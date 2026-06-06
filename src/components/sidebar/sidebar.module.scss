@@ -1,0 +1,237 @@
+:root {
+  --sidebar-w: 260px;
+  --sidebar-c: 80px;
+  --transition-speed: 0.3s;
+  --transition-timing: cubic-bezier(
+    0.4,
+    0,
+    0.2,
+    1
+  ); /* Professional easing curve */
+}
+
+/* ROOT SIDEBAR */
+.sidebar {
+  width: var(--sidebar-w);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  left: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+  border-right: 1px solid #f1f5f9;
+  box-shadow: 4px 0 24px rgba(15, 23, 42, 0.015);
+
+  overflow: hidden;
+  transition: width var(--transition-speed) var(--transition-timing);
+  padding: 16px 12px;
+  box-sizing: border-box;
+}
+
+/* COLLAPSED STATE */
+.collapsed {
+  width: var(--sidebar-c);
+
+  .logo {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  .label {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 8px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.logoWrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.logoDot {
+  min-width: 12px;
+  height: 12px;
+  border-radius: 4px; /* Modern squared-circle look */
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+  flex-shrink: 0;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  transition:
+    opacity var(--transition-speed) var(--transition-timing),
+    transform var(--transition-speed) var(--transition-timing);
+}
+
+.toggle {
+  border: none;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  cursor: pointer;
+  color: #64748b;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    transform: scale(1.05);
+  }
+}
+
+/* NAVIGATION MENU */
+.menu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* Custom Clean Scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 4px;
+  }
+}
+
+/* ITEMS (LINKS & BUTTONS) */
+.link,
+.logout {
+  display: grid;
+  /* Crucial: fixed template columns that remain structurally identical in both states */
+  grid-template-columns: 24px 1fr;
+  align-items: center;
+  gap: 16px;
+
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 10px;
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+
+  &:hover {
+    background: #f8fafc;
+
+    .icon {
+      color: #4f46e5;
+      transform: scale(1.05);
+    }
+    .label {
+      color: #0f172a;
+    }
+  }
+}
+
+/* ICON BOX */
+.iconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.icon {
+  font-size: 18px;
+  color: #64748b;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+/* TEXT LABELS */
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
+  white-space: nowrap;
+  transition:
+    opacity var(--transition-speed) var(--transition-timing),
+    transform var(--transition-speed) var(--transition-timing);
+}
+
+/* ACTIVE LINK STATE */
+.active {
+  background: #e0e7ff !important;
+
+  .icon {
+    color: #4f46e5;
+  }
+
+  .label {
+    color: #4f46e5;
+    font-weight: 600;
+  }
+
+  /* Left accent indicator border */
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 25%;
+    height: 50%;
+    width: 4px;
+    background: #4f46e5;
+    border-radius: 0 4px 4px 0;
+  }
+}
+
+/* FOOTER SECTION */
+.footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* DESTRUCTIVE ACTION BUTTON */
+.logout {
+  &:hover {
+    background: #fef2f2;
+
+    .icon {
+      color: #ef4444;
+    }
+    .label {
+      color: #991b1b;
+    }
+  }
+}
