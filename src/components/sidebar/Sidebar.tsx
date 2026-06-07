@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import AllTrackLogoIcon from "./AllTrackLogoIcon";
 import styles from "./sidebar.module.scss";
 
 import {
-  FiMenu,
   FiGrid,
   FiCheckSquare,
   FiClock,
@@ -31,17 +31,18 @@ export default function Sidebar() {
     <aside className={`${styles.sidebar} ${collapsed ? styles.collapsed : ""}`}>
       {/* HEADER */}
       <div className={styles.header}>
-        <div className={styles.logoWrap}>
-          <div className={styles.logoDot} />
-          <span className={styles.logo}>ATS</span>
-        </div>
-
         <button
-          className={styles.toggle}
+          type="button"
+          className={styles.logoWrap}
           onClick={() => setCollapsed((v) => !v)}
-          aria-label="Toggle Sidebar"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          <FiMenu />
+          <AllTrackLogoIcon className={styles.logoIcon} />
+          <span className={styles.logo} aria-hidden={collapsed}>
+            <span className={styles.logoAll}>All</span>
+            <span className={styles.logoTrack}>Track</span>
+          </span>
         </button>
       </div>
 

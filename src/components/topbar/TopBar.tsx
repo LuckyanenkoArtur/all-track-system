@@ -1,0 +1,109 @@
+import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "./TopBar.scss";
+
+export default function TopBar() {
+  const navigate = useNavigate();
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const notifRef = useRef(null);
+
+  // Mock data - replace with your actual state/API
+  const unreadCount = 105;
+  const notifications = [
+    { id: 1, text: "System update completed successfully.", time: "2m ago" },
+    { id: 2, text: "New login detected from Opsynta network.", time: "1h ago" },
+  ];
+
+  // Close dropdown when clicking outside (Enterprise UX standard)
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setIsNotifOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const displayCount = unreadCount > 99 ? "99+" : unreadCount;
+
+  return (
+    <header className="topbar">
+      {/* Search Section */}
+      <div className="search-container">
+        <svg
+          className="icon search-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="text"
+          placeholder="Search or type a command"
+          className="search-input"
+        />
+        <kbd className="shortcut">⌘F</kbd>
+      </div>
+
+      {/* Actions Section */}
+      <div className="actions-container">
+        {/* Notification Wrapper */}
+        <div className="notification-wrapper" ref={notifRef}>
+          <button
+            className={`action-btn ${isNotifOpen ? "active" : ""}`}
+            onClick={() => setIsNotifOpen(!isNotifOpen)}
+          >
+            <svg
+              className="icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            {unreadCount > 0 && <span className="badge">{displayCount}</span>}
+          </button>
+
+          {/* Animated Dropdown */}
+          <div className={`dropdown-menu ${isNotifOpen ? "open" : ""}`}>
+            <div className="dropdown-header">
+              <h3>Notifications</h3>
+            </div>
+            <div className="dropdown-body">
+              {notifications.length > 0 ? (
+                notifications.map((notif) => (
+                  <div key={notif.id} className="notif-item">
+                    <p className="notif-text">{notif.text}</p>
+                    <span className="notif-time">{notif.time}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="empty-state">
+                  <p>There are no notifications yet.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* User Profile Button */}
+        <button
+          className="user-profile-btn"
+          onClick={() => navigate("/user-profile")}
+        >
+          <img
+            src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix&backgroundColor=e2e8f0"
+            alt="User"
+            className="avatar"
+          />
+        </button>
+      </div>
+    </header>
+  );
+}
