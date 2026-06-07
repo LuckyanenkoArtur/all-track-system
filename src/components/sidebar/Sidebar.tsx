@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { logout } from "../../auth/auth";
+import { usePreferences } from "../../context/PreferencesContext";
+import { useTranslation } from "../../i18n";
 import AllTrackLogoIcon from "./AllTrackLogoIcon";
 import styles from "./sidebar.module.scss";
 
@@ -15,7 +17,13 @@ import {
 
 export default function Sidebar() {
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
+  const { sidebarCollapsed: defaultCollapsed } = usePreferences();
+  const { t } = useTranslation();
+  const [collapsed, setCollapsed] = useState(defaultCollapsed);
+
+  useEffect(() => {
+    setCollapsed(defaultCollapsed);
+  }, [defaultCollapsed]);
 
   const handleLogout = () => {
     logout();
@@ -23,13 +31,13 @@ export default function Sidebar() {
   };
 
   const navItems = [
-    { to: "/", label: "Overview", icon: FiGrid, end: true },
-    { to: "/task-tracking", label: "Tasks", icon: FiCheckSquare },
-    { to: "/time-tracking", label: "Time Tracking", icon: FiClock },
-    { to: "/calendar", label: "Calendar", icon: FiCalendar },
+    { to: "/", label: t.sidebar.overview, icon: FiGrid, end: true },
+    { to: "/task-tracking", label: t.sidebar.tasks, icon: FiCheckSquare },
+    { to: "/time-tracking", label: t.sidebar.timeTracking, icon: FiClock },
+    { to: "/calendar", label: t.sidebar.calendar, icon: FiCalendar },
     {
       to: "/accounting-finance-tracking",
-      label: "Finance",
+      label: t.sidebar.finance,
       icon: FiDollarSign,
     },
   ];
@@ -42,8 +50,8 @@ export default function Sidebar() {
           type="button"
           className={styles.logoWrap}
           onClick={() => setCollapsed((v) => !v)}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={collapsed ? t.sidebar.expand : t.sidebar.collapse}
+          title={collapsed ? t.sidebar.expand : t.sidebar.collapse}
         >
           <AllTrackLogoIcon className={styles.logoIcon} />
           <span className={styles.logo} aria-hidden={collapsed}>
@@ -78,7 +86,7 @@ export default function Sidebar() {
           <div className={styles.iconBox}>
             <FiLogOut className={styles.icon} />
           </div>
-          <span className={styles.label}>Log out</span>
+          <span className={styles.label}>{t.common.logout}</span>
         </button>
       </div>
     </aside>

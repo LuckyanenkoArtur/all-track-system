@@ -1,23 +1,25 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "../../i18n";
+import { useUserProfile } from "../../context/UserProfileContext";
 import "./TopBar.scss";
 
 export default function TopBar() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const { bio } = useUserProfile();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
-  const notifRef = useRef(null);
+  const notifRef = useRef<HTMLDivElement>(null);
 
-  // Mock data - replace with your actual state/API
   const unreadCount = 105;
   const notifications = [
     { id: 1, text: "System update completed successfully.", time: "2m ago" },
     { id: 2, text: "New login detected from Opsynta network.", time: "1h ago" },
   ];
 
-  // Close dropdown when clicking outside (Enterprise UX standard)
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (notifRef.current && !notifRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
         setIsNotifOpen(false);
       }
     }
@@ -29,7 +31,6 @@ export default function TopBar() {
 
   return (
     <header className="topbar">
-      {/* Search Section */}
       <div className="search-container">
         <svg
           className="icon search-icon"
@@ -43,15 +44,13 @@ export default function TopBar() {
         </svg>
         <input
           type="text"
-          placeholder="Search or type a command"
+          placeholder={t.common.search}
           className="search-input"
         />
         <kbd className="shortcut">⌘F</kbd>
       </div>
 
-      {/* Actions Section */}
       <div className="actions-container">
-        {/* Notification Wrapper */}
         <div className="notification-wrapper" ref={notifRef}>
           <button
             className={`action-btn ${isNotifOpen ? "active" : ""}`}
@@ -70,10 +69,9 @@ export default function TopBar() {
             {unreadCount > 0 && <span className="badge">{displayCount}</span>}
           </button>
 
-          {/* Animated Dropdown */}
           <div className={`dropdown-menu ${isNotifOpen ? "open" : ""}`}>
             <div className="dropdown-header">
-              <h3>Notifications</h3>
+              <h3>{t.common.notifications}</h3>
             </div>
             <div className="dropdown-body">
               {notifications.length > 0 ? (
@@ -85,20 +83,22 @@ export default function TopBar() {
                 ))
               ) : (
                 <div className="empty-state">
-                  <p>There are no notifications yet.</p>
+                  <p>{t.common.noNotifications}</p>
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* User Profile Button */}
         <button
           className="user-profile-btn"
           onClick={() => navigate("/user-profile")}
         >
           <img
-            src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix&backgroundColor=e2e8f0"
+            src={
+              bio.avatarUrl ??
+              "https://api.dicebear.com/7.x/notionists/svg?seed=Felix&backgroundColor=e2e8f0"
+            }
             alt="User"
             className="avatar"
           />

@@ -11,6 +11,7 @@ import AccountingFinanceTrackingPage from "./pages/accounting-finance-tracking";
 import CalendarPage from "./pages/calendar";
 import LoginPage from "./pages/login";
 import NotFoundPage from "./pages/not-found";
+import UserProfilePage from "./pages/user-profile";
 
 export const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ export const router = createBrowserRouter([
           {
             path: "/accounting-finance-tracking",
             element: <AccountingFinanceTrackingPage />,
+          },
+          {
+            path: "/user-profile",
+            element: <UserProfilePage />,
           },
         ],
       },
