@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { logout } from "../../auth/auth";
 import AllTrackLogoIcon from "./AllTrackLogoIcon";
 import styles from "./sidebar.module.scss";
 
@@ -13,7 +14,13 @@ import {
 } from "react-icons/fi";
 
 export default function Sidebar() {
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+  };
 
   const navItems = [
     { to: "/", label: "Overview", icon: FiGrid, end: true },
@@ -67,7 +74,7 @@ export default function Sidebar() {
 
       {/* FOOTER */}
       <div className={styles.footer}>
-        <button className={styles.logout}>
+        <button type="button" className={styles.logout} onClick={handleLogout}>
           <div className={styles.iconBox}>
             <FiLogOut className={styles.icon} />
           </div>
