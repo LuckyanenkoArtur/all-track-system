@@ -3,7 +3,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../auth/auth";
 import AllTrackPreview from "../../components/login/AllTrackPreview";
-import AllTrackLogoIcon from "../../components/sidebar/AllTrackLogoIcon";
+import AllTrackLogoIcon from "../../layouts/sidebar/AllTrackLogoIcon";
 import "./login.scss";
 
 export default function LoginPage() {
