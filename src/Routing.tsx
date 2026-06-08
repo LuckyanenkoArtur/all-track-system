@@ -12,7 +12,7 @@ import TimingPage from "./features/timing";
 import FinancePage from "./features/finance";
 import LoginPage from "./features/login";
 import NotFoundPage from "./pages/not-found";
-import UserProfilePage from "./pages/user-profile";
+import UserProfilePage from "./features/profile/user-profile";
 
 export const router = createBrowserRouter([
   {
