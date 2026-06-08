@@ -10,7 +10,7 @@ import CalendarPage from "./features/calendar";
 
 import TimeTrackingPage from "./pages/time-tracking";
 import FinancePage from "./features/finance";
-import LoginPage from "./pages/login";
+import LoginPage from "./features/login";
 import NotFoundPage from "./pages/not-found";
 import UserProfilePage from "./pages/user-profile";
 
