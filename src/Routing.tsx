@@ -8,7 +8,7 @@ import OverviewPage from "./features/overview";
 import TasksPage from "./features/tasks";
 import TimeTrackingPage from "./pages/time-tracking";
 import AccountingFinanceTrackingPage from "./pages/accounting-finance-tracking";
-import CalendarPage from "./pages/calendar";
+import CalendarPage from "./features/calendar";
 import LoginPage from "./pages/login";
 import NotFoundPage from "./pages/not-found";
 import UserProfilePage from "./pages/user-profile";
