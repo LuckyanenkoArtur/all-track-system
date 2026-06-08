@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { isAuthenticated } from "../../auth/auth";
+import { isAuthenticated } from "../../../auth/auth";
 
 export default function GuestRoute() {
   if (isAuthenticated()) {
