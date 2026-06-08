@@ -9,7 +9,7 @@ import TasksPage from "./features/tasks";
 import CalendarPage from "./features/calendar";
 
 import TimeTrackingPage from "./pages/time-tracking";
-import AccountingFinanceTrackingPage from "./pages/accounting-finance-tracking";
+import FinancePage from "./features/finance";
 import LoginPage from "./pages/login";
 import NotFoundPage from "./pages/not-found";
 import UserProfilePage from "./pages/user-profile";
@@ -48,7 +48,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "/app/finance",
-            element: <AccountingFinanceTrackingPage />,
+            element: <FinancePage />,
           },
           {
             path: "/app/profile",
