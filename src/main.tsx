@@ -5,6 +5,8 @@ import App from "./App.tsx";
 import { PreferencesProvider } from "./context/PreferencesContext";
 import { UserProfileProvider } from "./context/UserProfileContext";
 
+// TODO: Remove PreferencesProvider and UserProfileProvider on Redux + LocalStorage + Database storage
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <PreferencesProvider>
