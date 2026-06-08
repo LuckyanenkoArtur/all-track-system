@@ -1,6 +1,6 @@
 import { FiGlobe, FiLayout, FiMoon } from "react-icons/fi";
-import { usePreferences } from "../../context/PreferencesContext";
-import { useTranslation, type Language } from "../../i18n";
+import { usePreferences } from "../../../context/PreferencesContext";
+import { useTranslation, type Language } from "../../../i18n";
 
 export default function SettingsTab() {
   const { t } = useTranslation();
@@ -16,8 +16,12 @@ export default function SettingsTab() {
   return (
     <div className="user-page__tab-content">
       <div className="user-page__settings-header">
-        <h3 className="user-page__section-title">{t.userPage.settings.title}</h3>
-        <p className="user-page__section-desc">{t.userPage.settings.subtitle}</p>
+        <h3 className="user-page__section-title">
+          {t.userPage.settings.title}
+        </h3>
+        <p className="user-page__section-desc">
+          {t.userPage.settings.subtitle}
+        </p>
       </div>
 
       {/* Language */}
@@ -27,8 +31,12 @@ export default function SettingsTab() {
             <FiGlobe />
           </div>
           <div>
-            <h4 className="user-page__setting-label">{t.userPage.settings.language}</h4>
-            <p className="user-page__setting-desc">{t.userPage.settings.languageDesc}</p>
+            <h4 className="user-page__setting-label">
+              {t.userPage.settings.language}
+            </h4>
+            <p className="user-page__setting-desc">
+              {t.userPage.settings.languageDesc}
+            </p>
           </div>
         </div>
         <div className="user-page__toggle-group">
@@ -52,8 +60,12 @@ export default function SettingsTab() {
             <FiMoon />
           </div>
           <div>
-            <h4 className="user-page__setting-label">{t.userPage.settings.theme}</h4>
-            <p className="user-page__setting-desc">{t.userPage.settings.themeDesc}</p>
+            <h4 className="user-page__setting-label">
+              {t.userPage.settings.theme}
+            </h4>
+            <p className="user-page__setting-desc">
+              {t.userPage.settings.themeDesc}
+            </p>
           </div>
         </div>
         <div className="user-page__toggle-group">
@@ -81,8 +93,12 @@ export default function SettingsTab() {
             <FiLayout />
           </div>
           <div>
-            <h4 className="user-page__setting-label">{t.userPage.settings.sidebar}</h4>
-            <p className="user-page__setting-desc">{t.userPage.settings.sidebarDesc}</p>
+            <h4 className="user-page__setting-label">
+              {t.userPage.settings.sidebar}
+            </h4>
+            <p className="user-page__setting-desc">
+              {t.userPage.settings.sidebarDesc}
+            </p>
           </div>
         </div>
         <div className="user-page__toggle-group">
