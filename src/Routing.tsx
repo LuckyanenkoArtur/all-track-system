@@ -8,7 +8,7 @@ import OverviewPage from "./features/overview";
 import TasksPage from "./features/tasks";
 import CalendarPage from "./features/calendar";
 
-import TimeTrackingPage from "./pages/time-tracking";
+import TimingPage from "./features/timing";
 import FinancePage from "./features/finance";
 import LoginPage from "./features/login";
 import NotFoundPage from "./pages/not-found";
@@ -40,7 +40,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "/app/timing",
-            element: <TimeTrackingPage />,
+            element: <TimingPage />,
           },
           {
             path: "/app/calendar",
