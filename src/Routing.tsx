@@ -4,8 +4,8 @@ import GuestRoute from "./components/auth/GuestRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import MainLayout from "./layouts/MainLayout";
 
-import HomePage from "./pages/home";
-import TaskTrackingPage from "./pages/task-tracking";
+import OverviewPage from "./features/overview";
+import TasksPage from "./features/tasks";
 import TimeTrackingPage from "./pages/time-tracking";
 import AccountingFinanceTrackingPage from "./pages/accounting-finance-tracking";
 import CalendarPage from "./pages/calendar";
@@ -30,27 +30,27 @@ export const router = createBrowserRouter([
         element: <MainLayout />,
         children: [
           {
-            path: "/",
-            element: <HomePage />,
+            path: "/app/overview",
+            element: <OverviewPage />,
           },
           {
-            path: "/task-tracking",
-            element: <TaskTrackingPage />,
+            path: "/app/tasks",
+            element: <TasksPage />,
           },
           {
-            path: "/time-tracking",
+            path: "/app/timing",
             element: <TimeTrackingPage />,
           },
           {
-            path: "/calendar",
+            path: "/app/calendar",
             element: <CalendarPage />,
           },
           {
-            path: "/accounting-finance-tracking",
+            path: "/app/finance",
             element: <AccountingFinanceTrackingPage />,
           },
           {
-            path: "/user-profile",
+            path: "/app/profile",
             element: <UserProfilePage />,
           },
         ],
