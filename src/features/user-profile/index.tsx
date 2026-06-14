@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
 import { FiUser, FiSettings, FiMonitor, FiLink } from "react-icons/fi";
-import BioTab from "./BioTab";
-import SettingsTab from "./SettingsTab";
-import DevicesTab from "./DevicesTab";
-import IntegrationsTab from "./IntegrationsTab";
-import { ConfirmDialog } from "../ui/Dialog";
+import BioTab from "./user-page/BioTab";
+import SettingsTab from "./user-page/SettingsTab";
+import DevicesTab from "./user-page/DevicesTab";
+import IntegrationsTab from "./user-page/IntegrationsTab";
+import { ConfirmDialog } from "./components/dialogs/Dialog";
 import { useTranslation } from "../../i18n";
 import "./UserPage.scss";
 
@@ -17,7 +17,7 @@ const tabs: { id: TabId; icon: typeof FiUser }[] = [
   { id: "integrations", icon: FiLink },
 ];
 
-export default function UserPage() {
+export default function UserProfilePage() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabId>("bio");
   const [pendingTab, setPendingTab] = useState<TabId | null>(null);

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FiEye, FiEyeOff, FiLock } from "react-icons/fi";
-import Dialog from "../ui/Dialog";
-import { useTranslation } from "../../i18n";
+import Dialog from "../components/dialogs/Dialog";
+import { useTranslation } from "../../../i18n";
 
 interface ChangePasswordDialogProps {
   open: boolean;
@@ -78,13 +78,22 @@ export default function ChangePasswordDialog({
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} showClose={false} className="dialog--wide">
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      showClose={false}
+      className="dialog--wide"
+    >
       <div className="user-page__dialog-hero">
         <div className="user-page__dialog-icon">
           <FiLock />
         </div>
-        <h2 className="user-page__dialog-title">{t.userPage.changePassword.title}</h2>
-        <p className="user-page__dialog-desc">{t.userPage.changePassword.description}</p>
+        <h2 className="user-page__dialog-title">
+          {t.userPage.changePassword.title}
+        </h2>
+        <p className="user-page__dialog-desc">
+          {t.userPage.changePassword.description}
+        </p>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -109,7 +118,10 @@ export default function ChangePasswordDialog({
 
         {error && <p className="user-page__error">{error}</p>}
 
-        <button type="submit" className="user-page__btn user-page__btn--primary user-page__btn--full">
+        <button
+          type="submit"
+          className="user-page__btn user-page__btn--primary user-page__btn--full"
+        >
           {t.userPage.changePassword.submit}
         </button>
       </form>

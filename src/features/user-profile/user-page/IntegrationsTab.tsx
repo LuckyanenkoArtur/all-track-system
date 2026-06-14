@@ -1,5 +1,5 @@
 import { FiMail, FiPlus } from "react-icons/fi";
-import { useTranslation } from "../../i18n";
+import { useTranslation } from "../../../i18n";
 
 export default function IntegrationsTab() {
   const { t } = useTranslation();
@@ -20,8 +20,12 @@ export default function IntegrationsTab() {
   return (
     <div className="user-page__tab-content">
       <div className="user-page__settings-header">
-        <h3 className="user-page__section-title">{t.userPage.integrations.title}</h3>
-        <p className="user-page__section-desc">{t.userPage.integrations.subtitle}</p>
+        <h3 className="user-page__section-title">
+          {t.userPage.integrations.title}
+        </h3>
+        <p className="user-page__section-desc">
+          {t.userPage.integrations.subtitle}
+        </p>
       </div>
 
       <div className="user-page__integration-list">

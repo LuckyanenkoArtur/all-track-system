@@ -1,17 +1,18 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import GuestRoute from "./components/auth/GuestRoute";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
+import GuestRoute from "./features/login/auth/GuestRoute";
+import ProtectedRoute from "./features/login/auth/ProtectedRoute";
 import MainLayout from "./layouts/MainLayout";
 
-import HomePage from "./pages/home";
-import TaskTrackingPage from "./pages/task-tracking";
-import TimeTrackingPage from "./pages/time-tracking";
-import AccountingFinanceTrackingPage from "./pages/accounting-finance-tracking";
-import CalendarPage from "./pages/calendar";
-import LoginPage from "./pages/login";
+import OverviewPage from "./features/overview";
+import TasksPage from "./features/tasks";
+import CalendarPage from "./features/calendar";
+
+import TimingPage from "./features/timing";
+import FinancePage from "./features/finance";
+import LoginPage from "./features/login";
 import NotFoundPage from "./pages/not-found";
-import UserProfilePage from "./pages/user-profile";
+import UserProfilePage from "./features/user-profile";
 
 export const router = createBrowserRouter([
   {
@@ -30,27 +31,27 @@ export const router = createBrowserRouter([
         element: <MainLayout />,
         children: [
           {
-            path: "/",
-            element: <HomePage />,
+            path: "/app/overview",
+            element: <OverviewPage />,
           },
           {
-            path: "/task-tracking",
-            element: <TaskTrackingPage />,
+            path: "/app/tasks",
+            element: <TasksPage />,
           },
           {
-            path: "/time-tracking",
-            element: <TimeTrackingPage />,
+            path: "/app/timing",
+            element: <TimingPage />,
           },
           {
-            path: "/calendar",
+            path: "/app/calendar",
             element: <CalendarPage />,
           },
           {
-            path: "/accounting-finance-tracking",
-            element: <AccountingFinanceTrackingPage />,
+            path: "/app/finance",
+            element: <FinancePage />,
           },
           {
-            path: "/user-profile",
+            path: "/app/profile",
             element: <UserProfilePage />,
           },
         ],

@@ -19,7 +19,10 @@ export default function TopBar() {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+      if (
+        notifRef.current &&
+        !notifRef.current.contains(event.target as Node)
+      ) {
         setIsNotifOpen(false);
       }
     }
@@ -92,7 +95,7 @@ export default function TopBar() {
 
         <button
           className="user-profile-btn"
-          onClick={() => navigate("/user-profile")}
+          onClick={() => navigate("/app/profile")}
         >
           <img
             src={

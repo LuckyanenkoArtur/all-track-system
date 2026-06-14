@@ -31,12 +31,12 @@ export default function Sidebar() {
   };
 
   const navItems = [
-    { to: "/", label: t.sidebar.overview, icon: FiGrid, end: true },
-    { to: "/task-tracking", label: t.sidebar.tasks, icon: FiCheckSquare },
-    { to: "/time-tracking", label: t.sidebar.timeTracking, icon: FiClock },
-    { to: "/calendar", label: t.sidebar.calendar, icon: FiCalendar },
+    { to: "/app/overview", label: t.sidebar.overview, icon: FiGrid, end: true },
+    { to: "/app/tasks", label: t.sidebar.tasks, icon: FiCheckSquare },
+    { to: "/app/timing", label: t.sidebar.timeTracking, icon: FiClock },
+    { to: "/app/calendar", label: t.sidebar.calendar, icon: FiCalendar },
     {
-      to: "/accounting-finance-tracking",
+      to: "/app/finance",
       label: t.sidebar.finance,
       icon: FiDollarSign,
     },

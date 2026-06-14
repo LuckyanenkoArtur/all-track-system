@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { FiLogOut, FiMonitor, FiSmartphone, FiTablet } from "react-icons/fi";
-import { useUserProfile, type Device } from "../../context/UserProfileContext";
-import { useTranslation } from "../../i18n";
+import {
+  useUserProfile,
+  type Device,
+} from "../../../context/UserProfileContext";
+import { useTranslation } from "../../../i18n";
 
 function DeviceIcon({ type }: { type: Device["type"] }) {
   switch (type) {
