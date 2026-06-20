@@ -15,3 +15,7 @@ https://www.patterns.dev/react/hooks-pattern/ -> useMediaQuery - for prefrances
 
 
 Check all comments with !
+
+Remove all px where if is
+
+we need refactor SidebarNav.tsx component

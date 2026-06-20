@@ -1,7 +1,6 @@
 $sidebar-w: 260px;
 $sidebar-c: 80px;
 $sidebar-inset-x: 12px;
-$logo-size: 32px;
 $transition-speed: 0.3s;
 $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -33,12 +32,7 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
     overflow: visible;
   }
 
-  .logoWrap {
-    gap: 0;
-  }
-
   .link,
-  .logout,
   .groupToggle {
     justify-content: center;
     padding: 0;
@@ -70,53 +64,6 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
   .flyout {
     left: calc(100% + 8px);
   }
-
-  .footer {
-    display: flex;
-    justify-content: center;
-  }
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  height: 48px;
-  padding: 0 $sidebar-inset-x;
-  margin-bottom: 24px;
-  transition: padding $transition-speed $transition-timing;
-}
-
-.logoWrap {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: $logo-size;
-  flex-shrink: 0;
-  user-select: none;
-  border: none;
-  background: transparent;
-  padding: 0;
-  margin: 0;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  border-radius: 10px;
-  transition:
-    gap $transition-speed $transition-timing,
-    background 0.2s ease;
-
-  &:hover {
-    background: var(--color-surface-hover);
-  }
-
-  &:active {
-    background: var(--color-surface-secondary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
 }
 
 .menu {
@@ -138,7 +85,6 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .link,
-.logout,
 .groupToggle {
   display: flex;
   align-items: center;
@@ -380,34 +326,5 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
   .label {
     color: var(--color-text);
     font-weight: 600;
-  }
-}
-
-.footer {
-  margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px solid var(--color-border);
-  transition: border-color 0.35s ease;
-}
-
-.logout {
-  &:hover {
-    background: #fef2f2;
-
-    .icon {
-      color: var(--color-danger);
-    }
-
-    .label {
-      color: #991b1b;
-    }
-  }
-}
-
-[data-theme="dark"] .logout:hover {
-  background: rgba(239, 68, 68, 0.1);
-
-  .label {
-    color: var(--color-danger);
   }
 }

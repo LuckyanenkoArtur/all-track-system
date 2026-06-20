@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import type { IconType } from "react-icons";
 import { FiChevronDown } from "react-icons/fi";
-import styles from "./sidebar.module.scss";
+import styles from "../sidebar.module.scss";
+import { createSidebarItems } from "../utils/createSidebarItems";
+import { useTranslation } from "../../../../../i18n";
 
 export type SidebarLinkItem = {
   kind: "link";
@@ -53,15 +55,17 @@ function collectGroupIds(item: SidebarGroupItem, pathname: string): string[] {
 }
 
 type SidebarNavProps = {
-  items: SidebarNavItem[];
   collapsed: boolean;
 };
 
-export default function SidebarNav({ items, collapsed }: SidebarNavProps) {
+export default function SidebarNav({ collapsed }: SidebarNavProps) {
   const { pathname } = useLocation();
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
   const [flyoutId, setFlyoutId] = useState<string | null>(null);
   const navRef = useRef<HTMLElement>(null);
+
+  const { t } = useTranslation();
+  const items = useMemo(() => createSidebarItems(t), [t]);
 
   useEffect(() => {
     const activeIds = items.flatMap((item) =>
