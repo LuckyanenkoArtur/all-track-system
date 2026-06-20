@@ -1,15 +1,32 @@
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FiCalendar, FiFilter, FiList, FiSearch } from "react-icons/fi";
 import { BiAbacus, BiTable } from "react-icons/bi";
 import { useTranslation } from "../../i18n";
 import { TaskCollectionsBar } from "./components/TaskCollectionsBar";
 import { TaskFiltersPanel } from "./components/TaskFiltersPanel";
 import { TaskPagination } from "./components/TaskPagination";
+import { TaskDetailsPanel } from "./components/TaskDetailsPanel";
 import { TaskTable } from "./components/TaskTable";
+import { useTasks } from "./hooks/useTasks";
+import { useTaskTrackingDisplay } from "./hooks/useTaskTrackingDisplay";
 import { useTaskListState } from "./hooks/useTaskListState";
+import { getLiveTimeSpent } from "./utils/timeTrackingUtils";
 import styles from "./TasksPage.module.scss";
 
 export function TasksPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { tasks, updateTaskStatus, isTracking, toggleTracking, completeTask, getTrackingElapsedMs } =
+    useTasks();
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const {
+    isTracking: selectedIsTracking,
+    sessionTimer,
+    toggleTracking: toggleSelectedTracking,
+    getDisplayTimeSpent,
+  } = useTaskTrackingDisplay(selectedTaskId);
+
   const {
     filters,
     setFilters,
@@ -33,6 +50,23 @@ export function TasksPage() {
   } = useTaskListState();
 
   const taskLabels = t.tasks;
+  const detailLabels = taskLabels.details;
+
+  const selectedTask = useMemo(
+    () => tasks.find((task) => task.id === selectedTaskId) ?? null,
+    [tasks, selectedTaskId],
+  );
+
+  const selectedLiveTimeSpent = useMemo(() => {
+    if (!selectedTask) return undefined;
+    if (!selectedIsTracking) return selectedTask.timeSpent;
+    return getLiveTimeSpent(selectedTask.timeSpent, getTrackingElapsedMs());
+  }, [selectedTask, selectedIsTracking, getTrackingElapsedMs]);
+
+  const handleExpandTask = (taskId: string) => {
+    setSelectedTaskId(null);
+    navigate(`/app/tasks/${taskId}`);
+  };
 
   return (
     <div className={styles.page}>
@@ -148,6 +182,7 @@ export function TasksPage() {
           tasks={listResult.tasks}
           sort={sort}
           onSort={toggleSort}
+          onTaskClick={(task) => setSelectedTaskId(task.id)}
           emptyLabel={taskLabels.noResults}
           columns={{
             taskDetails: taskLabels.taskDetails,
@@ -159,7 +194,15 @@ export function TasksPage() {
             responsible: taskLabels.responsible,
             budget: taskLabels.budget,
             totalTime: taskLabels.totalTime,
+            actions: taskLabels.actions,
+            startTracking: taskLabels.startTracking,
+            stopTracking: taskLabels.stopTracking,
+            completeTask: taskLabels.completeTask,
           }}
+          isTracking={isTracking}
+          getDisplayTimeSpent={getDisplayTimeSpent}
+          onToggleTracking={toggleTracking}
+          onCompleteTask={completeTask}
         />
 
         <TaskPagination
@@ -181,6 +224,49 @@ export function TasksPage() {
           }}
         />
       </div>
+
+      <TaskDetailsPanel
+        open={selectedTaskId !== null}
+        task={selectedTask}
+        onClose={() => setSelectedTaskId(null)}
+        onExpand={handleExpandTask}
+        onStatusChange={updateTaskStatus}
+        isTracking={selectedIsTracking}
+        sessionTimer={sessionTimer}
+        liveTimeSpent={selectedLiveTimeSpent}
+        onToggleTracking={
+          selectedTask ? () => toggleSelectedTracking(selectedTask.id) : undefined
+        }
+        labels={{
+          title: taskLabels.taskDetails,
+          expandFullPage: detailLabels.expandFullPage,
+          close: detailLabels.close,
+          startTracking: taskLabels.startTracking,
+          stopTracking: taskLabels.stopTracking,
+          tracking: taskLabels.tracking,
+          session: taskLabels.session,
+          status: taskLabels.status,
+          priority: taskLabels.priority,
+          groups: taskLabels.groups,
+          dueDate: taskLabels.dueDate,
+          createdAt: detailLabels.createdAt,
+          initiator: taskLabels.initiator,
+          responsible: taskLabels.responsible,
+          budget: taskLabels.budget,
+          totalTime: taskLabels.totalTime,
+          description: detailLabels.description,
+          descriptionPlaceholder: detailLabels.descriptionPlaceholder,
+          addComment: detailLabels.addComment,
+          comments: detailLabels.comments,
+          changeStatus: detailLabels.changeStatus,
+          done: taskLabels.done,
+          inProgress: taskLabels.inProgress,
+          pending: taskLabels.pending,
+          high: taskLabels.high,
+          medium: taskLabels.medium,
+          low: taskLabels.low,
+        }}
+      />
     </div>
   );
 }

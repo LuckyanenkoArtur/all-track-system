@@ -1,10 +1,25 @@
 $sidebar-w: 260px;
 $sidebar-c: 80px;
 $sidebar-inset-x: 12px;
+$nav-item-size: 44px;
+$nav-icon-size: 24px;
+$icon-rail-left: $sidebar-inset-x * 2;
+$item-pad-collapsed: ($nav-item-size - $nav-icon-size) / 2;
+$sidebar-pad-collapsed-start: $icon-rail-left - $item-pad-collapsed;
 $transition-speed: 0.3s;
 $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 
 .sidebar {
+  --sidebar-pad-start: #{$sidebar-inset-x};
+  --sidebar-pad-end: #{$sidebar-inset-x};
+  --item-pad-start: #{$sidebar-inset-x};
+  --item-pad-end: #{$sidebar-inset-x};
+  --item-width: 100%;
+  --logo-pad-start: #{$sidebar-inset-x};
+  --nav-col-gap: 16px;
+  --nav-grid-label: 1fr;
+  --nav-grid-chevron: auto;
+
   width: $sidebar-w;
   height: 100%;
   max-height: 100%;
@@ -16,14 +31,25 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   transition:
     width $transition-speed $transition-timing,
+    padding $transition-speed $transition-timing,
     background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 16px $sidebar-inset-x;
+  padding: 16px var(--sidebar-pad-end) 16px var(--sidebar-pad-start);
   box-sizing: border-box;
   flex-shrink: 0;
 }
 
 .collapsed {
+  --sidebar-pad-start: #{$sidebar-pad-collapsed-start};
+  --sidebar-pad-end: 0px;
+  --item-pad-start: #{$item-pad-collapsed};
+  --item-pad-end: 0px;
+  --item-width: #{$nav-item-size};
+  --logo-pad-start: #{$item-pad-collapsed};
+  --nav-col-gap: 0px;
+  --nav-grid-label: 0fr;
+  --nav-grid-chevron: 0fr;
+
   width: $sidebar-c;
   overflow: visible;
   z-index: 30;
@@ -32,29 +58,44 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
     overflow: visible;
   }
 
-  .link,
-  .groupToggle {
-    justify-content: center;
-    padding: 0;
-    gap: 0;
-  }
-
-  .groupToggle .chevron,
-  .subMenu {
-    display: none;
-  }
-
   .label {
     flex: 0 0 0;
-    min-width: 0;
+    max-width: 0;
     opacity: 0;
-    overflow: hidden;
     margin: 0;
     padding: 0;
+    transition:
+      opacity 0.15s $transition-timing,
+      max-width $transition-speed $transition-timing,
+      margin $transition-speed $transition-timing,
+      padding $transition-speed $transition-timing;
   }
 
-  .active::before {
-    display: none;
+  .chevron {
+    flex: 0 0 0;
+    max-width: 0;
+    opacity: 0;
+    margin-left: 0;
+    transition:
+      opacity 0.15s $transition-timing,
+      max-width $transition-speed $transition-timing,
+      margin-left $transition-speed $transition-timing;
+  }
+
+  .subMenuWrap {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    margin-block: 0;
+    transition:
+      grid-template-rows $transition-speed $transition-timing,
+      opacity 0.15s $transition-timing,
+      margin-block $transition-speed $transition-timing;
+  }
+
+  .subMenu {
+    margin-left: 0;
+    padding-left: 0;
+    border-left-color: transparent;
   }
 
   .navGroup {
@@ -86,16 +127,17 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 
 .link,
 .groupToggle {
-  display: flex;
+  display: grid;
+  grid-template-columns: $nav-icon-size var(--nav-grid-label) var(--nav-grid-chevron);
+  column-gap: var(--nav-col-gap);
   align-items: center;
-  gap: 16px;
-  height: 44px;
-  padding: 0 $sidebar-inset-x;
+  width: var(--item-width);
+  height: $nav-item-size;
+  padding-inline: var(--item-pad-start) var(--item-pad-end);
   border-radius: 10px;
   text-decoration: none;
   border: none;
   background: transparent;
-  width: 100%;
   box-sizing: border-box;
   text-align: left;
   cursor: pointer;
@@ -104,8 +146,11 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
   transition:
     background 0.2s ease,
     color 0.2s ease,
-    padding $transition-speed $transition-timing,
-    gap $transition-speed $transition-timing;
+    width $transition-speed $transition-timing,
+    height $transition-speed $transition-timing,
+    padding-inline $transition-speed $transition-timing,
+    column-gap $transition-speed $transition-timing,
+    grid-template-columns $transition-speed $transition-timing;
 
   &:hover {
     background: var(--color-surface-hover);
@@ -122,19 +167,33 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .groupToggle {
-  width: 100%;
+  width: var(--item-width);
 }
 
 .navGroupNested .groupToggle {
   height: 36px;
   padding-left: 20px;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    padding-inline $transition-speed $transition-timing,
+    padding-left $transition-speed $transition-timing,
+    column-gap $transition-speed $transition-timing,
+    grid-template-columns $transition-speed $transition-timing;
 }
 
 .subLink {
+  display: flex;
   height: 36px;
   padding-left: 20px;
   gap: 8px;
   font-size: 13px;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    padding-inline $transition-speed $transition-timing,
+    padding-left $transition-speed $transition-timing,
+    gap $transition-speed $transition-timing;
 
   .label {
     font-size: 13px;
@@ -156,26 +215,82 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
   gap: 0;
 }
 
+.subMenuWrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  margin-block: 0;
+  overflow: hidden;
+  transition:
+    grid-template-rows $transition-speed $transition-timing,
+    opacity 0.2s $transition-timing 0.05s,
+    margin-block $transition-speed $transition-timing;
+}
+
+.subMenuWrapOpen {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  margin-block: 2px 4px;
+  transition:
+    grid-template-rows $transition-speed $transition-timing 0.12s,
+    opacity 0.2s $transition-timing 0.15s,
+    margin-block $transition-speed $transition-timing 0.12s;
+}
+
+.subMenuInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
 .subMenu {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  margin: 2px 0 4px 22px;
+  margin-left: 0;
+  padding-left: 0;
+  border-left: 2px solid transparent;
+  transition:
+    margin-left $transition-speed $transition-timing,
+    padding-left $transition-speed $transition-timing,
+    border-color $transition-speed $transition-timing;
+}
+
+.subMenuWrapOpen .subMenu {
+  margin-left: 22px;
   padding-left: 14px;
-  border-left: 2px solid var(--color-border);
+  border-left-color: var(--color-border);
+  transition:
+    margin-left $transition-speed $transition-timing 0.12s,
+    padding-left $transition-speed $transition-timing 0.12s,
+    border-color $transition-speed $transition-timing 0.12s;
 }
 
 .subMenuNested {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.subMenuWrapOpen .subMenuNested {
   margin-left: 8px;
   padding-left: 12px;
+  transition:
+    margin-left $transition-speed $transition-timing 0.12s,
+    padding-left $transition-speed $transition-timing 0.12s,
+    border-color $transition-speed $transition-timing 0.12s;
 }
 
 .chevron {
-  margin-left: auto;
+  justify-self: end;
+  max-width: 14px;
   font-size: 14px;
   color: var(--color-text-muted);
-  flex-shrink: 0;
-  transition: transform 0.2s ease;
+  overflow: hidden;
+  opacity: 1;
+  min-width: 0;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s $transition-timing 0.08s,
+    max-width $transition-speed $transition-timing;
 }
 
 .chevronOpen {
@@ -258,12 +373,13 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .iconBox {
+  grid-column: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  flex: 0 0 24px;
+  width: $nav-icon-size;
+  height: $nav-icon-size;
+  min-width: $nav-icon-size;
 }
 
 .icon {
@@ -277,8 +393,9 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .label {
-  flex: 1 1 auto;
+  grid-column: 2;
   min-width: 0;
+  max-width: 180px;
   font-size: 14px;
   font-weight: 500;
   color: var(--color-text-muted);
@@ -286,9 +403,14 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   opacity: 1;
   transition:
-    opacity $transition-speed $transition-timing,
-    flex $transition-speed $transition-timing,
-    min-width $transition-speed $transition-timing;
+    opacity 0.2s $transition-timing 0.08s,
+    max-width $transition-speed $transition-timing,
+    margin $transition-speed $transition-timing,
+    padding $transition-speed $transition-timing;
+}
+
+.groupToggle .chevron {
+  grid-column: 3;
 }
 
 .groupToggle.active,
@@ -313,7 +435,15 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
     width: 4px;
     background: var(--color-accent);
     border-radius: 0 4px 4px 0;
+    opacity: 1;
+    transition: opacity $transition-speed $transition-timing 0.1s;
   }
+}
+
+.collapsed .groupToggle.active::before,
+.collapsed .link.active::before {
+  opacity: 0;
+  transition: opacity 0.15s $transition-timing;
 }
 
 .subLink.active {

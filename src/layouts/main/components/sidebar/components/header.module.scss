@@ -1,5 +1,5 @@
-$sidebar-inset-x: 12px;
 $logo-size: 32px;
+$nav-item-size: 44px;
 $transition-speed: 0.3s;
 $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -7,9 +7,7 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   height: 48px;
-  padding: 0 $sidebar-inset-x;
   margin-bottom: 24px;
-  transition: padding $transition-speed $transition-timing;
 }
 
 .logoWrap {
@@ -17,18 +15,24 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
   align-items: center;
   gap: 12px;
   min-width: $logo-size;
+  width: var(--item-width, 100%);
+  height: $nav-item-size;
   flex-shrink: 0;
   user-select: none;
   border: none;
   background: transparent;
-  padding: 0;
+  padding-inline: var(--logo-pad-start, 12px) var(--item-pad-end, 12px);
   margin: 0;
   font: inherit;
   text-align: left;
   cursor: pointer;
   border-radius: 10px;
+  box-sizing: border-box;
   transition:
     gap $transition-speed $transition-timing,
+    width $transition-speed $transition-timing,
+    height $transition-speed $transition-timing,
+    padding-inline $transition-speed $transition-timing,
     background 0.2s ease;
 
   &:hover {

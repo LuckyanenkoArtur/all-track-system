@@ -26,6 +26,9 @@ const BASE_TASKS: Task[] = [
     responsible: ["Frontend Team"],
     budget: "$850",
     timeSpent: "6h 15m",
+    budgetSpent: "$620",
+    description:
+      "Fix sidebar jiggle on collapse/expand transitions. Review layout shift in nested routes and ensure consistent min-width handling across breakpoints.",
   },
   {
     id: "TSK-003",
@@ -190,7 +193,7 @@ const BASE_TASKS: Task[] = [
     priority: "high",
     groups: ["Backend", "Security"],
     createdAt: "2026-06-10T14:00:00Z",
-    dueDate: "2026-06-17T12:00:00Z",
+    dueDate: "2026-06-20T12:00:00Z",
     initiator: "Alex M.",
     responsible: ["Backend Team"],
     budget: "$0",

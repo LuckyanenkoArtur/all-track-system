@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { MOCK_TASKS } from "../mockTasks";
+import { useTasks } from "../hooks/useTasks";
 import type { PageSize, TaskFilters, TaskSort } from "../types";
 import {
   DEFAULT_FILTERS,
@@ -13,6 +13,7 @@ import {
 import { useTaskCollections } from "./useTaskCollections";
 
 export function useTaskListState() {
+  const { tasks } = useTasks();
   const { collections, saveCollection, deleteCollection } = useTaskCollections();
 
   const [filters, setFiltersState] = useState<TaskFilters>(DEFAULT_FILTERS);
@@ -22,16 +23,16 @@ export function useTaskListState() {
   const [activeCollectionId, setActiveCollectionId] = useState<string | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const filterOptions = useMemo(() => getUniqueFilterOptions(MOCK_TASKS), []);
+  const filterOptions = useMemo(() => getUniqueFilterOptions(tasks), [tasks]);
 
   const filteredTotal = useMemo(() => {
-    return processTaskList(MOCK_TASKS, {
+    return processTaskList(tasks, {
       filters,
       sort,
       pageSize,
       page: 1,
     }).total;
-  }, [filters, sort, pageSize]);
+  }, [filters, sort, pageSize, tasks]);
 
   const safePage = Math.min(
     page,
@@ -40,13 +41,13 @@ export function useTaskListState() {
 
   const listResult = useMemo(
     () =>
-      processTaskList(MOCK_TASKS, {
+      processTaskList(tasks, {
         filters,
         sort,
         pageSize,
         page: safePage,
       }),
-    [filters, sort, pageSize, safePage],
+    [filters, sort, pageSize, safePage, tasks],
   );
 
   const clearActiveCollection = useCallback(() => {
@@ -128,10 +129,10 @@ export function useTaskListState() {
   );
 
   const stats = useMemo(() => {
-    const inProgress = MOCK_TASKS.filter((task) => task.status === "inProgress").length;
-    const pending = MOCK_TASKS.filter((task) => task.status === "pending").length;
-    return { total: MOCK_TASKS.length, inProgress, pending };
-  }, []);
+    const inProgress = tasks.filter((task) => task.status === "inProgress").length;
+    const pending = tasks.filter((task) => task.status === "pending").length;
+    return { total: tasks.length, inProgress, pending };
+  }, [tasks]);
 
   const activeFilterCount = useMemo(() => countActiveFilters(filters), [filters]);
 

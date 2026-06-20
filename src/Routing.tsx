@@ -9,6 +9,7 @@ import {
   TasksLayout,
   TasksPage,
   TasksOverviewPage,
+  TaskDetailsPage,
 } from "./features/tasks";
 import CalendarPage from "./features/calendar";
 
@@ -48,6 +49,7 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <TasksOverviewPage /> },
               { path: "tasks", element: <TasksPage /> },
+              { path: ":id", element: <TaskDetailsPage /> },
             ],
           },
           {

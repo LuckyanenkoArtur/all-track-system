@@ -2,6 +2,16 @@ export type TaskStatus = "done" | "inProgress" | "pending";
 export type TaskPriority = "high" | "medium" | "low";
 export type PageSize = 5 | 10 | 15 | 20;
 
+export interface CreateTaskInput {
+  title: string;
+  priority: TaskPriority;
+  groups: string[];
+  dueDate: string;
+  initiator: string;
+  responsible: string[];
+  budget: string;
+}
+
 export interface Task {
   id: string;
   title: string;
@@ -14,6 +24,34 @@ export interface Task {
   responsible: string[];
   budget: string;
   timeSpent: string;
+  description?: string;
+  budgetSpent?: string;
+}
+
+export interface TaskCommentAttachment {
+  id: string;
+  name: string;
+  size: number;
+  mimeType: string;
+  dataUrl: string;
+}
+
+export interface TaskComment {
+  id: string;
+  taskId: string;
+  author: string;
+  authorInitials: string;
+  body: string;
+  createdAt: string;
+  attachments: TaskCommentAttachment[];
+}
+
+export interface AddTaskCommentInput {
+  taskId: string;
+  body: string;
+  author: string;
+  authorInitials: string;
+  attachments: Omit<TaskCommentAttachment, "id">[];
 }
 
 export type SortField =

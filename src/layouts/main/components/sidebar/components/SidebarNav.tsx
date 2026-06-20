@@ -200,12 +200,10 @@ export default function SidebarNav({ collapsed }: SidebarNavProps) {
             </div>
           )}
           <span className={styles.label}>{item.label}</span>
-          {!collapsed && (
-            <FiChevronDown
-              className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`}
-              aria-hidden
-            />
-          )}
+          <FiChevronDown
+            className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`}
+            aria-hidden
+          />
         </button>
 
         {collapsed && depth === 0 && showFlyout && (
@@ -215,17 +213,24 @@ export default function SidebarNav({ collapsed }: SidebarNavProps) {
           </div>
         )}
 
-        {!collapsed && isOpen && (
-          <div
-            className={`${styles.subMenu} ${depth > 0 ? styles.subMenuNested : ""}`}
-          >
-            {item.children.map((child) =>
-              child.kind === "link"
-                ? renderLink(child, true)
-                : renderGroup(child, depth + 1),
-            )}
-          </div>
-        )}
+        <div
+          className={`${styles.subMenuWrap} ${isOpen && !collapsed ? styles.subMenuWrapOpen : ""}`}
+          aria-hidden={!isOpen || collapsed}
+        >
+          {isOpen && (
+            <div className={styles.subMenuInner}>
+              <div
+                className={`${styles.subMenu} ${depth > 0 ? styles.subMenuNested : ""}`}
+              >
+                {item.children.map((child) =>
+                  child.kind === "link"
+                    ? renderLink(child, true)
+                    : renderGroup(child, depth + 1),
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   };

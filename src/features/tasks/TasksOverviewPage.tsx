@@ -1,122 +1,217 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
-  FiCheckCircle,
   FiAlertCircle,
-  FiCircle,
+  FiCalendar,
+  FiCheckCircle,
+  FiClipboard,
   FiClock,
+  FiLayers,
+  FiPlus,
 } from "react-icons/fi";
 import { useTranslation } from "../../i18n";
-import { MOCK_TASKS } from "./mockTasks";
+import { CreateTaskDialog } from "./components/CreateTaskDialog";
+import { ActiveTrackingCard } from "./components/ActiveTrackingCard";
+import { TaskInfoCards } from "./components/TaskInfoCards";
+import { TodoScheduleTable } from "./components/TodoScheduleTable";
+import { useTasks } from "./hooks/useTasks";
+import { isThisWeek, isToday } from "./utils/dateUtils";
 import styles from "./TasksOverviewPage.module.scss";
+
+function isOpenTask(status: string) {
+  return status === "pending" || status === "inProgress";
+}
 
 export function TasksOverviewPage() {
   const { t } = useTranslation();
+  const { tasks, addTask, updateTaskStatus } = useTasks();
+  const [createOpen, setCreateOpen] = useState(false);
+
+  const labels = t.tasks.dashboard;
+
+  const todayTasks = useMemo(
+    () =>
+      tasks
+        .filter((task) => isOpenTask(task.status) && isToday(task.dueDate))
+        .sort(
+          (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
+        ),
+    [tasks],
+  );
+
+  const weekTasks = useMemo(
+    () =>
+      tasks
+        .filter(
+          (task) =>
+            isOpenTask(task.status) &&
+            isThisWeek(task.dueDate) &&
+            !isToday(task.dueDate),
+        )
+        .sort(
+          (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
+        ),
+    [tasks],
+  );
 
   const stats = useMemo(() => {
-    const done = MOCK_TASKS.filter((task) => task.status === "done").length;
-    const inProgress = MOCK_TASKS.filter((task) => task.status === "inProgress").length;
-    const pending = MOCK_TASKS.filter((task) => task.status === "pending").length;
-    return { total: MOCK_TASKS.length, done, inProgress, pending };
-  }, []);
+    const inProgress = tasks.filter((task) => task.status === "inProgress").length;
+    const pending = tasks.filter((task) => task.status === "pending").length;
+    const done = tasks.filter((task) => task.status === "done").length;
 
-  const recentTasks = useMemo(
-    () =>
-      [...MOCK_TASKS]
-        .sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        )
-        .slice(0, 4),
-    [],
+    return {
+      total: tasks.length,
+      inProgress,
+      pending,
+      done,
+      dueToday: todayTasks.length,
+      dueThisWeek: weekTasks.length,
+    };
+  }, [tasks, todayTasks.length, weekTasks.length]);
+
+  const infoCards = useMemo(
+    () => [
+      {
+        id: "total",
+        label: labels.totalTasks,
+        value: stats.total,
+        icon: <FiLayers size={18} aria-hidden />,
+      },
+      {
+        id: "inProgress",
+        label: labels.inProgress,
+        value: stats.inProgress,
+        tone: "inProgress" as const,
+        icon: <FiAlertCircle size={18} aria-hidden />,
+      },
+      {
+        id: "pending",
+        label: labels.pending,
+        value: stats.pending,
+        tone: "pending" as const,
+        icon: <FiClock size={18} aria-hidden />,
+      },
+      {
+        id: "done",
+        label: labels.completed,
+        value: stats.done,
+        tone: "done" as const,
+        icon: <FiCheckCircle size={18} aria-hidden />,
+      },
+      {
+        id: "dueToday",
+        label: labels.dueToday,
+        value: stats.dueToday,
+        tone: "today" as const,
+        icon: <FiCalendar size={18} aria-hidden />,
+      },
+      {
+        id: "dueWeek",
+        label: labels.dueThisWeek,
+        value: stats.dueThisWeek,
+        tone: "week" as const,
+        icon: <FiCalendar size={18} aria-hidden />,
+      },
+    ],
+    [labels, stats],
   );
+
+  const handleToggleStatus = (taskId: string) => {
+    const task = tasks.find((item) => item.id === taskId);
+    if (!task) return;
+
+    updateTaskStatus(taskId, task.status === "done" ? "pending" : "done");
+  };
 
   return (
     <div className={styles.page}>
       <header className={styles.pageHeader}>
-        <h1>{t.sidebar.tasksOverview}</h1>
-        <p className={styles.pageSubtitle}>
-          Task metrics, workload trends, and recent activity
-        </p>
+        <div>
+          <h1>{t.sidebar.tasksOverview}</h1>
+          <p className={styles.pageSubtitle}>{labels.subtitle}</p>
+        </div>
+        <button
+          type="button"
+          className={styles.createBtn}
+          onClick={() => setCreateOpen(true)}
+        >
+          <FiPlus size={16} aria-hidden />
+          {labels.createTask}
+        </button>
       </header>
 
-      <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <span className={styles.statLabel}>Total tasks</span>
-          <strong className={styles.statValue}>{stats.total}</strong>
-        </div>
-        <div className={styles.statCard}>
-          <span className={styles.statLabel}>In progress</span>
-          <strong className={`${styles.statValue} ${styles.inProgress}`}>
-            {stats.inProgress}
-          </strong>
-        </div>
-        <div className={styles.statCard}>
-          <span className={styles.statLabel}>Pending</span>
-          <strong className={`${styles.statValue} ${styles.pending}`}>
-            {stats.pending}
-          </strong>
-        </div>
-        <div className={styles.statCard}>
-          <span className={styles.statLabel}>Completed</span>
-          <strong className={`${styles.statValue} ${styles.done}`}>
-            {stats.done}
-          </strong>
-        </div>
+      <TaskInfoCards stats={infoCards} />
+
+      <ActiveTrackingCard
+        labels={{
+          title: t.tasks.trackingActive,
+          session: t.tasks.session,
+          totalTime: t.tasks.totalTime,
+          stop: t.tasks.stopTracking,
+        }}
+      />
+
+      <div className={styles.quickActions}>
+        <button
+          type="button"
+          className={`${styles.actionCard} ${styles.actionPrimary}`}
+          onClick={() => setCreateOpen(true)}
+        >
+          <span className={styles.actionIcon}>
+            <FiClipboard size={18} aria-hidden />
+          </span>
+          <span className={styles.actionCopy}>
+            <strong>{labels.createTask}</strong>
+            <small>{labels.createTaskHint}</small>
+          </span>
+        </button>
       </div>
 
-      <div className={styles.dashboardGrid}>
-        <div className={`${styles.widget} ${styles.statusChart}`}>
-          <h2>Status breakdown</h2>
-          <div className={styles.chartPlaceholder}>
-            [ Chart placeholder — tasks by status ]
-          </div>
-          <div className={styles.legend}>
-            <span>
-              <FiCheckCircle aria-hidden /> Done {stats.done}
-            </span>
-            <span>
-              <FiAlertCircle aria-hidden /> In progress {stats.inProgress}
-            </span>
-            <span>
-              <FiCircle aria-hidden /> Pending {stats.pending}
-            </span>
-          </div>
-        </div>
+      <div className={styles.todoGrid}>
+        <TodoScheduleTable
+          title={labels.todoToday}
+          tasks={todayTasks}
+          emptyLabel={labels.emptyToday}
+          columns={{
+            name: labels.name,
+            projects: labels.projects,
+            dueDate: labels.dueDate,
+          }}
+          onToggleStatus={handleToggleStatus}
+        />
 
-        <div className={`${styles.widget} ${styles.workloadChart}`}>
-          <h2>Weekly workload</h2>
-          <div className={styles.chartPlaceholder}>
-            [ Chart placeholder — hours logged per day ]
-          </div>
-        </div>
-
-        <div className={`${styles.widget} ${styles.recentTasks}`}>
-          <h2>Recent tasks</h2>
-          <ul className={styles.taskList}>
-            {recentTasks.map((task) => (
-              <li key={task.id} className={styles.taskRow}>
-                <div>
-                  <span className={styles.taskTitle}>{task.title}</span>
-                  <span className={styles.taskMeta}>
-                    <FiClock size={12} aria-hidden />
-                    {task.timeSpent} logged
-                  </span>
-                </div>
-                <span className={`${styles.statusPill} ${styles[task.status]}`}>
-                  {task.status === "inProgress" ? "In progress" : task.status}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className={`${styles.widget} ${styles.budgetChart}`}>
-          <h2>Budget allocation</h2>
-          <div className={styles.chartPlaceholder}>
-            [ Chart placeholder — budget by group ]
-          </div>
-        </div>
+        <TodoScheduleTable
+          title={labels.todoThisWeek}
+          tasks={weekTasks}
+          emptyLabel={labels.emptyWeek}
+          columns={{
+            name: labels.name,
+            projects: labels.projects,
+            dueDate: labels.dueDate,
+          }}
+          onToggleStatus={handleToggleStatus}
+        />
       </div>
+
+      <CreateTaskDialog
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onSubmit={addTask}
+        labels={{
+          title: labels.createTask,
+          taskTitle: labels.taskTitle,
+          priority: t.tasks.priority,
+          group: labels.group,
+          dueDate: t.tasks.dueDate,
+          initiator: t.tasks.initiator,
+          responsible: t.tasks.responsible,
+          budget: t.tasks.budget,
+          create: labels.create,
+          cancel: t.common.cancel,
+          high: t.tasks.high,
+          medium: t.tasks.medium,
+          low: t.tasks.low,
+        }}
+      />
     </div>
   );
 }
