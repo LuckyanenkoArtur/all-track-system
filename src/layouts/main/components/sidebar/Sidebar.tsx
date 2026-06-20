@@ -5,9 +5,10 @@ import { createSidebarItems } from "./utils/createSidebarItems";
 import { logout } from "../../../../auth/auth";
 import { usePreferences } from "../../../../context/PreferencesContext";
 import { useTranslation } from "../../../../i18n";
-import AllTrackLogoIcon from "../../../../assets/AllTrackLogoIcon";
 import SidebarNav from "./SidebarNav";
 import styles from "./sidebar.module.scss";
+
+import AllTrackLogo from "../../../../components/all-track-logo";
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -38,11 +39,7 @@ export default function Sidebar() {
           aria-label={collapsed ? t.sidebar.expand : t.sidebar.collapse}
           title={collapsed ? t.sidebar.expand : t.sidebar.collapse}
         >
-          <AllTrackLogoIcon className={styles.logoIcon} />
-          <span className={styles.logo} aria-hidden={collapsed}>
-            <span className={styles.logoAll}>All</span>
-            <span className={styles.logoTrack}>Track</span>
-          </span>
+          <AllTrackLogo collapsed={collapsed} />  
         </button>
       </div>
 

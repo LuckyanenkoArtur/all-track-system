@@ -1,0 +1,9 @@
+$logo-size: 32px;
+
+.logoIcon {
+  width: $logo-size;
+  height: $logo-size;
+  flex-shrink: 0;
+  display: block;
+  user-select: none;
+}

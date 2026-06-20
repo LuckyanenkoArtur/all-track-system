@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { isAuthenticated } from "../auth/auth";
 import NotFoundVisual from "./not-found/NotFoundVisual";
-import AllTrackLogoIcon from "../assets/AllTrackLogoIcon";
+import AllTrackLogoIcon from "../components/all-track-logo/icon";
 import "./not-found.scss";
 
 export default function NotFoundPage() {

@@ -1,0 +1,39 @@
+$logo-size: 32px;
+$transition-speed: 0.3s;
+$transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  height: $logo-size;
+  max-width: 120px;
+  overflow: hidden;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: $logo-size;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  opacity: 1;
+  transition:
+    max-width $transition-speed $transition-timing,
+    opacity $transition-speed $transition-timing;
+
+  &.collapsed {
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+}
+
+.logoAll {
+  color: var(--color-text);
+}
+
+.logoTrack {
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

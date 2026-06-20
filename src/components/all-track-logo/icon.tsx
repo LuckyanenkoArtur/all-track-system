@@ -1,4 +1,5 @@
 import { useId } from "react";
+import styles from "./icon.module.scss";
 
 type AllTrackLogoIconProps = {
   className?: string;
@@ -9,7 +10,7 @@ export default function AllTrackLogoIcon({ className }: AllTrackLogoIconProps) {
 
   return (
     <svg
-      className={className}
+      className={className ? `${styles.logoIcon} ${className}` : styles.logoIcon}
       viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
