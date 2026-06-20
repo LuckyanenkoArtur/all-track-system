@@ -25,7 +25,7 @@ export function createSidebarItems(t: TFunction): SidebarNavItem[] {
         {
           kind: "link",
           id: "tasks-overview",
-          to: "/app/tasks/overview",
+          to: "/app/tasks",
           label: t.sidebar.tasksOverview,
           end: true,
         },

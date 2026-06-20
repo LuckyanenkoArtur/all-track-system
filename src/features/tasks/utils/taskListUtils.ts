@@ -1,0 +1,201 @@
+import type {
+  Task,
+  TaskFilters,
+  TaskSort,
+  TaskListQuery,
+  SortField,
+} from "../types";
+
+const STATUS_ORDER = { pending: 0, inProgress: 1, done: 2 };
+const PRIORITY_ORDER = { low: 0, medium: 1, high: 2 };
+
+export function parseBudget(value: string): number {
+  return Number(value.replace(/[^0-9.-]/g, "")) || 0;
+}
+
+export function parseTimeMinutes(value: string): number {
+  const hours = value.match(/(\d+)h/)?.[1];
+  const minutes = value.match(/(\d+)m/)?.[1];
+  return (hours ? Number(hours) : 0) * 60 + (minutes ? Number(minutes) : 0);
+}
+
+export function formatDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function includesAny(values: string[], selected: string[]) {
+  if (selected.length === 0) return true;
+  return values.some((value) => selected.includes(value));
+}
+
+export function matchesSearch(task: Task, search: string): boolean {
+  const query = search.trim().toLowerCase();
+  if (!query) return true;
+
+  const haystack = [
+    task.id,
+    task.title,
+    task.initiator,
+    task.budget,
+    task.timeSpent,
+    task.status,
+    task.priority,
+    ...task.groups,
+    ...task.responsible,
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  return haystack.includes(query);
+}
+
+export function matchesFilters(task: Task, filters: TaskFilters): boolean {
+  if (filters.statuses.length > 0 && !filters.statuses.includes(task.status)) {
+    return false;
+  }
+
+  if (
+    filters.priorities.length > 0 &&
+    !filters.priorities.includes(task.priority)
+  ) {
+    return false;
+  }
+
+  if (!includesAny(task.groups, filters.groups)) return false;
+  if (filters.initiators.length > 0 && !filters.initiators.includes(task.initiator)) {
+    return false;
+  }
+  if (!includesAny(task.responsible, filters.responsible)) return false;
+
+  if (filters.dueDateFrom) {
+    const from = new Date(filters.dueDateFrom).getTime();
+    if (new Date(task.dueDate).getTime() < from) return false;
+  }
+
+  if (filters.dueDateTo) {
+    const to = new Date(filters.dueDateTo).getTime();
+    if (new Date(task.dueDate).getTime() > to) return false;
+  }
+
+  const budget = parseBudget(task.budget);
+  if (filters.budgetMin && budget < Number(filters.budgetMin)) return false;
+  if (filters.budgetMax && budget > Number(filters.budgetMax)) return false;
+
+  const timeMinutes = parseTimeMinutes(task.timeSpent);
+  if (filters.timeMin && timeMinutes < Number(filters.timeMin)) return false;
+  if (filters.timeMax && timeMinutes > Number(filters.timeMax)) return false;
+
+  return true;
+}
+
+function compareField(a: Task, b: Task, field: SortField): number {
+  switch (field) {
+    case "title":
+      return a.title.localeCompare(b.title);
+    case "status":
+      return STATUS_ORDER[a.status] - STATUS_ORDER[b.status];
+    case "priority":
+      return PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority];
+    case "groups":
+      return a.groups.join(", ").localeCompare(b.groups.join(", "));
+    case "dueDate":
+      return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+    case "initiator":
+      return a.initiator.localeCompare(b.initiator);
+    case "responsible":
+      return a.responsible.join(", ").localeCompare(b.responsible.join(", "));
+    case "budget":
+      return parseBudget(a.budget) - parseBudget(b.budget);
+    case "timeSpent":
+      return parseTimeMinutes(a.timeSpent) - parseTimeMinutes(b.timeSpent);
+    default:
+      return 0;
+  }
+}
+
+export function sortTasks(tasks: Task[], sort: TaskSort | null): Task[] {
+  if (!sort) return tasks;
+
+  return [...tasks].sort((a, b) => {
+    const result = compareField(a, b, sort.field);
+    return sort.direction === "asc" ? result : -result;
+  });
+}
+
+export function processTaskList(tasks: Task[], query: TaskListQuery) {
+  const filtered = tasks.filter(
+    (task) =>
+      matchesSearch(task, query.filters.search) &&
+      matchesFilters(task, query.filters),
+  );
+
+  const sorted = sortTasks(filtered, query.sort);
+  const total = sorted.length;
+  const totalPages = Math.max(1, Math.ceil(total / query.pageSize));
+  const page = Math.min(Math.max(1, query.page), totalPages);
+  const startIndex = (page - 1) * query.pageSize;
+  const endIndex = Math.min(startIndex + query.pageSize, total);
+
+  return {
+    tasks: sorted.slice(startIndex, endIndex),
+    total,
+    totalPages,
+    page,
+    startIndex,
+    endIndex,
+  };
+}
+
+export function getUniqueFilterOptions(tasks: Task[]) {
+  const groups = new Set<string>();
+  const initiators = new Set<string>();
+  const responsible = new Set<string>();
+
+  for (const task of tasks) {
+    task.groups.forEach((group) => groups.add(group));
+    initiators.add(task.initiator);
+    task.responsible.forEach((person) => responsible.add(person));
+  }
+
+  return {
+    groups: [...groups].sort(),
+    initiators: [...initiators].sort(),
+    responsible: [...responsible].sort(),
+  };
+}
+
+export function hasActiveFilters(filters: TaskFilters): boolean {
+  return (
+    filters.search.trim() !== "" ||
+    filters.statuses.length > 0 ||
+    filters.priorities.length > 0 ||
+    filters.groups.length > 0 ||
+    filters.initiators.length > 0 ||
+    filters.responsible.length > 0 ||
+    filters.dueDateFrom !== "" ||
+    filters.dueDateTo !== "" ||
+    filters.budgetMin !== "" ||
+    filters.budgetMax !== "" ||
+    filters.timeMin !== "" ||
+    filters.timeMax !== ""
+  );
+}
+
+export function countActiveFilters(filters: TaskFilters): number {
+  let count = 0;
+  if (filters.search.trim()) count += 1;
+  if (filters.statuses.length) count += 1;
+  if (filters.priorities.length) count += 1;
+  if (filters.groups.length) count += 1;
+  if (filters.initiators.length) count += 1;
+  if (filters.responsible.length) count += 1;
+  if (filters.dueDateFrom || filters.dueDateTo) count += 1;
+  if (filters.budgetMin || filters.budgetMax) count += 1;
+  if (filters.timeMin || filters.timeMax) count += 1;
+  return count;
+}

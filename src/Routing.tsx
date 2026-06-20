@@ -5,7 +5,11 @@ import ProtectedRoute from "./features/login/auth/ProtectedRoute";
 import MainLayout from "./layouts/main";
 
 import OverviewPage from "./features/overview";
-import TasksPage from "./features/tasks";
+import {
+  TasksLayout,
+  TasksPage,
+  TasksOverviewPage,
+} from "./features/tasks";
 import CalendarPage from "./features/calendar";
 
 import TimingPage from "./features/timing";
@@ -40,7 +44,11 @@ export const router = createBrowserRouter([
           },
           {
             path: "/app/tasks",
-            element: <TasksPage />,
+            element: <TasksLayout />,
+            children: [
+              { index: true, element: <TasksOverviewPage /> },
+              { path: "tasks", element: <TasksPage /> },
+            ],
           },
           {
             path: "/app/timing",
