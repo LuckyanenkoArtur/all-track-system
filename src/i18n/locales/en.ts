@@ -16,6 +16,7 @@ const en = {
     workQueue: "Work queue",
     timeTracking: "Time Tracking",
     calendar: "Calendar",
+    reminders: "Reminders",
     finance: "Finance",
     financeDashboard: "Dashboard",
     financeAccounts: "Accounts",

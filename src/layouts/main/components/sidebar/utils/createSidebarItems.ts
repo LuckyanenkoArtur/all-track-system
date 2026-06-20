@@ -1,7 +1,7 @@
 import type { SidebarNavItem } from "../components/SidebarNav";
 
 import { RxDashboard } from "react-icons/rx";
-import { FiCheckSquare, FiClock, FiCalendar, FiDollarSign } from "react-icons/fi";
+import { FiCheckSquare, FiClock, FiCalendar, FiDollarSign, FiBell } from "react-icons/fi";
 
 type TFunction = {
   sidebar: Record<string, string>;
@@ -50,6 +50,13 @@ export function createSidebarItems(t: TFunction): SidebarNavItem[] {
       to: "/app/calendar",
       label: t.sidebar.calendar,
       icon: FiCalendar,
+    },
+    {
+      kind: "link",
+      id: "reminders",
+      to: "/app/reminders",
+      label: t.sidebar.reminders,
+      icon: FiBell,
     },
     {
       kind: "group",
