@@ -12,6 +12,7 @@ const ru: TranslationKeys = {
     noNotifications: "Уведомлений пока нет.",
   },
   sidebar: {
+    dashboard: "Панель управления",  
     tasks: "Задачи",
     tasksOverview: "Обзор",
     workQueue: "Очередь работ",

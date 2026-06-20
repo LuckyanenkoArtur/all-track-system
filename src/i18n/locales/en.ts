@@ -10,6 +10,7 @@ const en = {
     noNotifications: "There are no notifications yet.",
   },
   sidebar: {
+    dashboard: "Dashboard",
     tasks: "Tasks",
     tasksOverview: "Overview",
     workQueue: "Work queue",

@@ -15,6 +15,8 @@ import {
   FiLogOut,
 } from "react-icons/fi";
 
+import { RxDashboard } from "react-icons/rx";
+
 export default function Sidebar() {
   const navigate = useNavigate();
   const { sidebarCollapsed: defaultCollapsed } = usePreferences();
@@ -33,6 +35,13 @@ export default function Sidebar() {
   const navItems = useMemo<SidebarNavItem[]>(
     () => [
       {
+        kind: "link",
+        id: "dashboard",
+        to: "/app/overview",
+        label: t.sidebar.dashboard,
+        icon: RxDashboard ,
+      },
+      {
         kind: "group",
         id: "tasks",
         label: t.sidebar.tasks,
@@ -41,14 +50,14 @@ export default function Sidebar() {
           {
             kind: "link",
             id: "tasks-overview",
-            to: "/app/overview",
+            to: "/app/tasks/overview",
             label: t.sidebar.tasksOverview,
             end: true,
           },
           {
             kind: "link",
             id: "tasks-queue",
-            to: "/app/tasks",
+            to: "/app/tasks/tasks",
             label: t.sidebar.workQueue,
           },
         ],
