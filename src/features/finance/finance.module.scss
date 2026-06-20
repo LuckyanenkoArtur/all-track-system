@@ -1,0 +1,450 @@
+.financePage {
+  --finance-bg: #f4f5f7;
+  --finance-surface: #ffffff;
+  --finance-text-main: #111827;
+  --finance-text-muted: #6b7280;
+  --finance-border: #e5e7eb;
+  --finance-primary-dark: #22c55e;
+  --finance-radius-lg: 16px;
+  --finance-radius-md: 12px;
+  --finance-radius-sm: 8px;
+
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--finance-bg);
+  color: var(--finance-text-main);
+  overflow: hidden;
+}
+
+.mainContent,
+.sectionPage {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: clamp(16px, 3vw, 32px);
+}
+
+.sectionPage {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+}
+
+.pageHint {
+  margin: 0;
+  color: var(--finance-text-muted);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: clamp(20px, 3vw, 32px);
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  flex: 1 1 220px;
+  max-width: 360px;
+  min-width: 0;
+  background: var(--finance-surface);
+  padding: 10px 16px;
+  border-radius: var(--finance-radius-md);
+  border: 1px solid var(--finance-border);
+
+  input {
+    border: none;
+    outline: none;
+    background: transparent;
+    margin-left: 8px;
+    width: 100%;
+    min-width: 0;
+    color: var(--finance-text-main);
+  }
+}
+
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.iconBtn {
+  background: var(--finance-surface);
+  border: 1px solid var(--finance-border);
+  border-radius: 999px;
+  min-width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+  cursor: pointer;
+  color: var(--finance-text-muted);
+}
+
+.addWidgetLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--finance-text-main);
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ddd;
+  flex-shrink: 0;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  small {
+    font-size: 0.75rem;
+    color: var(--finance-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 20px);
+}
+
+.widget {
+  background: var(--finance-surface);
+  border-radius: var(--finance-radius-lg);
+  padding: clamp(16px, 2.5vw, 24px);
+  border: 1px solid var(--finance-border);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 16px;
+  }
+}
+
+.balanceOverview {
+  grid-column: span 8;
+  grid-row: span 2;
+}
+
+.myCard {
+  grid-column: span 4;
+  grid-row: span 2;
+}
+
+.spendingLimit,
+.budgetTips {
+  grid-column: span 4;
+}
+
+.transactionHistory {
+  grid-column: span 4;
+  grid-row: span 3;
+}
+
+.costAnalysis,
+.financialHealth {
+  grid-column: span 3;
+}
+
+.chartPlaceholder {
+  flex: 1;
+  min-height: 180px;
+  background: #fafafa;
+  border-radius: var(--finance-radius-sm);
+  border: 1px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+  font-size: 0.875rem;
+  color: var(--finance-text-muted);
+}
+
+.cardMockup {
+  height: 160px;
+  background: linear-gradient(135deg, #86efac, #22c55e);
+  border-radius: var(--finance-radius-md);
+  margin-bottom: 16px;
+  padding: 16px;
+  color: #111;
+}
+
+.cardMockupTop,
+.cardMockupBottom,
+.cardNumber {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cardMockupTop {
+  margin-bottom: 40px;
+}
+
+.cardNumber {
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.cardMockupBottom {
+  font-size: 0.8rem;
+}
+
+.cardActions {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  text-align: center;
+}
+
+.cardAction {
+  min-width: 0;
+
+  small {
+    font-size: 0.75rem;
+    color: var(--finance-text-muted);
+  }
+}
+
+.cardActionIcon {
+  width: 40px;
+  height: 40px;
+  max-width: 100%;
+  margin: 0 auto 8px;
+  background: #f3f4f6;
+  border-radius: var(--finance-radius-sm);
+}
+
+.metricLarge {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  margin: 8px 0;
+}
+
+.metricMuted {
+  font-size: 0.9rem;
+  color: var(--finance-text-muted);
+  font-weight: 400;
+}
+
+.metricSub {
+  font-size: 0.85rem;
+  color: var(--finance-text-muted);
+}
+
+.progressTrack {
+  height: 12px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  margin-top: 16px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--finance-primary-dark);
+}
+
+.stackedBar {
+  display: flex;
+  height: 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+
+.barAmber {
+  background: #f59e0b;
+}
+
+.barRed {
+  background: #ef4444;
+}
+
+.barBlue {
+  background: #3b82f6;
+}
+
+.barGreen {
+  background: var(--finance-primary-dark);
+}
+
+.healthScore {
+  text-align: center;
+  margin: 24px 0;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  color: var(--finance-primary-dark);
+}
+
+.healthCaption {
+  text-align: center;
+}
+
+.widgetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  h3 {
+    margin: 0;
+  }
+}
+
+.txList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.txRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.txMain {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+.txIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--finance-radius-sm);
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+
+.txName,
+.txDate {
+  display: block;
+}
+
+.txName {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.txDate {
+  font-size: 0.75rem;
+  color: var(--finance-text-muted);
+}
+
+.txPositive {
+  color: #22c55e;
+}
+
+.txNegative {
+  color: #111827;
+}
+
+@media (max-width: 1280px) {
+  .balanceOverview,
+  .myCard,
+  .spendingLimit,
+  .budgetTips,
+  .transactionHistory,
+  .costAnalysis,
+  .financialHealth {
+    grid-column: span 6;
+    grid-row: span 1;
+  }
+}
+
+@media (max-width: 900px) {
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .balanceOverview,
+  .myCard,
+  .spendingLimit,
+  .budgetTips,
+  .transactionHistory,
+  .costAnalysis,
+  .financialHealth {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+
+  .profile .info {
+    display: none;
+  }
+
+  .addWidgetLabel {
+    display: none;
+  }
+
+  .iconBtn.addWidget {
+    min-width: 40px;
+    padding: 0;
+  }
+
+  .cardActions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .headerActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .searchBar {
+    max-width: none;
+    flex-basis: 100%;
+  }
+
+  .cardActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

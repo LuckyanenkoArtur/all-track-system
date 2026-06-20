@@ -1,3 +1,21 @@
-export default function FinancePage() {
-  return <h1>Accounting & Finance Tracking</h1>;
+import { Outlet } from "react-router-dom";
+import styles from "./finance.module.scss";
+
+export function FinanceLayout() {
+  return (
+    <div className={styles.financePage}>
+      <Outlet />
+    </div>
+  );
 }
+
+export function FinanceSection({ title }: { title: string }) {
+  return (
+    <div className={styles.sectionPage}>
+      <h1 className={styles.pageTitle}>{title}</h1>
+      <p className={styles.pageHint}>In development...</p>
+    </div>
+  );
+}
+
+export { FinanceDashboard } from "./FinanceDashboard";

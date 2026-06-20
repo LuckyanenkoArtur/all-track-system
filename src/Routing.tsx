@@ -9,7 +9,11 @@ import TasksPage from "./features/tasks";
 import CalendarPage from "./features/calendar";
 
 import TimingPage from "./features/timing";
-import FinancePage from "./features/finance";
+import {
+  FinanceLayout,
+  FinanceDashboard,
+  FinanceSection,
+} from "./features/finance";
 import LoginPage from "./features/login";
 import NotFoundPage from "./pages/not-found";
 import UserProfilePage from "./features/user-profile";
@@ -48,7 +52,38 @@ export const router = createBrowserRouter([
           },
           {
             path: "/app/finance",
-            element: <FinancePage />,
+            element: <FinanceLayout />,
+            children: [
+              { index: true, element: <FinanceDashboard /> },
+              {
+                path: "accounts",
+                element: <FinanceSection title="Accounts" />,
+              },
+              {
+                path: "transactions/history",
+                element: <FinanceSection title="Transaction history" />,
+              },
+              {
+                path: "transactions/integration",
+                element: <FinanceSection title="Integration" />,
+              },
+              {
+                path: "transactions/reports",
+                element: <FinanceSection title="Reports" />,
+              },
+              {
+                path: "cashflow",
+                element: <FinanceSection title="Cash flow" />,
+              },
+              {
+                path: "budget",
+                element: <FinanceSection title="Budget" />,
+              },
+              {
+                path: "investments",
+                element: <FinanceSection title="Investments" />,
+              },
+            ],
           },
           {
             path: "/app/profile",
