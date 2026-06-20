@@ -1,5 +1,5 @@
-import AllTrackLogo from '../../../../../components/all-track-logo'
-import { useTranslation } from '../../../../../i18n';
+import AllTrackLogo from '../../../../../../components/all-track-logo'
+import { useTranslation } from '../../../../../../i18n';
 import styles from './header.module.scss';
 
 type SidebarHeaderProps = {

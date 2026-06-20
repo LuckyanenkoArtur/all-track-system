@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "../../../../../i18n";
-import { logout } from "../../../../../auth/auth";
+import { useTranslation } from "../../../../../../i18n";
+import { logout } from "../../../../../../auth/auth";
 
 import { FiLogOut } from "react-icons/fi";
 import styles from "./footer.module.scss";

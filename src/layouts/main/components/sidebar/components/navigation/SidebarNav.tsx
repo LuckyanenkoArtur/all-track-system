@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import type { IconType } from "react-icons";
 import { FiChevronDown } from "react-icons/fi";
-import styles from "../sidebar.module.scss";
-import { createSidebarItems } from "../utils/createSidebarItems";
-import { useTranslation } from "../../../../../i18n";
+import styles from "../../sidebar.module.scss";
+import { createSidebarItems } from "../../utils/createSidebarItems";
+import { useTranslation } from "../../../../../../i18n";
 
 export type SidebarLinkItem = {
   kind: "link";

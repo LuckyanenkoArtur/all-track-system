@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { usePreferences } from "../../../../context/PreferencesContext";
 
-import SidebarHeader from "./components/header";
-import SidebarNav from "./components/SidebarNav";
-import SidebarFooter from "./components/footer";
+import SidebarHeader from "./components/header/header";
+import SidebarNav from "./components/navigation/SidebarNav";
+import SidebarFooter from "./components/footer/footer";
 
 import styles from "./sidebar.module.scss";
 

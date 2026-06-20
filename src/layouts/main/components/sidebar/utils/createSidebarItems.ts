@@ -1,4 +1,4 @@
-import type { SidebarNavItem } from "../components/SidebarNav";
+import type { SidebarNavItem } from "../components/navigation/SidebarNav";
 
 import { RxDashboard } from "react-icons/rx";
 import { FiCheckSquare, FiClock, FiCalendar, FiDollarSign, FiBell } from "react-icons/fi";
