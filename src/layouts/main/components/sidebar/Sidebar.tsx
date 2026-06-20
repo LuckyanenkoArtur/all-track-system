@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../auth/auth";
-import { usePreferences } from "../../context/PreferencesContext";
-import { useTranslation } from "../../i18n";
-import AllTrackLogoIcon from "../../assets/AllTrackLogoIcon";
+import { logout } from "../../../../auth/auth";
+import { usePreferences } from "../../../../context/PreferencesContext";
+import { useTranslation } from "../../../../i18n";
+import AllTrackLogoIcon from "../../../../assets/AllTrackLogoIcon";
 import SidebarNav, { type SidebarNavItem } from "./SidebarNav";
 import styles from "./sidebar.module.scss";
 

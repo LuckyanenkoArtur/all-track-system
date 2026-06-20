@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
-import Sidebar from "./sidebar/Sidebar";
-import TopBar from "./topbar/TopBar";
+import Sidebar from "./components/sidebar/Sidebar";
+import TopBar from "./components/topbar/TopBar";
 
 export default function MainLayout() {
   const { pathname } = useLocation();

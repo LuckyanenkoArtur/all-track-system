@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "../../i18n";
-import { useUserProfile } from "../../context/UserProfileContext";
+import { useTranslation } from "../../../../i18n";
+import { useUserProfile } from "../../../../context/UserProfileContext";
 import "./TopBar.scss";
 
 export default function TopBar() {
