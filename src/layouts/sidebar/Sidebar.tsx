@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../../auth/auth";
 import { usePreferences } from "../../context/PreferencesContext";
 import { useTranslation } from "../../i18n";
-import AllTrackLogoIcon from "./AllTrackLogoIcon";
+import AllTrackLogoIcon from "../../assets/AllTrackLogoIcon";
 import SidebarNav, { type SidebarNavItem } from "./SidebarNav";
 import styles from "./sidebar.module.scss";
 
@@ -105,7 +105,6 @@ export default function Sidebar() {
                 id: "finance-history",
                 to: "/app/finance/transactions/history",
                 label: t.sidebar.financeHistory,
-                badge: 19,
               },
               {
                 kind: "link",

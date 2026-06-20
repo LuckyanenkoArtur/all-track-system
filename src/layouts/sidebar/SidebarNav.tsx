@@ -12,7 +12,6 @@ export type SidebarLinkItem = {
   label: string;
   icon?: IconType;
   end?: boolean;
-  badge?: number;
 };
 
 export type SidebarGroupItem = {
@@ -128,9 +127,6 @@ export default function SidebarNav({ items, collapsed }: SidebarNavProps) {
           </div>
         )}
         <span className={styles.label}>{item.label}</span>
-        {item.badge !== undefined && (
-          <span className={styles.badge}>{item.badge}</span>
-        )}
       </NavLink>
     );
   };
@@ -153,9 +149,6 @@ export default function SidebarNav({ items, collapsed }: SidebarNavProps) {
             onClick={() => setFlyoutId(null)}
           >
             <span>{child.label}</span>
-            {child.badge !== undefined && (
-              <span className={styles.badge}>{child.badge}</span>
-            )}
           </NavLink>
         );
       }
