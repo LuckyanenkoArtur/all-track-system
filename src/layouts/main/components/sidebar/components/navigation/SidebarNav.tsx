@@ -1,30 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import type { IconType } from "react-icons";
 import { FiChevronDown } from "react-icons/fi";
 import styles from "../../sidebar.module.scss";
 import { createSidebarItems } from "../../utils/createSidebarItems";
 import { useTranslation } from "../../../../../../i18n";
+import type { SidebarGroupItem } from "./types/group-item";
+import type { SidebarNavItem } from "./types/navigation-item";
+import type { SidebarLinkItem } from "./types/link-item";
 
-export type SidebarLinkItem = {
-  kind: "link";
-  id: string;
-  to: string;
-  label: string;
-  icon?: IconType;
-  end?: boolean;
-};
-
-export type SidebarGroupItem = {
-  kind: "group";
-  id: string;
-  label: string;
-  icon?: IconType;
-  children: SidebarNavItem[];
-};
-
-export type SidebarNavItem = SidebarLinkItem | SidebarGroupItem;
 
 function isLinkActive(to: string, pathname: string, end?: boolean) {
   if (end) {
