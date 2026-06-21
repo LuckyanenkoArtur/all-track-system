@@ -14,6 +14,7 @@ const DEFAULT_COLLECTIONS: TaskCollection[] = [
       groups: [],
       initiators: [],
       responsible: [],
+      observables: [],
       dueDateFrom: "",
       dueDateTo: "",
       budgetMin: "",
@@ -34,6 +35,7 @@ const DEFAULT_COLLECTIONS: TaskCollection[] = [
       groups: [],
       initiators: [],
       responsible: [],
+      observables: [],
       dueDateFrom: "",
       dueDateTo: "",
       budgetMin: "",
@@ -46,13 +48,23 @@ const DEFAULT_COLLECTIONS: TaskCollection[] = [
   },
 ];
 
+function normalizeFilters(filters: TaskFilters): TaskFilters {
+  return {
+    ...filters,
+    observables: filters.observables ?? [],
+  };
+}
+
 function loadCollections(): TaskCollection[] {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored) as TaskCollection[];
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        return parsed.map((collection) => ({
+          ...collection,
+          filters: normalizeFilters(collection.filters),
+        }));
       }
     }
   } catch {

@@ -1,5 +1,5 @@
 import type { Task, TaskStatus } from "../types";
-import { parseBudget, parseTimeMinutes } from "./taskListUtils";
+import { formatBudget, parseBudget, parseTimeMinutes } from "./taskListUtils";
 
 export type DeadlineTone = "ok" | "warning" | "critical" | "overdue";
 
@@ -23,7 +23,7 @@ export interface BudgetInfo {
 }
 
 export function formatCurrency(amount: number): string {
-  return `$${amount.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
+  return formatBudget(amount);
 }
 
 export function getTaskBudgetSpent(task: Task): number {

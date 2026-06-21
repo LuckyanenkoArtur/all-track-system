@@ -2,41 +2,50 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiCalendar, FiFilter, FiList, FiSearch } from "react-icons/fi";
 import { BiAbacus, BiTable } from "react-icons/bi";
+import { useUserProfile } from "../../context/UserProfileContext";
 import { useTranslation } from "../../i18n";
+import { CreateTaskButton } from "./components/CreateTaskButton";
+import { CreateTaskDialog } from "./components/CreateTaskDialog";
 import { TaskCollectionsBar } from "./components/TaskCollectionsBar";
-import { TaskFiltersPanel } from "./components/TaskFiltersPanel";
+import { TaskFiltersDrawer } from "./components/TaskFiltersDrawer";
 import { TaskPagination } from "./components/TaskPagination";
 import { TaskDetailsPanel } from "./components/TaskDetailsPanel";
 import { TaskTable } from "./components/TaskTable";
 import { useTasks } from "./hooks/useTasks";
 import { useTaskTrackingDisplay } from "./hooks/useTaskTrackingDisplay";
 import { useTaskListState } from "./hooks/useTaskListState";
-import { getLiveTimeSpent } from "./utils/timeTrackingUtils";
 import styles from "./TasksPage.module.scss";
 
 export function TasksPage() {
   const { t } = useTranslation();
+  const { bio } = useUserProfile();
   const navigate = useNavigate();
-  const { tasks, updateTaskStatus, isTracking, toggleTracking, completeTask, getTrackingElapsedMs } =
-    useTasks();
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const {
-    isTracking: selectedIsTracking,
-    sessionTimer,
-    toggleTracking: toggleSelectedTracking,
-    getDisplayTimeSpent,
-  } = useTaskTrackingDisplay(selectedTaskId);
+    tasks,
+    addTask,
+    isTracking,
+    toggleTracking,
+    completeTask,
+  } = useTasks();
+  const { getDisplayTimeSpent } = useTaskTrackingDisplay();
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
 
   const {
     filters,
+    draftFilters,
     setFilters,
+    setDraftFilters,
     sort,
     toggleSort,
     pageSize,
     setPageSize,
     setPage,
     filtersOpen,
-    setFiltersOpen,
+    openFilters,
+    closeFilters,
+    applyFilters,
+    resetDraftFilters,
     collections,
     activeCollectionId,
     applyCollection,
@@ -45,23 +54,34 @@ export function TasksPage() {
     deleteCollection,
     filterOptions,
     listResult,
-    stats,
     activeFilterCount,
   } = useTaskListState();
 
   const taskLabels = t.tasks;
   const detailLabels = taskLabels.details;
+  const dashboardLabels = taskLabels.dashboard;
+
+  const initiatorName = `${bio.firstName} ${bio.lastName}`.trim() || bio.username;
+
+  const groupSelectOptions = useMemo(
+    () => filterOptions.groups.map((group) => ({ value: group, label: group })),
+    [filterOptions.groups],
+  );
+
+  const userSelectOptions = useMemo(() => {
+    const users = new Set<string>([
+      ...filterOptions.initiators,
+      ...filterOptions.responsible,
+      ...filterOptions.observables,
+      initiatorName,
+    ]);
+    return [...users].sort().map((user) => ({ value: user, label: user }));
+  }, [filterOptions.initiators, filterOptions.responsible, filterOptions.observables, initiatorName]);
 
   const selectedTask = useMemo(
     () => tasks.find((task) => task.id === selectedTaskId) ?? null,
     [tasks, selectedTaskId],
   );
-
-  const selectedLiveTimeSpent = useMemo(() => {
-    if (!selectedTask) return undefined;
-    if (!selectedIsTracking) return selectedTask.timeSpent;
-    return getLiveTimeSpent(selectedTask.timeSpent, getTrackingElapsedMs());
-  }, [selectedTask, selectedIsTracking, getTrackingElapsedMs]);
 
   const handleExpandTask = (taskId: string) => {
     setSelectedTaskId(null);
@@ -73,111 +93,98 @@ export function TasksPage() {
       <header className={styles.pageHeader}>
         <div className={styles.pageHeading}>
           <h1>{t.sidebar.workQueue}</h1>
-          <p className={styles.pageSubtitle}>
-            {stats.total} {taskLabels.tasksCount} · {stats.inProgress}{" "}
-            {taskLabels.inProgressCount} · {stats.pending} {taskLabels.pendingCount}
-          </p>
+        </div>
+
+        <div className={styles.pageToolbar}>
+          <div className={styles.searchBox}>
+            <FiSearch size={16} aria-hidden />
+            <input
+              type="search"
+              value={filters.search}
+              onChange={(event) =>
+                setFilters({ ...filters, search: event.target.value })
+              }
+              placeholder={taskLabels.searchPlaceholder}
+              aria-label={taskLabels.searchPlaceholder}
+            />
+          </div>
+
+          <button
+            type="button"
+            className={`${styles.filterToggle} ${filtersOpen ? styles.active : ""}`}
+            onClick={() => (filtersOpen ? closeFilters() : openFilters())}
+            aria-expanded={filtersOpen}
+          >
+            <FiFilter size={16} aria-hidden />
+            {taskLabels.filters}
+            {activeFilterCount > 0 && (
+              <span className={styles.filterBadge}>{activeFilterCount}</span>
+            )}
+          </button>
+
+          <div
+            className={styles.viewToggles}
+            role="tablist"
+            aria-label="View mode"
+          >
+            <button
+              type="button"
+              className={`${styles.toggleBtn} ${styles.active}`}
+              role="tab"
+              aria-selected
+            >
+              <BiTable size={16} aria-hidden /> {taskLabels.tableView}
+            </button>
+            <button
+              type="button"
+              disabled
+              className={styles.toggleBtn}
+              role="tab"
+            >
+              <BiAbacus size={16} aria-hidden /> Kanban
+            </button>
+            <button
+              type="button"
+              disabled
+              className={styles.toggleBtn}
+              role="tab"
+            >
+              <FiCalendar size={16} aria-hidden /> Calendar
+            </button>
+            <button
+              type="button"
+              disabled
+              className={styles.toggleBtn}
+              role="tab"
+            >
+              <FiList size={16} aria-hidden /> List
+            </button>
+          </div>
+
+          <CreateTaskButton
+            label={dashboardLabels.createTask}
+            onClick={() => setCreateOpen(true)}
+          />
         </div>
       </header>
 
-      <TaskCollectionsBar
-        collections={collections}
-        activeCollectionId={activeCollectionId}
-        onSelectAll={resetFilters}
-        onSelectCollection={applyCollection}
-        onSaveCollection={handleSaveCollection}
-        onDeleteCollection={(id) => {
-          deleteCollection(id);
-          if (activeCollectionId === id) {
-            resetFilters();
-          }
-        }}
-        labels={{
-          allTasks: taskLabels.allTasks,
-          saveCollection: taskLabels.saveCollection,
-          collectionName: taskLabels.collectionName,
-          save: t.common.save,
-          cancel: t.common.cancel,
-        }}
-      />
-
-      <div className={styles.toolbar}>
-        <div className={styles.searchBox}>
-          <FiSearch size={16} aria-hidden />
-          <input
-            type="search"
-            value={filters.search}
-            onChange={(event) => setFilters({ ...filters, search: event.target.value })}
-            placeholder={taskLabels.searchPlaceholder}
-            aria-label={taskLabels.searchPlaceholder}
-          />
-        </div>
-
-        <button
-          type="button"
-          className={`${styles.filterToggle} ${filtersOpen ? styles.active : ""}`}
-          onClick={() => setFiltersOpen((open) => !open)}
-          aria-expanded={filtersOpen}
-        >
-          <FiFilter size={16} aria-hidden />
-          {taskLabels.filters}
-          {activeFilterCount > 0 && (
-            <span className={styles.filterBadge}>{activeFilterCount}</span>
-          )}
-        </button>
-
-        <div className={styles.viewToggles} role="tablist" aria-label="View mode">
-          <button
-            type="button"
-            className={`${styles.toggleBtn} ${styles.active}`}
-            role="tab"
-            aria-selected
-          >
-            <BiTable size={16} aria-hidden /> {taskLabels.tableView}
-          </button>
-          <button type="button" disabled className={styles.toggleBtn} role="tab">
-            <BiAbacus size={16} aria-hidden /> Kanban
-          </button>
-          <button type="button" disabled className={styles.toggleBtn} role="tab">
-            <FiCalendar size={16} aria-hidden /> Calendar
-          </button>
-          <button type="button" disabled className={styles.toggleBtn} role="tab">
-            <FiList size={16} aria-hidden /> List
-          </button>
-        </div>
-      </div>
-
-      {filtersOpen && (
-        <TaskFiltersPanel
-          filters={filters}
-          options={filterOptions}
-          onChange={setFilters}
-          onReset={resetFilters}
+      <div className={styles.tableCard}>
+        <TaskCollectionsBar
+          collections={collections}
+          activeCollectionId={activeCollectionId}
+          onSelectAll={resetFilters}
+          onSelectCollection={applyCollection}
+          onDeleteCollection={(id) => {
+            deleteCollection(id);
+            if (activeCollectionId === id) {
+              resetFilters();
+            }
+          }}
           labels={{
-            title: taskLabels.filters,
-            reset: taskLabels.resetFilters,
-            status: taskLabels.status,
-            priority: taskLabels.priority,
-            groups: taskLabels.groups,
-            dueDateFrom: taskLabels.dueDateFrom,
-            dueDateTo: taskLabels.dueDateTo,
-            initiator: taskLabels.initiator,
-            responsible: taskLabels.responsible,
-            budgetMin: taskLabels.budgetMin,
-            budgetMax: taskLabels.budgetMax,
-            timeMin: taskLabels.timeMin,
-            timeMax: taskLabels.timeMax,
-            done: taskLabels.done,
-            inProgress: taskLabels.inProgress,
-            pending: taskLabels.pending,
-            high: taskLabels.high,
-            medium: taskLabels.medium,
-            low: taskLabels.low,
+            allTasks: taskLabels.allTasks,
           }}
         />
-      )}
 
-      <div className={styles.tableCard}>
         <TaskTable
           tasks={listResult.tasks}
           sort={sort}
@@ -189,9 +196,11 @@ export function TasksPage() {
             status: taskLabels.status,
             priority: taskLabels.priority,
             groups: taskLabels.groups,
+            createdAt: taskLabels.createdAt,
             dueDate: taskLabels.dueDate,
             initiator: taskLabels.initiator,
             responsible: taskLabels.responsible,
+            observables: taskLabels.observables,
             budget: taskLabels.budget,
             totalTime: taskLabels.totalTime,
             actions: taskLabels.actions,
@@ -225,43 +234,115 @@ export function TasksPage() {
         />
       </div>
 
+      <TaskFiltersDrawer
+        open={filtersOpen}
+        filters={draftFilters}
+        appliedFilters={filters}
+        options={filterOptions}
+        onChange={setDraftFilters}
+        onClose={closeFilters}
+        onApply={applyFilters}
+        onReset={resetDraftFilters}
+        onSaveCollection={(name) =>
+          handleSaveCollection(
+            name,
+            { ...draftFilters, search: filters.search },
+            false,
+          )
+        }
+        labels={{
+          title: taskLabels.filters,
+          close: taskLabels.closeFilters,
+          apply: taskLabels.applyFilters,
+          reset: taskLabels.resetFilters,
+          saveCollection: taskLabels.saveCollection,
+          collectionName: taskLabels.collectionName,
+          save: t.common.save,
+          cancel: t.common.cancel,
+          searchOptions: taskLabels.searchOptions,
+          noOptionsFound: taskLabels.noOptionsFound,
+          selectPlaceholder: taskLabels.selectPlaceholder,
+          sectionPeople: taskLabels.filterSections.people,
+          sectionTaskState: taskLabels.filterSections.taskState,
+          sectionDueDate: taskLabels.filterSections.dueDate,
+          sectionBudget: taskLabels.filterSections.budget,
+          sectionTime: taskLabels.filterSections.time,
+          status: taskLabels.status,
+          priority: taskLabels.priority,
+          groups: taskLabels.groups,
+          dueDateFrom: taskLabels.dueDateFrom,
+          dueDateTo: taskLabels.dueDateTo,
+          initiator: taskLabels.initiator,
+          responsible: taskLabels.responsible,
+          observables: taskLabels.observables,
+          budgetMin: taskLabels.budgetMin,
+          budgetMax: taskLabels.budgetMax,
+          timeMin: taskLabels.timeMin,
+          timeMax: taskLabels.timeMax,
+          done: taskLabels.done,
+          inProgress: taskLabels.inProgress,
+          pending: taskLabels.pending,
+          high: taskLabels.high,
+          medium: taskLabels.medium,
+          low: taskLabels.low,
+        }}
+      />
+
       <TaskDetailsPanel
         open={selectedTaskId !== null}
         task={selectedTask}
         onClose={() => setSelectedTaskId(null)}
         onExpand={handleExpandTask}
-        onStatusChange={updateTaskStatus}
-        isTracking={selectedIsTracking}
-        sessionTimer={sessionTimer}
-        liveTimeSpent={selectedLiveTimeSpent}
-        onToggleTracking={
-          selectedTask ? () => toggleSelectedTracking(selectedTask.id) : undefined
-        }
+      />
+
+      <CreateTaskDialog
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onSubmit={addTask}
+        initiatorName={initiatorName}
+        groupOptions={groupSelectOptions}
+        userOptions={userSelectOptions}
         labels={{
-          title: taskLabels.taskDetails,
-          expandFullPage: detailLabels.expandFullPage,
-          close: detailLabels.close,
-          startTracking: taskLabels.startTracking,
-          stopTracking: taskLabels.stopTracking,
-          tracking: taskLabels.tracking,
-          session: taskLabels.session,
-          status: taskLabels.status,
-          priority: taskLabels.priority,
-          groups: taskLabels.groups,
-          dueDate: taskLabels.dueDate,
-          createdAt: detailLabels.createdAt,
+          title: dashboardLabels.createTask,
+          subtitle: dashboardLabels.createTaskSubtitle,
+          taskTitle: dashboardLabels.taskTitle,
+          taskTitlePlaceholder: dashboardLabels.taskTitle,
+          required: dashboardLabels.required,
+          description: dashboardLabels.taskDescription,
+          descriptionPlaceholder: dashboardLabels.taskDescriptionPlaceholder,
+          steps: dashboardLabels.stepsToPerform,
+          addStep: dashboardLabels.addStep,
+          stepPlaceholder: dashboardLabels.stepPlaceholder,
+          removeStep: dashboardLabels.removeStep,
           initiator: taskLabels.initiator,
-          responsible: taskLabels.responsible,
-          budget: taskLabels.budget,
-          totalTime: taskLabels.totalTime,
-          description: detailLabels.description,
-          descriptionPlaceholder: detailLabels.descriptionPlaceholder,
-          addComment: detailLabels.addComment,
-          comments: detailLabels.comments,
-          changeStatus: detailLabels.changeStatus,
-          done: taskLabels.done,
-          inProgress: taskLabels.inProgress,
-          pending: taskLabels.pending,
+          groups: taskLabels.groups,
+          observables: taskLabels.observables,
+          startDate: taskLabels.startDate,
+          dueDate: taskLabels.dueDate,
+          priority: taskLabels.priority,
+          priorityPlaceholder: dashboardLabels.priorityPlaceholder,
+          budget: dashboardLabels.maxBudget,
+          budgetPlaceholder: dashboardLabels.maxBudgetPlaceholder,
+          attachments: dashboardLabels.attachments,
+          attachFile: detailLabels.attachFile,
+          removeAttachment: detailLabels.removeAttachment,
+          fileTooLarge: detailLabels.fileTooLarge,
+          maxAttachments: detailLabels.maxAttachments,
+          requiresResultReview: dashboardLabels.requiresResultReview,
+          create: dashboardLabels.create,
+          cancel: t.common.cancel,
+          searchOptions: taskLabels.searchOptions,
+          noOptionsFound: taskLabels.noOptionsFound,
+          selectPlaceholder: taskLabels.selectPlaceholder,
+          unsavedTitle: dashboardLabels.unsavedTitle,
+          unsavedMessage: dashboardLabels.unsavedMessage,
+          unsavedYes: dashboardLabels.unsavedYes,
+          unsavedNo: dashboardLabels.unsavedNo,
+          sectionTaskDetails: dashboardLabels.sections.taskDetails,
+          sectionPeople: dashboardLabels.sections.people,
+          sectionSchedule: dashboardLabels.sections.schedule,
+          sectionPriorityBudget: dashboardLabels.sections.priorityBudget,
+          sectionAttachments: dashboardLabels.sections.attachments,
           high: taskLabels.high,
           medium: taskLabels.medium,
           low: taskLabels.low,

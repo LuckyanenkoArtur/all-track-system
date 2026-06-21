@@ -17,6 +17,7 @@ export function useTaskListState() {
   const { collections, saveCollection, deleteCollection } = useTaskCollections();
 
   const [filters, setFiltersState] = useState<TaskFilters>(DEFAULT_FILTERS);
+  const [draftFilters, setDraftFilters] = useState<TaskFilters>(DEFAULT_FILTERS);
   const [sort, setSortState] = useState<TaskSort | null>(null);
   const [pageSize, setPageSizeState] = useState<PageSize>(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(1);
@@ -97,11 +98,39 @@ export function useTaskListState() {
 
   const resetFilters = useCallback(() => {
     setFilters(DEFAULT_FILTERS);
+    setDraftFilters(DEFAULT_FILTERS);
     setSort(null);
     setPageSize(DEFAULT_PAGE_SIZE);
     setPage(1);
     setActiveCollectionId(null);
   }, [setFilters, setSort, setPageSize]);
+
+  const openFilters = useCallback(() => {
+    setDraftFilters(filters);
+    setFiltersOpen(true);
+  }, [filters]);
+
+  const closeFilters = useCallback(() => {
+    setDraftFilters(filters);
+    setFiltersOpen(false);
+  }, [filters]);
+
+  const applyFilters = useCallback(() => {
+    clearActiveCollection();
+    setFiltersState((current) => ({
+      ...draftFilters,
+      search: current.search,
+    }));
+    setPage(1);
+    setFiltersOpen(false);
+  }, [clearActiveCollection, draftFilters]);
+
+  const resetDraftFilters = useCallback(() => {
+    setDraftFilters((current) => ({
+      ...DEFAULT_FILTERS,
+      search: current.search,
+    }));
+  }, []);
 
   const applyCollection = useCallback(
     (collectionId: string) => {
@@ -109,6 +138,7 @@ export function useTaskListState() {
       if (!collection) return;
 
       setFiltersState(collection.filters);
+      setDraftFilters(collection.filters);
       setSortState(collection.sort);
       setPageSizeState(collection.pageSize);
       setPage(1);
@@ -118,9 +148,9 @@ export function useTaskListState() {
   );
 
   const handleSaveCollection = useCallback(
-    (name: string) => {
-      const collection = saveCollection(name, filters, sort, pageSize);
-      if (collection) {
+    (name: string, filtersToSave: TaskFilters = filters, activate = true) => {
+      const collection = saveCollection(name, filtersToSave, sort, pageSize);
+      if (collection && activate) {
         setActiveCollectionId(collection.id);
       }
       return collection;
@@ -138,7 +168,9 @@ export function useTaskListState() {
 
   return {
     filters,
+    draftFilters,
     setFilters,
+    setDraftFilters,
     sort,
     setSort,
     toggleSort,
@@ -148,6 +180,10 @@ export function useTaskListState() {
     setPage,
     filtersOpen,
     setFiltersOpen,
+    openFilters,
+    closeFilters,
+    applyFilters,
+    resetDraftFilters,
     collections,
     activeCollectionId,
     applyCollection,

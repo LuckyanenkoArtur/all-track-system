@@ -1,7 +1,6 @@
 import {
   FiCalendar,
   FiCheckCircle,
-  FiCircle,
   FiFlag,
 } from "react-icons/fi";
 import type { Task, TaskPriority } from "../types";
@@ -12,12 +11,15 @@ type TodoScheduleTableProps = {
   title: string;
   tasks: Task[];
   emptyLabel: string;
+  completeLabel: string;
   columns: {
     name: string;
     projects: string;
     dueDate: string;
+    actions: string;
   };
-  onToggleStatus?: (taskId: string) => void;
+  onTaskClick?: (task: Task) => void;
+  onCompleteTask?: (taskId: string) => void;
 };
 
 const PRIORITY_CLASS: Record<TaskPriority, string> = {
@@ -30,8 +32,10 @@ export function TodoScheduleTable({
   title,
   tasks,
   emptyLabel,
+  completeLabel,
   columns,
-  onToggleStatus,
+  onTaskClick,
+  onCompleteTask,
 }: TodoScheduleTableProps) {
   return (
     <section className={styles.widget}>
@@ -48,31 +52,24 @@ export function TodoScheduleTable({
               <th>{columns.name}</th>
               <th>{columns.projects}</th>
               <th>{columns.dueDate}</th>
+              <th className={styles.actionsCol}>{columns.actions}</th>
             </tr>
           </thead>
           <tbody>
             {tasks.length === 0 ? (
               <tr>
-                <td colSpan={4} className={styles.empty}>
+                <td colSpan={5} className={styles.empty}>
                   {emptyLabel}
                 </td>
               </tr>
             ) : (
               tasks.map((task) => (
-                <tr key={task.id}>
+                <tr
+                  key={task.id}
+                  className={onTaskClick ? styles.clickableRow : undefined}
+                  onClick={() => onTaskClick?.(task)}
+                >
                   <td className={styles.iconCol}>
-                    <button
-                      type="button"
-                      className={styles.statusBtn}
-                      aria-label={`Mark ${task.title} complete`}
-                      onClick={() => onToggleStatus?.(task.id)}
-                    >
-                      {task.status === "done" ? (
-                        <FiCheckCircle className={styles.doneIcon} aria-hidden />
-                      ) : (
-                        <FiCircle aria-hidden />
-                      )}
-                    </button>
                     <FiFlag
                       className={`${styles.flag} ${PRIORITY_CLASS[task.priority]}`}
                       aria-hidden
@@ -95,6 +92,21 @@ export function TodoScheduleTable({
                       <FiCalendar size={12} aria-hidden />
                       {formatDueDateShort(task.dueDate)}
                     </span>
+                  </td>
+                  <td className={styles.actionsCol}>
+                    {onCompleteTask && (
+                      <button
+                        type="button"
+                        className={styles.completeBtn}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onCompleteTask(task.id);
+                        }}
+                      >
+                        <FiCheckCircle size={14} aria-hidden />
+                        {completeLabel}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))

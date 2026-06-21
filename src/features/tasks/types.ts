@@ -2,15 +2,37 @@ export type TaskStatus = "done" | "inProgress" | "pending";
 export type TaskPriority = "high" | "medium" | "low";
 export type PageSize = 5 | 10 | 15 | 20;
 
+export interface TaskStep {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
+export interface TaskAttachment {
+  id: string;
+  name: string;
+  size: number;
+  mimeType: string;
+  dataUrl: string;
+}
+
 export interface CreateTaskInput {
   title: string;
+  description?: string;
+  steps?: TaskStep[];
   priority: TaskPriority;
   groups: string[];
+  observables: string[];
+  startDate?: string;
   dueDate: string;
   initiator: string;
   responsible: string[];
   budget: string;
+  attachments?: (Omit<TaskAttachment, "id"> & { id?: string })[];
+  requiresResultReview: boolean;
 }
+
+export type UpdateTaskInput = CreateTaskInput;
 
 export interface Task {
   id: string;
@@ -18,13 +40,18 @@ export interface Task {
   status: TaskStatus;
   priority: TaskPriority;
   groups: string[];
+  observables: string[];
   createdAt: string;
+  startDate: string;
   dueDate: string;
   initiator: string;
   responsible: string[];
   budget: string;
   timeSpent: string;
   description?: string;
+  steps?: TaskStep[];
+  attachments?: TaskAttachment[];
+  requiresResultReview?: boolean;
   budgetSpent?: string;
 }
 
@@ -44,6 +71,32 @@ export interface TaskComment {
   body: string;
   createdAt: string;
   attachments: TaskCommentAttachment[];
+  kind?: "default" | "completion";
+  completionSteps?: CompletionReportStep[];
+}
+
+export interface CompletionReportStep {
+  id: string;
+  text: string;
+}
+
+export interface CompleteTaskReportInput {
+  taskId: string;
+  description: string;
+  steps: CompletionReportStep[];
+  author: string;
+  authorInitials: string;
+}
+
+export interface TaskHistoryEntry {
+  id: string;
+  taskId: string;
+  type: "task_completed";
+  author: string;
+  authorInitials: string;
+  description: string;
+  steps: CompletionReportStep[];
+  createdAt: string;
 }
 
 export interface AddTaskCommentInput {
@@ -52,6 +105,8 @@ export interface AddTaskCommentInput {
   author: string;
   authorInitials: string;
   attachments: Omit<TaskCommentAttachment, "id">[];
+  kind?: "default" | "completion";
+  completionSteps?: CompletionReportStep[];
 }
 
 export type SortField =
@@ -59,9 +114,11 @@ export type SortField =
   | "status"
   | "priority"
   | "groups"
+  | "createdAt"
   | "dueDate"
   | "initiator"
   | "responsible"
+  | "observables"
   | "budget"
   | "timeSpent";
 
@@ -79,6 +136,7 @@ export interface TaskFilters {
   groups: string[];
   initiators: string[];
   responsible: string[];
+  observables: string[];
   dueDateFrom: string;
   dueDateTo: string;
   budgetMin: string;
@@ -112,6 +170,7 @@ export const DEFAULT_FILTERS: TaskFilters = {
   groups: [],
   initiators: [],
   responsible: [],
+  observables: [],
   dueDateFrom: "",
   dueDateTo: "",
   budgetMin: "",

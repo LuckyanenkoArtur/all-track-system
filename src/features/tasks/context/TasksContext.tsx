@@ -7,11 +7,22 @@ import {
 } from "react";
 import { MOCK_TASKS } from "../mockTasks";
 import { MOCK_TASK_COMMENTS } from "../mockTaskComments";
-import type { AddTaskCommentInput, CreateTaskInput, Task, TaskComment, TaskStatus } from "../types";
+import type {
+  AddTaskCommentInput,
+  CompleteTaskReportInput,
+  CreateTaskInput,
+  Task,
+  TaskComment,
+  TaskHistoryEntry,
+  TaskStatus,
+  TaskStep,
+  UpdateTaskInput,
+} from "../types";
 import { addElapsedToTimeSpent } from "../utils/timeTrackingUtils";
 
 const STORAGE_KEY = "alltrack-tasks";
 const COMMENTS_STORAGE_KEY = "alltrack-task-comments";
+const HISTORY_STORAGE_KEY = "alltrack-task-history";
 const TRACKING_STORAGE_KEY = "alltrack-task-tracking";
 
 export interface TaskTracking {
@@ -23,14 +34,18 @@ interface TasksContextValue {
   tasks: Task[];
   tracking: TaskTracking | null;
   addTask: (input: CreateTaskInput) => Task;
+  updateTask: (id: string, input: UpdateTaskInput) => void;
+  updateTaskSteps: (id: string, steps: TaskStep[]) => void;
   updateTaskStatus: (id: string, status: TaskStatus) => void;
   startTracking: (taskId: string) => void;
   stopTracking: () => void;
   toggleTracking: (taskId: string) => void;
   completeTask: (taskId: string) => void;
+  completeTaskWithReport: (input: CompleteTaskReportInput) => void;
   isTracking: (taskId: string) => boolean;
   getTrackingElapsedMs: () => number;
   getTaskComments: (taskId: string) => TaskComment[];
+  getTaskHistory: (taskId: string) => TaskHistoryEntry[];
   addTaskComment: (input: AddTaskCommentInput) => TaskComment;
 }
 
@@ -38,19 +53,30 @@ const TasksContext = createContext<TasksContextValue | null>(null);
 
 export { TasksContext };
 
+function normalizeTask(task: Task): Task {
+  return {
+    ...task,
+    observables: task.observables ?? [],
+    startDate: task.startDate ?? task.createdAt,
+    steps: task.steps ?? [],
+    attachments: task.attachments ?? [],
+    requiresResultReview: task.requiresResultReview ?? false,
+  };
+}
+
 function loadTasks(): Task[] {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored) as Task[];
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        return parsed.map(normalizeTask);
       }
     }
   } catch {
     /* use seed data */
   }
-  return MOCK_TASKS;
+  return MOCK_TASKS.map(normalizeTask);
 }
 
 function loadTracking(): TaskTracking | null {
@@ -86,6 +112,25 @@ function persistComments(comments: TaskComment[]) {
   localStorage.setItem(COMMENTS_STORAGE_KEY, JSON.stringify(comments));
 }
 
+function loadHistory(): TaskHistoryEntry[] {
+  try {
+    const stored = localStorage.getItem(HISTORY_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored) as TaskHistoryEntry[];
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    }
+  } catch {
+    /* use empty history */
+  }
+  return [];
+}
+
+function persistHistory(history: TaskHistoryEntry[]) {
+  localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+}
+
 function persistTasks(tasks: Task[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 }
@@ -116,6 +161,15 @@ function createCommentId(comments: TaskComment[]) {
   return `CMT-${String(maxId + 1).padStart(3, "0")}`;
 }
 
+function createHistoryId(history: TaskHistoryEntry[]) {
+  const maxId = history.reduce((max, entry) => {
+    const numeric = Number(entry.id.replace(/\D/g, ""));
+    return Number.isFinite(numeric) ? Math.max(max, numeric) : max;
+  }, 0);
+
+  return `HIS-${String(maxId + 1).padStart(3, "0")}`;
+}
+
 function createAttachmentId() {
   return `ATT-${crypto.randomUUID().slice(0, 8)}`;
 }
@@ -132,6 +186,7 @@ function applyTrackingElapsed(tasks: Task[], tracking: TaskTracking): Task[] {
 export function TasksProvider({ children }: { children: ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>(loadTasks);
   const [comments, setComments] = useState<TaskComment[]>(loadComments);
+  const [history, setHistory] = useState<TaskHistoryEntry[]>(loadHistory);
   const [tracking, setTracking] = useState<TaskTracking | null>(() => {
     const saved = loadTracking();
     if (!saved) return null;
@@ -221,8 +276,74 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     [tracking],
   );
 
+  const completeTaskWithReport = useCallback(
+    (input: CompleteTaskReportInput) => {
+      const description = input.description.trim();
+      const steps = input.steps
+        .map((step) => ({ ...step, text: step.text.trim() }))
+        .filter((step) => step.text.length > 0);
+      const now = new Date().toISOString();
+
+      setTasks((prev) => {
+        let next = prev;
+
+        if (tracking?.taskId === input.taskId) {
+          next = applyTrackingElapsed(next, tracking);
+        }
+
+        next = next.map((task) =>
+          task.id === input.taskId ? { ...task, status: "done" as TaskStatus } : task,
+        );
+        persistTasks(next);
+        return next;
+      });
+
+      if (tracking?.taskId === input.taskId) {
+        setTracking(null);
+        persistTracking(null);
+      }
+
+      setComments((prev) => {
+        const createdComment: TaskComment = {
+          id: createCommentId(prev),
+          taskId: input.taskId,
+          author: input.author,
+          authorInitials: input.authorInitials,
+          body: description,
+          createdAt: now,
+          attachments: [],
+          kind: "completion",
+          completionSteps: steps.length > 0 ? steps : undefined,
+        };
+
+        const next = [...prev, createdComment];
+        persistComments(next);
+        return next;
+      });
+
+      setHistory((prev) => {
+        const entry: TaskHistoryEntry = {
+          id: createHistoryId(prev),
+          taskId: input.taskId,
+          type: "task_completed",
+          author: input.author,
+          authorInitials: input.authorInitials,
+          description,
+          steps,
+          createdAt: now,
+        };
+
+        const next = [...prev, entry];
+        persistHistory(next);
+        return next;
+      });
+    },
+    [tracking],
+  );
+
   const addTask = useCallback((input: CreateTaskInput) => {
     let createdTask: Task | null = null;
+    const now = new Date().toISOString();
 
     setTasks((prev) => {
       createdTask = {
@@ -231,12 +352,29 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         status: "pending",
         priority: input.priority,
         groups: input.groups.filter(Boolean),
-        createdAt: new Date().toISOString(),
+        observables: input.observables.filter(Boolean),
+        createdAt: now,
+        startDate: input.startDate
+          ? new Date(input.startDate).toISOString()
+          : now,
         dueDate: new Date(input.dueDate).toISOString(),
         initiator: input.initiator.trim(),
         responsible: input.responsible.filter(Boolean),
         budget: input.budget.trim() || "$0",
         timeSpent: "0h 00m",
+        description: input.description?.trim() || undefined,
+        steps: input.steps ?? [],
+        attachments: (input.attachments ?? []).map((attachment) => ({
+          name: attachment.name,
+          size: attachment.size,
+          mimeType: attachment.mimeType,
+          dataUrl: attachment.dataUrl,
+          id:
+            attachment.id?.startsWith("ATT-")
+              ? attachment.id
+              : createAttachmentId(),
+        })),
+        requiresResultReview: input.requiresResultReview,
       };
 
       const next = [createdTask, ...prev];
@@ -245,6 +383,56 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     });
 
     return createdTask!;
+  }, []);
+
+  const updateTask = useCallback((id: string, input: UpdateTaskInput) => {
+    setTasks((prev) => {
+      const next = prev.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              title: input.title.trim(),
+              priority: input.priority,
+              groups: input.groups.filter(Boolean),
+              observables: input.observables.filter(Boolean),
+              startDate: input.startDate
+                ? new Date(input.startDate).toISOString()
+                : task.startDate,
+              dueDate: new Date(input.dueDate).toISOString(),
+              initiator: input.initiator.trim(),
+              responsible: input.responsible.filter(Boolean),
+              budget: input.budget.trim() || "$0",
+              description: input.description?.trim() || undefined,
+              steps: input.steps ?? task.steps ?? [],
+              attachments: input.attachments
+                ? input.attachments.map((attachment) => ({
+                    name: attachment.name,
+                    size: attachment.size,
+                    mimeType: attachment.mimeType,
+                    dataUrl: attachment.dataUrl,
+                    id:
+                      attachment.id?.startsWith("ATT-")
+                        ? attachment.id
+                        : createAttachmentId(),
+                  }))
+                : task.attachments ?? [],
+              requiresResultReview: input.requiresResultReview,
+            }
+          : task,
+      );
+      persistTasks(next);
+      return next;
+    });
+  }, []);
+
+  const updateTaskSteps = useCallback((id: string, steps: TaskStep[]) => {
+    setTasks((prev) => {
+      const next = prev.map((task) =>
+        task.id === id ? { ...task, steps } : task,
+      );
+      persistTasks(next);
+      return next;
+    });
   }, []);
 
   const updateTaskStatus = useCallback((id: string, status: TaskStatus) => {
@@ -292,6 +480,8 @@ export function TasksProvider({ children }: { children: ReactNode }) {
           ...attachment,
           id: createAttachmentId(),
         })),
+        kind: input.kind ?? "default",
+        completionSteps: input.completionSteps,
       };
 
       const next = [...prev, createdComment];
@@ -302,33 +492,51 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     return createdComment!;
   }, []);
 
+  const getTaskHistory = useCallback(
+    (taskId: string) =>
+      history
+        .filter((entry) => entry.taskId === taskId)
+        .sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        ),
+    [history],
+  );
+
   const value = useMemo(
     () => ({
       tasks,
       tracking,
       addTask,
+      updateTask,
+      updateTaskSteps,
       updateTaskStatus,
       startTracking,
       stopTracking,
       toggleTracking,
       completeTask,
+      completeTaskWithReport,
       isTracking,
       getTrackingElapsedMs,
       getTaskComments,
+      getTaskHistory,
       addTaskComment,
     }),
     [
       tasks,
       tracking,
       addTask,
+      updateTask,
+      updateTaskSteps,
       updateTaskStatus,
       startTracking,
       stopTracking,
       toggleTracking,
       completeTask,
+      completeTaskWithReport,
       isTracking,
       getTrackingElapsedMs,
       getTaskComments,
+      getTaskHistory,
       addTaskComment,
     ],
   );

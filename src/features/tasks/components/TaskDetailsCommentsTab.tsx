@@ -1,6 +1,7 @@
 import { useRef, useState, type ChangeEvent, type FormEvent, type KeyboardEvent } from "react";
 import {
   FiDownload,
+  FiMessageSquare,
   FiPaperclip,
   FiSend,
   FiX,
@@ -16,9 +17,11 @@ import {
   readFileAsDataUrl,
   type PendingAttachment,
 } from "../utils/commentUtils";
+import { TaskDetailsTabPlaceholder } from "./TaskDetailsTabPlaceholder";
 import styles from "./TaskDetailsCommentsTab.module.scss";
 
 export type TaskCommentsLabels = {
+  title: string;
   empty: string;
   placeholder: string;
   attach: string;
@@ -27,6 +30,7 @@ export type TaskCommentsLabels = {
   fileTooLarge: string;
   maxAttachments: string;
   attachmentUnavailable: string;
+  completionSteps: string;
 };
 
 type TaskDetailsCommentsTabProps = {
@@ -115,17 +119,24 @@ export function TaskDetailsCommentsTab({
     <div className={styles.commentsTab}>
       <div className={styles.thread}>
         {comments.length === 0 ? (
-          <div className={styles.emptyState}>
-            <p>{labels.empty}</p>
-          </div>
+          <TaskDetailsTabPlaceholder
+            icon={<FiMessageSquare size={22} aria-hidden />}
+            title={labels.title}
+            message={labels.empty}
+          />
         ) : (
           <ul className={styles.commentList}>
             {comments.map((comment) => (
               <li key={comment.id} className={styles.commentItem}>
-                <div className={styles.avatar} aria-hidden>
+                <div
+                  className={`${styles.avatar} ${comment.kind === "completion" ? styles.avatarCompletion : ""}`}
+                  aria-hidden
+                >
                   {comment.authorInitials}
                 </div>
-                <article className={styles.commentCard}>
+                <article
+                  className={`${styles.commentCard} ${comment.kind === "completion" ? styles.commentCardCompletion : ""}`}
+                >
                   <header className={styles.commentHeader}>
                     <strong>{comment.author}</strong>
                     <time dateTime={comment.createdAt}>
@@ -133,6 +144,16 @@ export function TaskDetailsCommentsTab({
                     </time>
                   </header>
                   {comment.body && <p className={styles.commentBody}>{comment.body}</p>}
+                  {comment.completionSteps && comment.completionSteps.length > 0 && (
+                    <div className={styles.completionSteps}>
+                      <h4>{labels.completionSteps}</h4>
+                      <ol>
+                        {comment.completionSteps.map((step) => (
+                          <li key={step.id}>{step.text}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  )}
                   {comment.attachments.length > 0 && (
                     <ul className={styles.attachmentList}>
                       {comment.attachments.map((attachment) => (

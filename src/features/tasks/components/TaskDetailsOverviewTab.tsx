@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
 import {
+  FiCheckCircle,
   FiCalendar,
   FiClock,
   FiDollarSign,
+  FiEdit2,
   FiFlag,
   FiLayers,
   FiPlay,
@@ -17,7 +19,7 @@ import {
   getBudgetInfo,
   getDeadlineInfo,
 } from "../utils/taskDetailsUtils";
-import { formatDate } from "../utils/taskListUtils";
+import { formatDate, formatBudget } from "../utils/taskListUtils";
 import { PriorityBadge, StatusBadge } from "./TaskBadges";
 import { TaskBudgetChart } from "./TaskBudgetChart";
 import styles from "./TaskDetailsOverviewTab.module.scss";
@@ -26,6 +28,8 @@ export type TaskOverviewLabels = {
   initiator: string;
   status: string;
   responsible: string;
+  observables: string;
+  startDate: string;
   dueDate: string;
   groups: string;
   budget: string;
@@ -43,6 +47,11 @@ export type TaskOverviewLabels = {
   tracking: string;
   startTracking: string;
   stopTracking: string;
+  description: string;
+  descriptionEmpty: string;
+  requiresResultReview: string;
+  editTask: string;
+  completeTask: string;
 };
 
 type TaskDetailsOverviewTabProps = {
@@ -53,6 +62,8 @@ type TaskDetailsOverviewTabProps = {
   sessionTimer?: string;
   onStatusChange?: (status: TaskStatus) => void;
   onToggleTracking?: () => void;
+  onEditTask?: () => void;
+  onCompleteTask?: () => void;
 };
 
 function getInitials(name: string) {
@@ -72,6 +83,8 @@ export function TaskDetailsOverviewTab({
   sessionTimer,
   onStatusChange,
   onToggleTracking,
+  onEditTask,
+  onCompleteTask,
 }: TaskDetailsOverviewTabProps) {
   const deadline = getDeadlineInfo(task.dueDate, task.status);
   const budget = getBudgetInfo(task);
@@ -84,36 +97,6 @@ export function TaskDetailsOverviewTab({
 
   return (
     <div className={styles.overview}>
-      {onToggleTracking && task.status !== "done" && (
-        <div className={`${styles.trackingBar} ${isTracking ? styles.trackingActive : ""}`}>
-          <div className={styles.trackingInfo}>
-            <span className={styles.trackingLabel}>{labels.tracking}</span>
-            {isTracking && sessionTimer ? (
-              <strong className={styles.trackingTimer}>{sessionTimer}</strong>
-            ) : (
-              <span className={styles.trackingHint}>{liveTimeSpent ?? task.timeSpent}</span>
-            )}
-          </div>
-          <button
-            type="button"
-            className={`${styles.trackingBtn} ${isTracking ? styles.stop : styles.start}`}
-            onClick={onToggleTracking}
-          >
-            {isTracking ? (
-              <>
-                <FiSquare size={14} aria-hidden />
-                {labels.stopTracking}
-              </>
-            ) : (
-              <>
-                <FiPlay size={14} aria-hidden />
-                {labels.startTracking}
-              </>
-            )}
-          </button>
-        </div>
-      )}
-
       <div className={styles.columns}>
         <section className={styles.leftPanel} aria-label="Task information">
           <header className={styles.taskHeading}>
@@ -153,6 +136,29 @@ export function TaskDetailsOverviewTab({
               value={formatDueDate(task.dueDate)}
             />
             <PropertyItem
+              label={labels.startDate}
+              icon={<FiCalendar size={15} aria-hidden />}
+              value={formatDueDate(task.startDate)}
+            />
+            <PropertyItem
+              label={labels.observables}
+              icon={<FiUsers size={15} aria-hidden />}
+              value={
+                task.observables.length > 0 ? (
+                  <div className={styles.assigneeList}>
+                    {task.observables.map((person) => (
+                      <span key={person} className={styles.assignee}>
+                        <span className={styles.avatar}>{getInitials(person)}</span>
+                        {person}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <span className={styles.emptyValue}>—</span>
+                )
+              }
+            />
+            <PropertyItem
               label={labels.groups}
               icon={<FiLayers size={15} aria-hidden />}
               value={
@@ -168,7 +174,7 @@ export function TaskDetailsOverviewTab({
             <PropertyItem
               label={labels.budget}
               icon={<FiDollarSign size={15} aria-hidden />}
-              value={task.budget}
+              value={formatBudget(task.budget)}
             />
             <PropertyItem
               label={labels.totalTime}
@@ -181,6 +187,23 @@ export function TaskDetailsOverviewTab({
               }
             />
           </dl>
+
+          <section className={styles.descriptionSection} aria-label={labels.description}>
+            <h3 className={styles.descriptionTitle}>{labels.description}</h3>
+            <div className={styles.descriptionBox}>
+              {task.description?.trim() ? (
+                <p className={styles.descriptionText}>{task.description}</p>
+              ) : (
+                <p className={styles.descriptionPlaceholder}>{labels.descriptionEmpty}</p>
+              )}
+            </div>
+          </section>
+
+          {task.requiresResultReview && (
+            <div className={styles.reviewFlag}>
+              {labels.requiresResultReview}
+            </div>
+          )}
         </section>
 
         <section className={styles.rightPanel} aria-label="Task metrics">
@@ -207,6 +230,7 @@ export function TaskDetailsOverviewTab({
             total={budget.total}
             spent={budget.spent}
             remaining={budget.remaining}
+            compact
             labels={{
               title: labels.budgetChart,
               spent: labels.spent,
@@ -234,6 +258,50 @@ export function TaskDetailsOverviewTab({
                 ))}
               </select>
             </div>
+          )}
+
+          {onToggleTracking && task.status !== "done" && (
+            <div className={`${styles.trackingBar} ${isTracking ? styles.trackingActive : ""}`}>
+              <div className={styles.trackingInfo}>
+                <span className={styles.trackingLabel}>{labels.tracking}</span>
+                {isTracking && sessionTimer ? (
+                  <strong className={styles.trackingTimer}>{sessionTimer}</strong>
+                ) : (
+                  <span className={styles.trackingHint}>{liveTimeSpent ?? task.timeSpent}</span>
+                )}
+              </div>
+              <button
+                type="button"
+                className={`${styles.trackingBtn} ${isTracking ? styles.stop : styles.start}`}
+                onClick={onToggleTracking}
+              >
+                {isTracking ? (
+                  <>
+                    <FiSquare size={14} aria-hidden />
+                    {labels.stopTracking}
+                  </>
+                ) : (
+                  <>
+                    <FiPlay size={14} aria-hidden />
+                    {labels.startTracking}
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+
+          {onCompleteTask && task.status !== "done" && (
+            <button type="button" className={styles.completeTaskBtn} onClick={onCompleteTask}>
+              <FiCheckCircle size={15} aria-hidden />
+              {labels.completeTask}
+            </button>
+          )}
+
+          {onEditTask && (
+            <button type="button" className={styles.editTaskBtn} onClick={onEditTask}>
+              <FiEdit2 size={15} aria-hidden />
+              {labels.editTask}
+            </button>
           )}
         </section>
       </div>

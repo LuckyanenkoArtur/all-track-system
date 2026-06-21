@@ -7,7 +7,7 @@ import {
   FiUsers,
 } from "react-icons/fi";
 import type { SortField, Task, TaskSort } from "../types";
-import { formatDate } from "../utils/taskListUtils";
+import { formatDate, formatBudget } from "../utils/taskListUtils";
 import { PriorityBadge, StatusBadge } from "./TaskBadges";
 import { TaskRowActions } from "./TaskRowActions";
 import styles from "../TasksPage.module.scss";
@@ -29,9 +29,11 @@ type TaskTableProps = {
     status: string;
     priority: string;
     groups: string;
+    createdAt: string;
     dueDate: string;
     initiator: string;
     responsible: string;
+    observables: string;
     budget: string;
     totalTime: string;
     actions: string;
@@ -50,12 +52,51 @@ const TABLE_COLUMNS: Column[] = [
   { field: "status", label: "status" },
   { field: "priority", label: "priority" },
   { field: "groups", label: "groups" },
+  { field: "createdAt", label: "createdAt" },
   { field: "dueDate", label: "dueDate" },
   { field: "initiator", label: "initiator" },
   { field: "responsible", label: "responsible" },
+  { field: "observables", label: "observables" },
   { field: "budget", label: "budget", align: "right" },
   { field: "timeSpent", label: "totalTime", align: "right" },
 ];
+
+const VISIBLE_PEOPLE_LIMIT = 3;
+
+type UserBadgeListProps = {
+  items: string[];
+  icon: typeof FiUser;
+  emptyLabel?: string;
+};
+
+function UserBadgeList({ items, icon: Icon, emptyLabel }: UserBadgeListProps) {
+  if (items.length === 0) {
+    return emptyLabel ? <span className={styles.emptyCell}>{emptyLabel}</span> : null;
+  }
+
+  const visible = items.slice(0, VISIBLE_PEOPLE_LIMIT);
+  const hidden = items.slice(VISIBLE_PEOPLE_LIMIT);
+
+  return (
+    <div className={styles.badgeGroup}>
+      {visible.map((person) => (
+        <span key={person} className={styles.userBadge}>
+          <Icon size={12} aria-hidden />
+          {person}
+        </span>
+      ))}
+      {hidden.length > 0 && (
+        <span
+          className={styles.moreBadge}
+          title={hidden.join(", ")}
+          aria-label={hidden.join(", ")}
+        >
+          +{hidden.length}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export function TaskTable({
   tasks,
@@ -70,9 +111,11 @@ export function TaskTable({
   onCompleteTask,
 }: TaskTableProps) {
   const columnCount = TABLE_COLUMNS.length + 1;
+
   return (
     <div className={styles.tableWrapper}>
-      <table>
+      <div className={styles.tableScroll}>
+        <table className={styles.taskTable}>
         <thead>
           <tr>
             {TABLE_COLUMNS.map((column) => {
@@ -120,98 +163,97 @@ export function TaskTable({
               const timeSpent = getDisplayTimeSpent?.(task) ?? task.timeSpent;
 
               return (
-              <tr
-                key={task.id}
-                className={onTaskClick ? styles.clickableRow : undefined}
-                onClick={onTaskClick ? () => onTaskClick(task) : undefined}
-                onKeyDown={
-                  onTaskClick
-                    ? (event) => {
-                        if (event.key === "Enter" || event.key === " ") {
-                          event.preventDefault();
-                          onTaskClick(task);
+                <tr
+                  key={task.id}
+                  className={onTaskClick ? styles.clickableRow : undefined}
+                  onClick={onTaskClick ? () => onTaskClick(task) : undefined}
+                  onKeyDown={
+                    onTaskClick
+                      ? (event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            onTaskClick(task);
+                          }
                         }
-                      }
-                    : undefined
-                }
-                tabIndex={onTaskClick ? 0 : undefined}
-                role={onTaskClick ? "button" : undefined}
-                aria-label={onTaskClick ? task.title : undefined}
-              >
-                <td>
-                  <div className={styles.taskPrimary}>{task.title}</div>
-                  <div className={styles.taskMeta}>
-                    <FiClock size={12} aria-hidden />
-                    Created {formatDate(task.createdAt)}
-                  </div>
-                </td>
-                <td>
-                  <StatusBadge status={task.status} />
-                </td>
-                <td>
-                  <PriorityBadge priority={task.priority} />
-                </td>
-                <td>
-                  <div className={styles.badgeGroup}>
-                    {task.groups.map((group) => (
-                      <span key={group} className={styles.groupTag}>
-                        {group}
-                      </span>
-                    ))}
-                  </div>
-                </td>
-                <td>
-                  <div className={styles.dueDate}>
-                    <FiCalendar size={12} aria-hidden />
-                    {formatDate(task.dueDate)}
-                  </div>
-                </td>
-                <td>
-                  <div className={styles.initiator}>
-                    <FiUser size={14} aria-hidden />
-                    {task.initiator}
-                  </div>
-                </td>
-                <td>
-                  <div className={styles.badgeGroup}>
-                    {task.responsible.map((resp) => (
-                      <span key={resp} className={styles.userBadge}>
-                        <FiUsers size={12} aria-hidden />
-                        {resp}
-                      </span>
-                    ))}
-                  </div>
-                </td>
-                <td className={styles.alignRight}>
-                  <strong>{task.budget}</strong>
-                </td>
-                <td className={styles.alignRight}>
-                  <span className={`${styles.timePill} ${tracking ? styles.timePillActive : ""}`}>
-                    {timeSpent}
-                  </span>
-                </td>
-                <td className={`${styles.alignRight} ${styles.actionsCol}`}>
-                  {onToggleTracking && onCompleteTask && (
-                    <TaskRowActions
-                      task={task}
-                      isTracking={tracking}
-                      labels={{
-                        actions: columns.actions,
-                        startTracking: columns.startTracking,
-                        stopTracking: columns.stopTracking,
-                        completeTask: columns.completeTask,
-                      }}
-                      onToggleTracking={onToggleTracking}
-                      onComplete={onCompleteTask}
-                    />
-                  )}
-                </td>
-              </tr>
-            );
+                      : undefined
+                  }
+                  tabIndex={onTaskClick ? 0 : undefined}
+                  role={onTaskClick ? "button" : undefined}
+                  aria-label={onTaskClick ? task.title : undefined}
+                >
+                  <td>
+                    <div className={styles.taskPrimary}>{task.title}</div>
+                  </td>
+                  <td>
+                    <StatusBadge status={task.status} />
+                  </td>
+                  <td>
+                    <PriorityBadge priority={task.priority} />
+                  </td>
+                  <td>
+                    <div className={styles.badgeGroup}>
+                      {task.groups.map((group) => (
+                        <span key={group} className={styles.groupTag}>
+                          {group}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
+                  <td>
+                    <div className={styles.createdDate}>
+                      <FiClock size={12} aria-hidden />
+                      {formatDate(task.createdAt)}
+                    </div>
+                  </td>
+                  <td>
+                    <div className={styles.dueDate}>
+                      <FiCalendar size={12} aria-hidden />
+                      {formatDate(task.dueDate)}
+                    </div>
+                  </td>
+                  <td>
+                    <div className={styles.initiator}>
+                      <FiUser size={14} aria-hidden />
+                      {task.initiator}
+                    </div>
+                  </td>
+                  <td>
+                    <UserBadgeList items={task.responsible} icon={FiUsers} />
+                  </td>
+                  <td>
+                    <UserBadgeList items={task.observables} icon={FiUser} emptyLabel="—" />
+                  </td>
+                  <td className={styles.alignRight}>
+                    <strong>{formatBudget(task.budget)}</strong>
+                  </td>
+                  <td className={styles.alignRight}>
+                    <span className={`${styles.timePill} ${tracking ? styles.timePillActive : ""}`}>
+                      {timeSpent}
+                    </span>
+                  </td>
+                  <td className={`${styles.alignRight} ${styles.actionsCol}`}>
+                    {onToggleTracking && onCompleteTask && (
+                      <TaskRowActions
+                        task={task}
+                        isTracking={tracking}
+                        labels={{
+                          actions: columns.actions,
+                          startTracking: columns.startTracking,
+                          stopTracking: columns.stopTracking,
+                          completeTask: columns.completeTask,
+                        }}
+                        onToggleTracking={onToggleTracking}
+                        onComplete={onCompleteTask}
+                      />
+                    )}
+                  </td>
+                </tr>
+              );
             })
           )}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

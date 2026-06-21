@@ -5,6 +5,7 @@ type TaskBudgetChartProps = {
   total: number;
   spent: number;
   remaining: number;
+  compact?: boolean;
   labels: {
     title: string;
     spent: string;
@@ -13,12 +14,12 @@ type TaskBudgetChartProps = {
   };
 };
 
-export function TaskBudgetChart({ total, spent, remaining, labels }: TaskBudgetChartProps) {
+export function TaskBudgetChart({ total, spent, remaining, compact = false, labels }: TaskBudgetChartProps) {
   const spentPercent = total > 0 ? Math.min(100, (spent / total) * 100) : 0;
   const remainingPercent = total > 0 ? Math.max(0, (remaining / total) * 100) : 0;
 
   return (
-    <div className={styles.chart}>
+    <div className={`${styles.chart} ${compact ? styles.compact : ""}`}>
       <div className={styles.header}>
         <h4>{labels.title}</h4>
         <span className={styles.total}>{formatCurrency(total)}</span>

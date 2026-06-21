@@ -1,18 +1,21 @@
 .overview {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
 }
 
 .trackingBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 14px 16px;
+  gap: 12px;
+  padding: 10px 12px;
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--color-surface-secondary);
+  flex-shrink: 0;
 }
 
 .trackingActive {
@@ -23,12 +26,12 @@
 .trackingInfo {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   min-width: 0;
 }
 
 .trackingLabel {
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -36,27 +39,27 @@
 }
 
 .trackingTimer {
-  font-size: 1.25rem;
+  font-size: 1.0625rem;
   font-weight: 700;
   color: var(--color-accent);
   font-variant-numeric: tabular-nums;
 }
 
 .trackingHint {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: var(--color-text-muted);
 }
 
 .trackingBtn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
-  height: 38px;
-  padding: 0 16px;
+  height: 32px;
+  padding: 0 12px;
   border: none;
-  border-radius: 10px;
-  font-size: 0.8125rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
 
@@ -83,28 +86,47 @@
 .columns {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(20px, 3vw, 32px);
-  align-items: start;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
 }
 
 .leftPanel,
 .rightPanel {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
+  min-height: 0;
 }
 
 .leftPanel {
-  padding: clamp(20px, 3vw, 28px);
+  padding: 18px;
   border: 1px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: 12px;
   background: var(--color-surface-secondary);
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 6px;
+  }
+}
+
+.rightPanel {
+  overflow: hidden;
 }
 
 .taskHeading {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .taskId {
@@ -117,9 +139,9 @@
 
 .taskTitle {
   margin: 0;
-  font-size: clamp(1.25rem, 2.5vw, 1.625rem);
+  font-size: clamp(1.125rem, 2.2vw, 1.4375rem);
   font-weight: 700;
-  line-height: 1.35;
+  line-height: 1.32;
   letter-spacing: -0.02em;
   color: var(--color-text);
 }
@@ -131,6 +153,7 @@
   gap: 10px;
   font-size: 0.8125rem;
   color: var(--color-text-muted);
+  flex-shrink: 0;
 }
 
 .metaDivider {
@@ -143,7 +166,7 @@
 .initiator {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   color: var(--color-text);
   font-weight: 500;
 }
@@ -153,13 +176,14 @@
   flex-direction: column;
   gap: 0;
   margin: 0;
+  flex-shrink: 0;
 }
 
 .propertyItem {
   display: grid;
-  grid-template-columns: minmax(120px, 150px) 1fr;
-  gap: 16px;
-  padding: 14px 0;
+  grid-template-columns: minmax(116px, 140px) 1fr;
+  gap: 14px;
+  padding: 11px 0;
   border-top: 1px solid var(--color-border);
 
   &:first-child {
@@ -171,7 +195,7 @@
 .propertyLabel {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   margin: 0;
   font-size: 0.8125rem;
   font-weight: 500;
@@ -187,19 +211,19 @@
   margin: 0;
   font-size: 0.875rem;
   color: var(--color-text);
-  line-height: 1.5;
+  line-height: 1.45;
 }
 
 .assigneeList {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
 .assignee {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   padding: 4px 10px 4px 4px;
   border-radius: 9999px;
   background: var(--color-surface);
@@ -212,8 +236,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 9999px;
   background: var(--color-accent-light);
   color: var(--color-accent);
@@ -224,13 +248,13 @@
 .tagList {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .groupTag {
   display: inline-flex;
-  padding: 4px 10px;
-  border-radius: 8px;
+  padding: 4px 9px;
+  border-radius: 6px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   font-size: 0.75rem;
@@ -241,14 +265,14 @@
 .liveTime {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-weight: 600;
   color: var(--color-accent);
 }
 
 .liveDot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 9999px;
   background: var(--color-accent);
   animation: livePulse 1.4s ease-in-out infinite;
@@ -257,21 +281,22 @@
 .metricGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .metricCard {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 16px;
-  border-radius: 14px;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 10px;
   border: 1px solid var(--color-border);
   background: var(--color-surface-secondary);
 }
 
 .metricLabel {
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -279,15 +304,15 @@
 }
 
 .metricValue {
-  font-size: 1.125rem;
+  font-size: 0.9375rem;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.25;
   color: var(--color-text);
   font-variant-numeric: tabular-nums;
 }
 
 .timeUp {
-  font-size: 1rem;
+  font-size: 0.875rem;
   letter-spacing: 0.06em;
 }
 
@@ -357,36 +382,140 @@
 .statusCard {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 18px;
+  gap: 8px;
+  padding: 12px;
   border: 1px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: 10px;
   background: var(--color-surface-secondary);
+  flex-shrink: 0;
 }
 
 .statusLabel {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.8125rem;
+  gap: 6px;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-text);
 }
 
 .statusSelect {
   width: 100%;
-  height: 42px;
-  padding: 0 12px;
+  height: 34px;
+  padding: 0 10px;
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--color-surface);
   color: var(--color-text);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   cursor: pointer;
 
   &:focus {
     outline: 2px solid var(--color-accent-light);
     border-color: var(--color-accent);
+  }
+}
+
+.descriptionSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+  padding-top: 6px;
+  border-top: 1px solid var(--color-border);
+}
+
+.descriptionTitle {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  flex-shrink: 0;
+}
+
+.descriptionBox {
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+}
+
+.descriptionText {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--color-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.descriptionPlaceholder {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+.emptyValue {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+.reviewFlag {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.completeTaskBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 38px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  background: #16a34a;
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &:hover {
+    background: #15803d;
+  }
+}
+
+.editTaskBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 38px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &:hover {
+    background: var(--color-surface-hover);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 }
 
@@ -403,6 +532,15 @@
 @media (max-width: 960px) {
   .columns {
     grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+
+  .leftPanel {
+    overflow-y: auto;
+  }
+
+  .rightPanel {
+    overflow: visible;
   }
 
   .metricGrid {
@@ -413,7 +551,7 @@
 @media (max-width: 640px) {
   .propertyItem {
     grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 6px;
   }
 
   .trackingBar {

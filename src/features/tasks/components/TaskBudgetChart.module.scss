@@ -92,6 +92,41 @@
   background: var(--color-accent);
 }
 
+.compact {
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  flex-shrink: 0;
+
+  .header {
+    gap: 8px;
+
+    h4 {
+      font-size: 0.8125rem;
+    }
+  }
+
+  .total {
+    font-size: 0.75rem;
+  }
+
+  .barTrack {
+    height: 10px;
+  }
+
+  .legend {
+    gap: 8px;
+  }
+
+  .legendItem {
+    gap: 2px;
+
+    strong {
+      font-size: 0.8125rem;
+    }
+  }
+}
+
 @media (max-width: 640px) {
   .legend {
     grid-template-columns: 1fr;

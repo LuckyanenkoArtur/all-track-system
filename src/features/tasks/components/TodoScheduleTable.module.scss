@@ -80,31 +80,39 @@ table {
   }
 }
 
+.clickableRow {
+  cursor: pointer;
+}
+
 .iconCol {
-  width: 64px;
+  width: 40px;
   white-space: nowrap;
 }
 
-.statusBtn {
+.actionsCol {
+  width: 120px;
+  white-space: nowrap;
+}
+
+.completeBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  margin-right: 8px;
+  gap: 6px;
+  min-width: 96px;
+  height: 32px;
+  padding: 0 12px;
   border: none;
-  background: transparent;
-  color: var(--color-text-muted);
+  border-radius: 8px;
+  background: #16a34a;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
   cursor: pointer;
-  vertical-align: middle;
 
   &:hover {
-    color: var(--color-accent);
+    background: #15803d;
   }
-}
-
-.doneIcon {
-  color: #16a34a;
 }
 
 .flag {

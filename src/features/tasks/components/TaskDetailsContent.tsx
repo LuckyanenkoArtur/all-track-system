@@ -15,7 +15,7 @@ import {
 } from "react-icons/fi";
 import type { Task, TaskStatus } from "../types";
 import { formatDueDate } from "../utils/dateUtils";
-import { formatDate } from "../utils/taskListUtils";
+import { formatDate, formatBudget } from "../utils/taskListUtils";
 import { PriorityBadge, StatusBadge } from "./TaskBadges";
 import styles from "./TaskDetailsContent.module.scss";
 
@@ -180,7 +180,7 @@ export function TaskDetailsContent({
         <PropertyRow
           icon={<FiDollarSign size={16} aria-hidden />}
           label={labels.budget}
-          value={task.budget}
+          value={formatBudget(task.budget)}
         />
 
         <PropertyRow

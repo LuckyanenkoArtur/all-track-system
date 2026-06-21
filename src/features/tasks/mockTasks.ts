@@ -1,6 +1,6 @@
 import type { Task, TaskPriority, TaskStatus } from "./types";
 
-const BASE_TASKS: Task[] = [
+const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
     id: "TSK-001",
     title: "SynoraLab Brand Identity & Tech Campus Logo",
@@ -266,6 +266,26 @@ const BASE_TASKS: Task[] = [
   },
 ];
 
-export const MOCK_TASKS: Task[] = BASE_TASKS;
+export const MOCK_TASKS: Task[] = BASE_TASKS.map((task) => ({
+  ...task,
+  observables:
+    task.id === "TSK-002"
+      ? ["Sarah K.", "Michael R."]
+      : task.id === "TSK-003"
+        ? ["Alex M."]
+        : task.id === "TSK-008"
+          ? ["David L.", "Olivia P."]
+          : [],
+  startDate: task.createdAt,
+  steps:
+    task.id === "TSK-002"
+      ? [
+          { id: "step-1", text: "Reproduce jiggle on sidebar toggle", completed: true },
+          { id: "step-2", text: "Fix CSS transition on collapse", completed: false },
+          { id: "step-3", text: "Verify nested route layout shift", completed: false },
+        ]
+      : [],
+  requiresResultReview: task.id === "TSK-002" || task.id === "TSK-008",
+}));
 
 export type { Task, TaskStatus, TaskPriority };
