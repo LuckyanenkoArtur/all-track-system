@@ -1,0 +1,84 @@
+$transition-speed: 0.3s;
+$transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+
+.subMenuWrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  margin-block: 0;
+  overflow: hidden;
+  transition:
+    grid-template-rows $transition-speed $transition-timing,
+    opacity 0.2s $transition-timing 0.05s,
+    margin-block $transition-speed $transition-timing;
+}
+
+.subMenuWrapOpen {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  margin-block: 2px 4px;
+  transition:
+    grid-template-rows $transition-speed $transition-timing 0.12s,
+    opacity 0.2s $transition-timing 0.15s,
+    margin-block $transition-speed $transition-timing 0.12s;
+}
+
+.subMenuInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.subMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-left: 0;
+  padding-left: 0;
+  border-left: 2px solid transparent;
+  transition:
+    margin-left $transition-speed $transition-timing,
+    padding-left $transition-speed $transition-timing,
+    border-color $transition-speed $transition-timing;
+}
+
+.subMenuWrapOpen .subMenu {
+  margin-left: 22px;
+  padding-left: 14px;
+  border-left-color: var(--color-border);
+  transition:
+    margin-left $transition-speed $transition-timing 0.12s,
+    padding-left $transition-speed $transition-timing 0.12s,
+    border-color $transition-speed $transition-timing 0.12s;
+}
+
+.subMenuNested {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.subMenuWrapOpen .subMenuNested {
+  margin-left: 8px;
+  padding-left: 12px;
+  transition:
+    margin-left $transition-speed $transition-timing 0.12s,
+    padding-left $transition-speed $transition-timing 0.12s,
+    border-color $transition-speed $transition-timing 0.12s;
+}
+
+.collapsed {
+  .subMenuWrap {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    margin-block: 0;
+    transition:
+      grid-template-rows $transition-speed $transition-timing,
+      opacity 0.15s $transition-timing,
+      margin-block $transition-speed $transition-timing;
+  }
+
+  .subMenu {
+    margin-left: 0;
+    padding-left: 0;
+    border-left-color: transparent;
+  }
+}

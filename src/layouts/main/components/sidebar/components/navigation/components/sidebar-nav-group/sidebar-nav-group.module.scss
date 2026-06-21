@@ -1,0 +1,107 @@
+@use "../../styles/nav-item-shared" as nav;
+
+$transition-speed: 0.3s;
+$transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+
+.navGroup {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+}
+
+.navGroupNested {
+  gap: 0;
+}
+
+.hasFlyout {
+  z-index: 20;
+}
+
+.groupToggle {
+  @include nav.nav-item-base;
+  width: var(--item-width);
+}
+
+.navGroupNested .groupToggle {
+  height: 36px;
+  padding-left: 20px;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    padding-inline $transition-speed $transition-timing,
+    padding-left $transition-speed $transition-timing,
+    column-gap $transition-speed $transition-timing,
+    grid-template-columns $transition-speed $transition-timing;
+}
+
+.subLink {
+  @include nav.nav-sub-link;
+}
+
+.iconBox {
+  @include nav.nav-icon-box;
+}
+
+.icon {
+  @include nav.nav-icon;
+}
+
+.label {
+  @include nav.nav-label;
+}
+
+.chevron {
+  grid-column: 3;
+  justify-self: end;
+  max-width: 14px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  opacity: 1;
+  min-width: 0;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s $transition-timing 0.08s,
+    max-width $transition-speed $transition-timing;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.active {
+  @include nav.nav-item-active;
+}
+
+.subLink.active {
+  @include nav.nav-sub-link-active;
+}
+
+.flyoutOpen {
+  background: var(--color-surface-hover);
+}
+
+.collapsed {
+  width: 100%;
+
+  .label {
+    @include nav.nav-label-collapsed;
+  }
+
+  .chevron {
+    flex: 0 0 0;
+    max-width: 0;
+    opacity: 0;
+    margin-left: 0;
+    transition:
+      opacity 0.15s $transition-timing,
+      max-width $transition-speed $transition-timing,
+      margin-left $transition-speed $transition-timing;
+  }
+
+  .active {
+    @include nav.nav-item-active-collapsed;
+  }
+}

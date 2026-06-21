@@ -1,4 +1,4 @@
-import type { SidebarNavItem } from "../components/navigation/SidebarNav";
+import type { SidebarNavItemData } from "../components/navigation/types/navigation-item";
 
 import { RxDashboard } from "react-icons/rx";
 import { FiCheckSquare, FiClock, FiCalendar, FiDollarSign, FiBell } from "react-icons/fi";
@@ -7,7 +7,7 @@ type TFunction = {
   sidebar: Record<string, string>;
 };
 
-export function createSidebarItems(t: TFunction): SidebarNavItem[] {
+export function createSidebarItems(t: TFunction): SidebarNavItemData[] {
   return [
     {
       kind: "link",
