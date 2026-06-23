@@ -1,25 +1,32 @@
 import {
   FiCalendar,
-  FiCheckCircle,
   FiFlag,
 } from "react-icons/fi";
 import type { Task, TaskPriority } from "../types";
 import { formatDueDateShort } from "../utils/dateUtils";
+import { useTaskContextMenu } from "../hooks/useTaskContextMenu";
+import { TaskContextMenu } from "./TaskContextMenu";
 import styles from "./TodoScheduleTable.module.scss";
 
 type TodoScheduleTableProps = {
   title: string;
   tasks: Task[];
   emptyLabel: string;
-  completeLabel: string;
   columns: {
     name: string;
     projects: string;
     dueDate: string;
-    actions: string;
+    addManualTime: string;
+    startTracking: string;
+    finishTracking: string;
+    logBudgetExpense: string;
   };
+  isTracking?: (taskId: string) => boolean;
   onTaskClick?: (task: Task) => void;
-  onCompleteTask?: (taskId: string) => void;
+  onStartTracking?: (taskId: string) => void;
+  onStopTracking?: () => void;
+  onAddManualTime?: (taskId: string) => void;
+  onLogBudgetExpense?: (taskId: string) => void;
 };
 
 const PRIORITY_CLASS: Record<TaskPriority, string> = {
@@ -32,11 +39,23 @@ export function TodoScheduleTable({
   title,
   tasks,
   emptyLabel,
-  completeLabel,
   columns,
+  isTracking,
   onTaskClick,
-  onCompleteTask,
+  onStartTracking,
+  onStopTracking,
+  onAddManualTime,
+  onLogBudgetExpense,
 }: TodoScheduleTableProps) {
+  const { menu, openContextMenu, closeContextMenu } = useTaskContextMenu();
+
+  const contextMenuLabels = {
+    addManualTime: columns.addManualTime,
+    startTracking: columns.startTracking,
+    finishTracking: columns.finishTracking,
+    logBudgetExpense: columns.logBudgetExpense,
+  };
+
   return (
     <section className={styles.widget}>
       <header className={styles.header}>
@@ -52,13 +71,12 @@ export function TodoScheduleTable({
               <th>{columns.name}</th>
               <th>{columns.projects}</th>
               <th>{columns.dueDate}</th>
-              <th className={styles.actionsCol}>{columns.actions}</th>
             </tr>
           </thead>
           <tbody>
             {tasks.length === 0 ? (
               <tr>
-                <td colSpan={5} className={styles.empty}>
+                <td colSpan={4} className={styles.empty}>
                   {emptyLabel}
                 </td>
               </tr>
@@ -68,6 +86,7 @@ export function TodoScheduleTable({
                   key={task.id}
                   className={onTaskClick ? styles.clickableRow : undefined}
                   onClick={() => onTaskClick?.(task)}
+                  onContextMenu={(event) => openContextMenu(task, event)}
                 >
                   <td className={styles.iconCol}>
                     <FiFlag
@@ -93,27 +112,23 @@ export function TodoScheduleTable({
                       {formatDueDateShort(task.dueDate)}
                     </span>
                   </td>
-                  <td className={styles.actionsCol}>
-                    {onCompleteTask && (
-                      <button
-                        type="button"
-                        className={styles.completeBtn}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          onCompleteTask(task.id);
-                        }}
-                      >
-                        <FiCheckCircle size={14} aria-hidden />
-                        {completeLabel}
-                      </button>
-                    )}
-                  </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
       </div>
+
+      <TaskContextMenu
+        menu={menu}
+        isTracking={isTracking ?? (() => false)}
+        labels={contextMenuLabels}
+        onClose={closeContextMenu}
+        onAddManualTime={onAddManualTime}
+        onStartTracking={onStartTracking}
+        onStopTracking={onStopTracking}
+        onLogBudgetExpense={onLogBudgetExpense}
+      />
     </section>
   );
 }

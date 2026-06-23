@@ -11,6 +11,8 @@ import { getAuthorInitials } from "../utils/commentUtils";
 import { getLiveTimeSpent } from "../utils/timeTrackingUtils";
 import { CompleteTaskDialog } from "./CompleteTaskDialog";
 import { CreateTaskDialog } from "./CreateTaskDialog";
+import { ManualTimeEntryDialog } from "./ManualTimeEntryDialog";
+import { AddBudgetExpenseDialog } from "./AddBudgetExpenseDialog";
 import { TaskDetailsCommentsTab } from "./TaskDetailsCommentsTab";
 import { TaskDetailsHistoryTab } from "./TaskDetailsHistoryTab";
 import { TaskDetailsOverviewTab } from "./TaskDetailsOverviewTab";
@@ -38,12 +40,17 @@ export function TaskDetailsView({ task, variant = "page" }: TaskDetailsViewProps
     addTaskComment,
     completeTaskWithReport,
     getTaskHistory,
+    getBudgetTransactions,
+    addManualTime,
+    addBudgetExpense,
   } = useTasks();
   const { isTracking, sessionTimer, toggleTracking } = useTaskTrackingDisplay(task.id);
 
   const [activeTab, setActiveTab] = useState<DetailsTab>("overview");
   const [editOpen, setEditOpen] = useState(false);
   const [completeOpen, setCompleteOpen] = useState(false);
+  const [manualTimeOpen, setManualTimeOpen] = useState(false);
+  const [budgetExpenseOpen, setBudgetExpenseOpen] = useState(false);
 
   const taskLabels = t.tasks;
   const detailLabels = taskLabels.details;
@@ -81,6 +88,11 @@ export function TaskDetailsView({ task, variant = "page" }: TaskDetailsViewProps
     [task.id, getTaskHistory],
   );
 
+  const budgetTransactions = useMemo(
+    () => getBudgetTransactions(task.id),
+    [task.id, getBudgetTransactions],
+  );
+
   const authorName = `${bio.firstName} ${bio.lastName}`.trim() || bio.username;
   const authorInitials = getAuthorInitials(authorName);
 
@@ -88,6 +100,8 @@ export function TaskDetailsView({ task, variant = "page" }: TaskDetailsViewProps
     setActiveTab("overview");
     setEditOpen(false);
     setCompleteOpen(false);
+    setManualTimeOpen(false);
+    setBudgetExpenseOpen(false);
   }, [task.id]);
 
   const handleAddComment = (
@@ -156,6 +170,8 @@ export function TaskDetailsView({ task, variant = "page" }: TaskDetailsViewProps
     requiresResultReview: detailLabels.requiresResultReview,
     editTask: detailLabels.editTask,
     completeTask: detailLabels.completeTask,
+    addManualTime: taskLabels.addManualTime,
+    logBudgetExpense: taskLabels.logBudgetExpense,
   };
 
   const isPanel = variant === "panel";
@@ -195,10 +211,13 @@ export function TaskDetailsView({ task, variant = "page" }: TaskDetailsViewProps
             <TaskDetailsOverviewTab
               task={task}
               labels={overviewLabels}
+              budgetTransactions={budgetTransactions}
               liveTimeSpent={liveTimeSpent}
               isTracking={isTracking}
               sessionTimer={sessionTimer}
               onToggleTracking={() => toggleTracking(task.id)}
+              onAddManualTime={() => setManualTimeOpen(true)}
+              onLogBudgetExpense={() => setBudgetExpenseOpen(true)}
               onStatusChange={(status) => updateTaskStatus(task.id, status)}
               onEditTask={() => setEditOpen(true)}
               onCompleteTask={() => setCompleteOpen(true)}
@@ -337,6 +356,65 @@ export function TaskDetailsView({ task, variant = "page" }: TaskDetailsViewProps
           unsavedMessage: detailLabels.completeUnsavedMessage,
           unsavedYes: detailLabels.completeUnsavedYes,
           unsavedNo: detailLabels.completeUnsavedNo,
+        }}
+      />
+
+      <ManualTimeEntryDialog
+        open={manualTimeOpen}
+        onClose={() => setManualTimeOpen(false)}
+        onSubmit={(input) =>
+          addManualTime({
+            taskId: task.id,
+            hours: input.hours,
+            minutes: input.minutes,
+            note: input.note,
+            author: authorName,
+            authorInitials,
+          })
+        }
+        labels={{
+          title: detailLabels.manualTimeDialogTitle,
+          subtitle: detailLabels.manualTimeDialogSubtitle,
+          hours: detailLabels.manualTimeHours,
+          minutes: detailLabels.manualTimeMinutes,
+          note: detailLabels.manualTimeNote,
+          notePlaceholder: detailLabels.manualTimeNotePlaceholder,
+          required: dashboardLabels.required,
+          apply: detailLabels.manualTimeApply,
+          cancel: t.common.cancel,
+          unsavedTitle: detailLabels.manualTimeUnsavedTitle,
+          unsavedMessage: detailLabels.manualTimeUnsavedMessage,
+          unsavedYes: detailLabels.manualTimeUnsavedYes,
+          unsavedNo: detailLabels.manualTimeUnsavedNo,
+        }}
+      />
+
+      <AddBudgetExpenseDialog
+        open={budgetExpenseOpen}
+        onClose={() => setBudgetExpenseOpen(false)}
+        onSubmit={(input) =>
+          addBudgetExpense({
+            taskId: task.id,
+            amount: input.amount,
+            description: input.description,
+            author: authorName,
+            authorInitials,
+          })
+        }
+        labels={{
+          title: detailLabels.budgetExpenseDialogTitle,
+          subtitle: detailLabels.budgetExpenseDialogSubtitle,
+          amount: detailLabels.budgetExpenseAmount,
+          amountPlaceholder: dashboardLabels.maxBudgetPlaceholder,
+          description: detailLabels.budgetExpenseDescription,
+          descriptionPlaceholder: detailLabels.budgetExpenseDescriptionPlaceholder,
+          required: dashboardLabels.required,
+          apply: detailLabels.budgetExpenseApply,
+          cancel: t.common.cancel,
+          unsavedTitle: detailLabels.budgetExpenseUnsavedTitle,
+          unsavedMessage: detailLabels.budgetExpenseUnsavedMessage,
+          unsavedYes: detailLabels.budgetExpenseUnsavedYes,
+          unsavedNo: detailLabels.budgetExpenseUnsavedNo,
         }}
       />
     </>

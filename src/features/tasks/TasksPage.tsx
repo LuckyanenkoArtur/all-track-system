@@ -1,9 +1,11 @@
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FiCalendar, FiFilter, FiList, FiSearch } from "react-icons/fi";
 import { BiAbacus, BiTable } from "react-icons/bi";
 import { useUserProfile } from "../../context/UserProfileContext";
 import { useTranslation } from "../../i18n";
+import { AddBudgetExpenseDialog } from "./components/AddBudgetExpenseDialog";
+import { CompleteTaskDialog } from "./components/CompleteTaskDialog";
 import { CreateTaskButton } from "./components/CreateTaskButton";
 import { CreateTaskDialog } from "./components/CreateTaskDialog";
 import { TaskCollectionsBar } from "./components/TaskCollectionsBar";
@@ -11,25 +13,36 @@ import { TaskFiltersDrawer } from "./components/TaskFiltersDrawer";
 import { TaskPagination } from "./components/TaskPagination";
 import { TaskDetailsPanel } from "./components/TaskDetailsPanel";
 import { TaskTable } from "./components/TaskTable";
+import { ManualTimeEntryDialog } from "./components/ManualTimeEntryDialog";
 import { useTasks } from "./hooks/useTasks";
 import { useTaskTrackingDisplay } from "./hooks/useTaskTrackingDisplay";
 import { useTaskListState } from "./hooks/useTaskListState";
+import { DEFAULT_FILTERS, type TasksPageNavigationState } from "./types";
+import { getAuthorInitials } from "./utils/commentUtils";
 import styles from "./TasksPage.module.scss";
 
 export function TasksPage() {
   const { t } = useTranslation();
   const { bio } = useUserProfile();
   const navigate = useNavigate();
+  const location = useLocation();
   const {
     tasks,
     addTask,
     isTracking,
     toggleTracking,
-    completeTask,
+    startTracking,
+    stopTracking,
+    completeTaskWithReport,
+    addManualTime,
+    addBudgetExpense,
   } = useTasks();
   const { getDisplayTimeSpent } = useTaskTrackingDisplay();
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
+  const [completeTaskId, setCompleteTaskId] = useState<string | null>(null);
+  const [manualTimeTaskId, setManualTimeTaskId] = useState<string | null>(null);
+  const [budgetExpenseTaskId, setBudgetExpenseTaskId] = useState<string | null>(null);
 
   const {
     filters,
@@ -62,6 +75,26 @@ export function TasksPage() {
   const dashboardLabels = taskLabels.dashboard;
 
   const initiatorName = `${bio.firstName} ${bio.lastName}`.trim() || bio.username;
+  const authorName = initiatorName;
+  const authorInitials = getAuthorInitials(authorName);
+
+  useEffect(() => {
+    const navigationState = location.state as TasksPageNavigationState | null;
+    if (!navigationState) return;
+
+    if (navigationState.presetFilters) {
+      setFilters({
+        ...DEFAULT_FILTERS,
+        ...navigationState.presetFilters,
+      });
+    }
+
+    if (navigationState.selectedTaskId) {
+      setSelectedTaskId(navigationState.selectedTaskId);
+    }
+
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, location.state, navigate, setFilters]);
 
   const groupSelectOptions = useMemo(
     () => filterOptions.groups.map((group) => ({ value: group, label: group })),
@@ -86,6 +119,21 @@ export function TasksPage() {
   const handleExpandTask = (taskId: string) => {
     setSelectedTaskId(null);
     navigate(`/app/tasks/${taskId}`);
+  };
+
+  const handleCompleteTask = (input: {
+    description: string;
+    steps: { id: string; text: string }[];
+  }) => {
+    if (!completeTaskId) return;
+
+    completeTaskWithReport({
+      taskId: completeTaskId,
+      description: input.description,
+      steps: input.steps,
+      author: authorName,
+      authorInitials,
+    });
   };
 
   return (
@@ -206,12 +254,19 @@ export function TasksPage() {
             actions: taskLabels.actions,
             startTracking: taskLabels.startTracking,
             stopTracking: taskLabels.stopTracking,
+            finishTracking: taskLabels.finishTracking,
             completeTask: taskLabels.completeTask,
+            addManualTime: taskLabels.addManualTime,
+            logBudgetExpense: taskLabels.logBudgetExpense,
           }}
           isTracking={isTracking}
           getDisplayTimeSpent={getDisplayTimeSpent}
           onToggleTracking={toggleTracking}
-          onCompleteTask={completeTask}
+          onStartTracking={startTracking}
+          onStopTracking={stopTracking}
+          onCompleteTask={(taskId) => setCompleteTaskId(taskId)}
+          onAddManualTime={(taskId) => setManualTimeTaskId(taskId)}
+          onLogBudgetExpense={(taskId) => setBudgetExpenseTaskId(taskId)}
         />
 
         <TaskPagination
@@ -346,6 +401,90 @@ export function TasksPage() {
           high: taskLabels.high,
           medium: taskLabels.medium,
           low: taskLabels.low,
+        }}
+      />
+
+      <CompleteTaskDialog
+        open={completeTaskId !== null}
+        onClose={() => setCompleteTaskId(null)}
+        onSubmit={handleCompleteTask}
+        labels={{
+          title: detailLabels.completeDialogTitle,
+          subtitle: detailLabels.completeDialogSubtitle,
+          description: detailLabels.completionDescription,
+          descriptionPlaceholder: detailLabels.completionDescriptionPlaceholder,
+          required: dashboardLabels.required,
+          steps: detailLabels.completionSteps,
+          addStep: dashboardLabels.addStep,
+          stepPlaceholder: dashboardLabels.stepPlaceholder,
+          removeStep: dashboardLabels.removeStep,
+          apply: detailLabels.completeApply,
+          cancel: t.common.cancel,
+          unsavedTitle: detailLabels.completeUnsavedTitle,
+          unsavedMessage: detailLabels.completeUnsavedMessage,
+          unsavedYes: detailLabels.completeUnsavedYes,
+          unsavedNo: detailLabels.completeUnsavedNo,
+        }}
+      />
+
+      <ManualTimeEntryDialog
+        open={manualTimeTaskId !== null}
+        onClose={() => setManualTimeTaskId(null)}
+        onSubmit={(input) => {
+          if (!manualTimeTaskId) return;
+          addManualTime({
+            taskId: manualTimeTaskId,
+            hours: input.hours,
+            minutes: input.minutes,
+            note: input.note,
+            author: authorName,
+            authorInitials,
+          });
+        }}
+        labels={{
+          title: detailLabels.manualTimeDialogTitle,
+          subtitle: detailLabels.manualTimeDialogSubtitle,
+          hours: detailLabels.manualTimeHours,
+          minutes: detailLabels.manualTimeMinutes,
+          note: detailLabels.manualTimeNote,
+          notePlaceholder: detailLabels.manualTimeNotePlaceholder,
+          required: dashboardLabels.required,
+          apply: detailLabels.manualTimeApply,
+          cancel: t.common.cancel,
+          unsavedTitle: detailLabels.manualTimeUnsavedTitle,
+          unsavedMessage: detailLabels.manualTimeUnsavedMessage,
+          unsavedYes: detailLabels.manualTimeUnsavedYes,
+          unsavedNo: detailLabels.manualTimeUnsavedNo,
+        }}
+      />
+
+      <AddBudgetExpenseDialog
+        open={budgetExpenseTaskId !== null}
+        onClose={() => setBudgetExpenseTaskId(null)}
+        onSubmit={(input) => {
+          if (!budgetExpenseTaskId) return;
+          addBudgetExpense({
+            taskId: budgetExpenseTaskId,
+            amount: input.amount,
+            description: input.description,
+            author: authorName,
+            authorInitials,
+          });
+        }}
+        labels={{
+          title: detailLabels.budgetExpenseDialogTitle,
+          subtitle: detailLabels.budgetExpenseDialogSubtitle,
+          amount: detailLabels.budgetExpenseAmount,
+          amountPlaceholder: dashboardLabels.maxBudgetPlaceholder,
+          description: detailLabels.budgetExpenseDescription,
+          descriptionPlaceholder: detailLabels.budgetExpenseDescriptionPlaceholder,
+          required: dashboardLabels.required,
+          apply: detailLabels.budgetExpenseApply,
+          cancel: t.common.cancel,
+          unsavedTitle: detailLabels.budgetExpenseUnsavedTitle,
+          unsavedMessage: detailLabels.budgetExpenseUnsavedMessage,
+          unsavedYes: detailLabels.budgetExpenseUnsavedYes,
+          unsavedNo: detailLabels.budgetExpenseUnsavedNo,
         }}
       />
     </div>

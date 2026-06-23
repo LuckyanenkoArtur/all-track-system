@@ -88,16 +88,54 @@ export interface CompleteTaskReportInput {
   authorInitials: string;
 }
 
+export interface BudgetTransaction {
+  id: string;
+  taskId: string;
+  amount: number;
+  description: string;
+  createdAt: string;
+  author: string;
+}
+
+export interface AddManualTimeInput {
+  taskId: string;
+  hours: number;
+  minutes: number;
+  note?: string;
+  author: string;
+  authorInitials: string;
+}
+
+export interface AddBudgetExpenseInput {
+  taskId: string;
+  amount: number;
+  description: string;
+  author: string;
+  authorInitials: string;
+}
+
+export type TaskHistoryEntryType =
+  | "task_completed"
+  | "manual_time_added"
+  | "budget_expense_added";
+
 export interface TaskHistoryEntry {
   id: string;
   taskId: string;
-  type: "task_completed";
+  type: TaskHistoryEntryType;
   author: string;
   authorInitials: string;
   description: string;
   steps: CompletionReportStep[];
   createdAt: string;
+  minutesAdded?: number;
+  amount?: number;
 }
+
+export type TasksPageNavigationState = {
+  presetFilters?: Partial<TaskFilters>;
+  selectedTaskId?: string;
+};
 
 export interface AddTaskCommentInput {
   taskId: string;

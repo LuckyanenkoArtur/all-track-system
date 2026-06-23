@@ -1,4 +1,4 @@
-import type { Task, TaskStatus } from "../types";
+import type { BudgetTransaction, Task, TaskStatus } from "../types";
 import { formatBudget, parseBudget, parseTimeMinutes } from "./taskListUtils";
 
 export type DeadlineTone = "ok" | "warning" | "critical" | "overdue";
@@ -26,7 +26,15 @@ export function formatCurrency(amount: number): string {
   return formatBudget(amount);
 }
 
-export function getTaskBudgetSpent(task: Task): number {
+export function getTaskBudgetSpent(
+  task: Task,
+  transactions: BudgetTransaction[] = [],
+): number {
+  const taskTransactions = transactions.filter((entry) => entry.taskId === task.id);
+  if (taskTransactions.length > 0) {
+    return taskTransactions.reduce((sum, entry) => sum + entry.amount, 0);
+  }
+
   if (task.budgetSpent) {
     return parseBudget(task.budgetSpent);
   }
@@ -83,9 +91,12 @@ export function getDeadlineInfo(dueDate: string, status: TaskStatus): DeadlineIn
   return { tone: "ok", label, isTimeUp: false, msLeft };
 }
 
-export function getBudgetInfo(task: Task): BudgetInfo {
+export function getBudgetInfo(
+  task: Task,
+  transactions: BudgetTransaction[] = [],
+): BudgetInfo {
   const total = parseBudget(task.budget);
-  const spent = getTaskBudgetSpent(task);
+  const spent = getTaskBudgetSpent(task, transactions);
   const remaining = Math.max(0, total - spent);
   const spentPercent = total > 0 ? Math.min(100, (spent / total) * 100) : 0;
   const remainingPercent = total > 0 ? Math.max(0, (remaining / total) * 100) : 0;

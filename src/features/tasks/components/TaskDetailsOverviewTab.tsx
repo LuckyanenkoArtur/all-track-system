@@ -8,11 +8,12 @@ import {
   FiFlag,
   FiLayers,
   FiPlay,
+  FiPlus,
   FiSquare,
   FiUser,
   FiUsers,
 } from "react-icons/fi";
-import type { Task, TaskStatus } from "../types";
+import type { BudgetTransaction, Task, TaskStatus } from "../types";
 import { formatDueDate } from "../utils/dateUtils";
 import {
   formatCurrency,
@@ -52,16 +53,21 @@ export type TaskOverviewLabels = {
   requiresResultReview: string;
   editTask: string;
   completeTask: string;
+  addManualTime: string;
+  logBudgetExpense: string;
 };
 
 type TaskDetailsOverviewTabProps = {
   task: Task;
   labels: TaskOverviewLabels;
+  budgetTransactions?: BudgetTransaction[];
   liveTimeSpent?: string;
   isTracking?: boolean;
   sessionTimer?: string;
   onStatusChange?: (status: TaskStatus) => void;
   onToggleTracking?: () => void;
+  onAddManualTime?: () => void;
+  onLogBudgetExpense?: () => void;
   onEditTask?: () => void;
   onCompleteTask?: () => void;
 };
@@ -78,16 +84,19 @@ function getInitials(name: string) {
 export function TaskDetailsOverviewTab({
   task,
   labels,
+  budgetTransactions = [],
   liveTimeSpent,
   isTracking = false,
   sessionTimer,
   onStatusChange,
   onToggleTracking,
+  onAddManualTime,
+  onLogBudgetExpense,
   onEditTask,
   onCompleteTask,
 }: TaskDetailsOverviewTabProps) {
   const deadline = getDeadlineInfo(task.dueDate, task.status);
-  const budget = getBudgetInfo(task);
+  const budget = getBudgetInfo(task, budgetTransactions);
 
   const statusOptions: { value: TaskStatus; label: string }[] = [
     { value: "pending", label: labels.pending },
@@ -260,7 +269,7 @@ export function TaskDetailsOverviewTab({
             </div>
           )}
 
-          {onToggleTracking && task.status !== "done" && (
+          <section className={styles.trackingSection} aria-label={labels.tracking}>
             <div className={`${styles.trackingBar} ${isTracking ? styles.trackingActive : ""}`}>
               <div className={styles.trackingInfo}>
                 <span className={styles.trackingLabel}>{labels.tracking}</span>
@@ -270,25 +279,48 @@ export function TaskDetailsOverviewTab({
                   <span className={styles.trackingHint}>{liveTimeSpent ?? task.timeSpent}</span>
                 )}
               </div>
-              <button
-                type="button"
-                className={`${styles.trackingBtn} ${isTracking ? styles.stop : styles.start}`}
-                onClick={onToggleTracking}
-              >
-                {isTracking ? (
-                  <>
-                    <FiSquare size={14} aria-hidden />
-                    {labels.stopTracking}
-                  </>
-                ) : (
-                  <>
-                    <FiPlay size={14} aria-hidden />
-                    {labels.startTracking}
-                  </>
-                )}
-              </button>
+              {onToggleTracking && task.status !== "done" && (
+                <button
+                  type="button"
+                  className={`${styles.trackingBtn} ${isTracking ? styles.stop : styles.start}`}
+                  onClick={onToggleTracking}
+                >
+                  {isTracking ? (
+                    <>
+                      <FiSquare size={14} aria-hidden />
+                      {labels.stopTracking}
+                    </>
+                  ) : (
+                    <>
+                      <FiPlay size={14} aria-hidden />
+                      {labels.startTracking}
+                    </>
+                  )}
+                </button>
+              )}
             </div>
-          )}
+
+            {(onAddManualTime || onLogBudgetExpense) && (
+              <div className={styles.trackingActions}>
+                {onAddManualTime && (
+                  <button type="button" className={styles.secondaryActionBtn} onClick={onAddManualTime}>
+                    <FiPlus size={14} aria-hidden />
+                    {labels.addManualTime}
+                  </button>
+                )}
+                {onLogBudgetExpense && (
+                  <button
+                    type="button"
+                    className={styles.secondaryActionBtn}
+                    onClick={onLogBudgetExpense}
+                  >
+                    <FiDollarSign size={14} aria-hidden />
+                    {labels.logBudgetExpense}
+                  </button>
+                )}
+              </div>
+            )}
+          </section>
 
           {onCompleteTask && task.status !== "done" && (
             <button type="button" className={styles.completeTaskBtn} onClick={onCompleteTask}>

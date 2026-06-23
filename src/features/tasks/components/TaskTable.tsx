@@ -10,6 +10,8 @@ import type { SortField, Task, TaskSort } from "../types";
 import { formatDate, formatBudget } from "../utils/taskListUtils";
 import { PriorityBadge, StatusBadge } from "./TaskBadges";
 import { TaskRowActions } from "./TaskRowActions";
+import { TaskContextMenu } from "./TaskContextMenu";
+import { useTaskContextMenu } from "../hooks/useTaskContextMenu";
 import styles from "../TasksPage.module.scss";
 
 type Column = {
@@ -40,11 +42,18 @@ type TaskTableProps = {
     startTracking: string;
     stopTracking: string;
     completeTask: string;
+    addManualTime: string;
+    logBudgetExpense: string;
+    finishTracking: string;
   };
   isTracking?: (taskId: string) => boolean;
   getDisplayTimeSpent?: (task: Task) => string;
   onToggleTracking?: (taskId: string) => void;
+  onStartTracking?: (taskId: string) => void;
+  onStopTracking?: () => void;
   onCompleteTask?: (taskId: string) => void;
+  onAddManualTime?: (taskId: string) => void;
+  onLogBudgetExpense?: (taskId: string) => void;
 };
 
 const TABLE_COLUMNS: Column[] = [
@@ -108,9 +117,21 @@ export function TaskTable({
   isTracking,
   getDisplayTimeSpent,
   onToggleTracking,
+  onStartTracking,
+  onStopTracking,
   onCompleteTask,
+  onAddManualTime,
+  onLogBudgetExpense,
 }: TaskTableProps) {
+  const { menu, openContextMenu, closeContextMenu } = useTaskContextMenu();
   const columnCount = TABLE_COLUMNS.length + 1;
+
+  const contextMenuLabels = {
+    addManualTime: columns.addManualTime,
+    startTracking: columns.startTracking,
+    finishTracking: columns.finishTracking,
+    logBudgetExpense: columns.logBudgetExpense,
+  };
 
   return (
     <div className={styles.tableWrapper}>
@@ -167,6 +188,7 @@ export function TaskTable({
                   key={task.id}
                   className={onTaskClick ? styles.clickableRow : undefined}
                   onClick={onTaskClick ? () => onTaskClick(task) : undefined}
+                  onContextMenu={(event) => openContextMenu(task, event)}
                   onKeyDown={
                     onTaskClick
                       ? (event) => {
@@ -232,20 +254,22 @@ export function TaskTable({
                     </span>
                   </td>
                   <td className={`${styles.alignRight} ${styles.actionsCol}`}>
-                    {onToggleTracking && onCompleteTask && (
-                      <TaskRowActions
-                        task={task}
-                        isTracking={tracking}
-                        labels={{
-                          actions: columns.actions,
-                          startTracking: columns.startTracking,
-                          stopTracking: columns.stopTracking,
-                          completeTask: columns.completeTask,
-                        }}
-                        onToggleTracking={onToggleTracking}
-                        onComplete={onCompleteTask}
-                      />
-                    )}
+                    <TaskRowActions
+                      task={task}
+                      isTracking={tracking}
+                      labels={{
+                        actions: columns.actions,
+                        startTracking: columns.startTracking,
+                        stopTracking: columns.stopTracking,
+                        completeTask: columns.completeTask,
+                        addManualTime: columns.addManualTime,
+                        logBudgetExpense: columns.logBudgetExpense,
+                      }}
+                      onToggleTracking={onToggleTracking}
+                      onComplete={onCompleteTask}
+                      onAddManualTime={onAddManualTime}
+                      onLogBudgetExpense={onLogBudgetExpense}
+                    />
                   </td>
                 </tr>
               );
@@ -254,6 +278,17 @@ export function TaskTable({
         </tbody>
       </table>
       </div>
+
+      <TaskContextMenu
+        menu={menu}
+        isTracking={isTracking ?? (() => false)}
+        labels={contextMenuLabels}
+        onClose={closeContextMenu}
+        onAddManualTime={onAddManualTime}
+        onStartTracking={onStartTracking}
+        onStopTracking={onStopTracking}
+        onLogBudgetExpense={onLogBudgetExpense}
+      />
     </div>
   );
 }
