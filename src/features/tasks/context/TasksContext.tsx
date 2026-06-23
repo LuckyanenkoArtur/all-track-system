@@ -5,8 +5,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { MOCK_TASKS } from "../mockTasks";
-import { MOCK_TASK_COMMENTS } from "../mockTaskComments";
+import { MOCK_TASKS } from "../data/mockTasks";
+import { MOCK_TASK_COMMENTS } from "../data/mockTaskComments";
 import type {
   AddBudgetExpenseInput,
   AddManualTimeInput,
@@ -21,7 +21,10 @@ import type {
   TaskStep,
   UpdateTaskInput,
 } from "../types";
-import { addElapsedToTimeSpent, formatTimeSpent } from "../utils/timeTrackingUtils";
+import {
+  addElapsedToTimeSpent,
+  formatTimeSpent,
+} from "../utils/timeTrackingUtils";
 import { parseTimeMinutes } from "../utils/taskListUtils";
 
 const STORAGE_KEY = "alltrack-tasks";
@@ -156,7 +159,10 @@ function loadBudgetTransactions(): BudgetTransaction[] {
 }
 
 function persistBudgetTransactions(transactions: BudgetTransaction[]) {
-  localStorage.setItem(BUDGET_TRANSACTIONS_STORAGE_KEY, JSON.stringify(transactions));
+  localStorage.setItem(
+    BUDGET_TRANSACTIONS_STORAGE_KEY,
+    JSON.stringify(transactions),
+  );
 }
 
 function persistTasks(tasks: Task[]) {
@@ -224,9 +230,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>(loadTasks);
   const [comments, setComments] = useState<TaskComment[]>(loadComments);
   const [history, setHistory] = useState<TaskHistoryEntry[]>(loadHistory);
-  const [budgetTransactions, setBudgetTransactions] = useState<BudgetTransaction[]>(
-    loadBudgetTransactions,
-  );
+  const [budgetTransactions, setBudgetTransactions] = useState<
+    BudgetTransaction[]
+  >(loadBudgetTransactions);
   const [tracking, setTracking] = useState<TaskTracking | null>(() => {
     const saved = loadTracking();
     if (!saved) return null;
@@ -332,7 +338,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         }
 
         next = next.map((task) =>
-          task.id === input.taskId ? { ...task, status: "done" as TaskStatus } : task,
+          task.id === input.taskId
+            ? { ...task, status: "done" as TaskStatus }
+            : task,
         );
         persistTasks(next);
         return next;
@@ -409,10 +417,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
           size: attachment.size,
           mimeType: attachment.mimeType,
           dataUrl: attachment.dataUrl,
-          id:
-            attachment.id?.startsWith("ATT-")
-              ? attachment.id
-              : createAttachmentId(),
+          id: attachment.id?.startsWith("ATT-")
+            ? attachment.id
+            : createAttachmentId(),
         })),
         requiresResultReview: input.requiresResultReview,
       };
@@ -450,12 +457,11 @@ export function TasksProvider({ children }: { children: ReactNode }) {
                     size: attachment.size,
                     mimeType: attachment.mimeType,
                     dataUrl: attachment.dataUrl,
-                    id:
-                      attachment.id?.startsWith("ATT-")
-                        ? attachment.id
-                        : createAttachmentId(),
+                    id: attachment.id?.startsWith("ATT-")
+                      ? attachment.id
+                      : createAttachmentId(),
                   }))
-                : task.attachments ?? [],
+                : (task.attachments ?? []),
               requiresResultReview: input.requiresResultReview,
             }
           : task,
@@ -500,7 +506,8 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       comments
         .filter((comment) => comment.taskId === taskId)
         .sort(
-          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
         ),
     [comments],
   );
@@ -537,7 +544,8 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       history
         .filter((entry) => entry.taskId === taskId)
         .sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         ),
     [history],
   );
@@ -547,13 +555,15 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       budgetTransactions
         .filter((entry) => entry.taskId === taskId)
         .sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         ),
     [budgetTransactions],
   );
 
   const addManualTime = useCallback((input: AddManualTimeInput) => {
-    const totalMinutes = Math.max(0, input.hours) * 60 + Math.max(0, input.minutes);
+    const totalMinutes =
+      Math.max(0, input.hours) * 60 + Math.max(0, input.minutes);
     if (totalMinutes <= 0) return;
 
     const note = input.note?.trim() ?? "";
@@ -681,5 +691,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     ],
   );
 
-  return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>;
+  return (
+    <TasksContext.Provider value={value}>{children}</TasksContext.Provider>
+  );
 }
