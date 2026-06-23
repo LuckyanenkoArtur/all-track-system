@@ -1,4 +1,4 @@
-import type { Task, TaskPriority, TaskStatus } from "../domain/types";
+import type { Task, TaskPriority, TaskStatus } from "./types";
 
 const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
