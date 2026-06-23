@@ -1,9 +1,9 @@
 import { FiArrowLeft } from "react-icons/fi";
 import { Link, Navigate, useParams } from "react-router-dom";
 
-import { useTranslation } from "../../i18n";
-import { TaskDetailsView } from "./components/TaskDetailsView";
-import { useTasks } from "./hooks/useTasks";
+import { useTranslation } from "../../../../i18n";
+import { TaskDetailsView } from "../../components/TaskDetailsView";
+import { useTasks } from "../../hooks/useTasks";
 import styles from "./TaskDetailsPage.module.scss";
 
 export function TaskDetailsPage() {

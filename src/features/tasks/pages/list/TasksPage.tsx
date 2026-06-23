@@ -2,26 +2,26 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FiCalendar, FiFilter, FiList, FiSearch } from "react-icons/fi";
 import { BiAbacus, BiTable } from "react-icons/bi";
-import { useUserProfile } from "../../context/UserProfileContext";
-import { useTranslation } from "../../i18n";
-import { AddBudgetExpenseDialog } from "./components/AddBudgetExpenseDialog";
-import { CompleteTaskDialog } from "./components/CompleteTaskDialog";
-import { CreateTaskButton } from "./components/CreateTaskButton";
-import { CreateTaskDialog } from "./components/CreateTaskDialog";
-import { TaskCollectionsBar } from "./components/TaskCollectionsBar";
-import { TaskFiltersDrawer } from "./components/TaskFiltersDrawer";
-import { TaskPagination } from "./components/TaskPagination";
-import { TaskDetailsPanel } from "./components/TaskDetailsPanel";
-import { TaskTable } from "./components/TaskTable";
-import { ManualTimeEntryDialog } from "./components/ManualTimeEntryDialog";
-import { useTasks } from "./hooks/useTasks";
-import { useTaskTrackingDisplay } from "./hooks/useTaskTrackingDisplay";
-import { useTaskListState } from "./hooks/useTaskListState";
-import { DEFAULT_FILTERS, type TasksPageNavigationState } from "./types";
-import { getAuthorInitials } from "./utils/commentUtils";
+import { useUserProfile } from "../../../../context/UserProfileContext";
+import { useTranslation } from "../../../../i18n";
+import { AddBudgetExpenseDialog } from "../../components/AddBudgetExpenseDialog";
+import { CompleteTaskDialog } from "../../components/CompleteTaskDialog";
+import { CreateTaskButton } from "../../components/CreateTaskButton";
+import { CreateTaskDialog } from "../../components/CreateTaskDialog";
+import { TaskCollectionsBar } from "../../components/TaskCollectionsBar";
+import { TaskFiltersDrawer } from "../../components/TaskFiltersDrawer";
+import { TaskPagination } from "../../components/TaskPagination";
+import { TaskDetailsPanel } from "../../components/TaskDetailsPanel";
+import { TaskTable } from "../../components/TaskTable";
+import { ManualTimeEntryDialog } from "../../components/ManualTimeEntryDialog";
+import { useTasks } from "../../hooks/useTasks";
+import { useTaskTrackingDisplay } from "../../hooks/useTaskTrackingDisplay";
+import { useTaskListState } from "../../hooks/useTaskListState";
+import { DEFAULT_FILTERS, type TasksPageNavigationState } from "../../types";
+import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksPage.module.scss";
 
-export function TasksPage() {
+export function TaskListPage() {
   const { t } = useTranslation();
   const { bio } = useUserProfile();
   const navigate = useNavigate();
@@ -42,7 +42,9 @@ export function TasksPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [completeTaskId, setCompleteTaskId] = useState<string | null>(null);
   const [manualTimeTaskId, setManualTimeTaskId] = useState<string | null>(null);
-  const [budgetExpenseTaskId, setBudgetExpenseTaskId] = useState<string | null>(null);
+  const [budgetExpenseTaskId, setBudgetExpenseTaskId] = useState<string | null>(
+    null,
+  );
 
   const {
     filters,
@@ -74,7 +76,8 @@ export function TasksPage() {
   const detailLabels = taskLabels.details;
   const dashboardLabels = taskLabels.dashboard;
 
-  const initiatorName = `${bio.firstName} ${bio.lastName}`.trim() || bio.username;
+  const initiatorName =
+    `${bio.firstName} ${bio.lastName}`.trim() || bio.username;
   const authorName = initiatorName;
   const authorInitials = getAuthorInitials(authorName);
 
@@ -109,7 +112,12 @@ export function TasksPage() {
       initiatorName,
     ]);
     return [...users].sort().map((user) => ({ value: user, label: user }));
-  }, [filterOptions.initiators, filterOptions.responsible, filterOptions.observables, initiatorName]);
+  }, [
+    filterOptions.initiators,
+    filterOptions.responsible,
+    filterOptions.observables,
+    initiatorName,
+  ]);
 
   const selectedTask = useMemo(
     () => tasks.find((task) => task.id === selectedTaskId) ?? null,
@@ -477,7 +485,8 @@ export function TasksPage() {
           amount: detailLabels.budgetExpenseAmount,
           amountPlaceholder: dashboardLabels.maxBudgetPlaceholder,
           description: detailLabels.budgetExpenseDescription,
-          descriptionPlaceholder: detailLabels.budgetExpenseDescriptionPlaceholder,
+          descriptionPlaceholder:
+            detailLabels.budgetExpenseDescriptionPlaceholder,
           required: dashboardLabels.required,
           apply: detailLabels.budgetExpenseApply,
           cancel: t.common.cancel,

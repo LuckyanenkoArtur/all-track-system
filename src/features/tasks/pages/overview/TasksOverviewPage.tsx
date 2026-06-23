@@ -9,23 +9,23 @@ import {
   FiList,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { useUserProfile } from "../../context/UserProfileContext";
-import { useTranslation } from "../../i18n";
-import { AddBudgetExpenseDialog } from "./components/AddBudgetExpenseDialog";
-import { CompleteTaskDialog } from "./components/CompleteTaskDialog";
-import { CreateTaskButton } from "./components/CreateTaskButton";
-import { CreateTaskDialog } from "./components/CreateTaskDialog";
-import { ActiveTrackingCard } from "./components/ActiveTrackingCard";
-import { ManualTimeEntryDialog } from "./components/ManualTimeEntryDialog";
-import { TaskDetailsPanel } from "./components/TaskDetailsPanel";
-import { TaskDetailsTabPlaceholder } from "./components/TaskDetailsTabPlaceholder";
-import { TaskInfoCards } from "./components/TaskInfoCards";
-import { TodoScheduleTable } from "./components/TodoScheduleTable";
-import { useTasks } from "./hooks/useTasks";
-import { useTaskListState } from "./hooks/useTaskListState";
-import { getAuthorInitials } from "./utils/commentUtils";
-import { isThisWeek, isToday } from "./utils/dateUtils";
-import { getOverviewCardNavigation } from "./utils/tasksNavigation";
+import { useUserProfile } from "../../../../context/UserProfileContext";
+import { useTranslation } from "../../../../i18n";
+import { AddBudgetExpenseDialog } from "../../components/AddBudgetExpenseDialog";
+import { CompleteTaskDialog } from "../../components/CompleteTaskDialog";
+import { CreateTaskButton } from "../../components/CreateTaskButton";
+import { CreateTaskDialog } from "../../components/CreateTaskDialog";
+import { ActiveTrackingCard } from "../../components/ActiveTrackingCard";
+import { ManualTimeEntryDialog } from "../../components/ManualTimeEntryDialog";
+import { TaskDetailsPanel } from "../../components/TaskDetailsPanel";
+import { TaskDetailsTabPlaceholder } from "../../components/TaskDetailsTabPlaceholder";
+import { TaskInfoCards } from "../../components/TaskInfoCards";
+import { TodoScheduleTable } from "../../components/TodoScheduleTable";
+import { useTasks } from "../../hooks/useTasks";
+import { useTaskListState } from "../../hooks/useTaskListState";
+import { getAuthorInitials } from "../../utils/commentUtils";
+import { isThisWeek, isToday } from "../../utils/dateUtils";
+import { getOverviewCardNavigation } from "../../utils/tasksNavigation";
 import styles from "./TasksOverviewPage.module.scss";
 
 type OverviewTab = "taskList" | "cards" | "analytics";
@@ -54,13 +54,16 @@ export function TasksOverviewPage() {
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [completeTaskId, setCompleteTaskId] = useState<string | null>(null);
   const [manualTimeTaskId, setManualTimeTaskId] = useState<string | null>(null);
-  const [budgetExpenseTaskId, setBudgetExpenseTaskId] = useState<string | null>(null);
+  const [budgetExpenseTaskId, setBudgetExpenseTaskId] = useState<string | null>(
+    null,
+  );
 
   const labels = t.tasks.dashboard;
   const taskLabels = t.tasks;
   const detailLabels = taskLabels.details;
 
-  const initiatorName = `${bio.firstName} ${bio.lastName}`.trim() || bio.username;
+  const initiatorName =
+    `${bio.firstName} ${bio.lastName}`.trim() || bio.username;
   const authorName = initiatorName;
   const authorInitials = getAuthorInitials(authorName);
 
@@ -82,7 +85,12 @@ export function TasksOverviewPage() {
       initiatorName,
     ]);
     return [...users].sort().map((user) => ({ value: user, label: user }));
-  }, [filterOptions.initiators, filterOptions.responsible, filterOptions.observables, initiatorName]);
+  }, [
+    filterOptions.initiators,
+    filterOptions.responsible,
+    filterOptions.observables,
+    initiatorName,
+  ]);
 
   const todayTasks = useMemo(
     () =>
@@ -221,7 +229,11 @@ export function TasksOverviewPage() {
   };
 
   const tabs: { id: OverviewTab; label: string; icon: ReactNode }[] = [
-    { id: "taskList", label: labels.tabs.taskList, icon: <FiList size={15} aria-hidden /> },
+    {
+      id: "taskList",
+      label: labels.tabs.taskList,
+      icon: <FiList size={15} aria-hidden />,
+    },
     {
       id: "cards",
       label: labels.tabs.cardsOverview,
@@ -449,7 +461,8 @@ export function TasksOverviewPage() {
           amount: detailLabels.budgetExpenseAmount,
           amountPlaceholder: labels.maxBudgetPlaceholder,
           description: detailLabels.budgetExpenseDescription,
-          descriptionPlaceholder: detailLabels.budgetExpenseDescriptionPlaceholder,
+          descriptionPlaceholder:
+            detailLabels.budgetExpenseDescriptionPlaceholder,
           required: labels.required,
           apply: detailLabels.budgetExpenseApply,
           cancel: t.common.cancel,
