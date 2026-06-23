@@ -6,7 +6,7 @@ import {
   FiCircle,
   FiMinus,
 } from "react-icons/fi";
-import styles from "../TasksPage.module.scss";
+import styles from "../pages/list/TasksPage.module.scss";
 
 export function StatusBadge({ status }: { status: string }) {
   switch (status) {

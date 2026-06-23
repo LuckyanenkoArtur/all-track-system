@@ -1,6 +1,6 @@
 import { FiX } from "react-icons/fi";
 import type { TaskCollection } from "../types";
-import styles from "../TasksPage.module.scss";
+import styles from "../pages/list/TasksPage.module.scss";
 
 type TaskCollectionsBarProps = {
   collections: TaskCollection[];

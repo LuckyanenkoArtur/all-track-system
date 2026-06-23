@@ -1,7 +1,7 @@
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import type { PageSize } from "../types";
 import { PAGE_SIZE_OPTIONS } from "../types";
-import styles from "../TasksPage.module.scss";
+import styles from "../pages/list/TasksPage.module.scss";
 
 type TaskPaginationProps = {
   page: number;
@@ -47,7 +47,9 @@ export function TaskPagination({
           <span>{labels.rowsPerPage}</span>
           <select
             value={pageSize}
-            onChange={(event) => onPageSizeChange(Number(event.target.value) as PageSize)}
+            onChange={(event) =>
+              onPageSizeChange(Number(event.target.value) as PageSize)
+            }
           >
             {PAGE_SIZE_OPTIONS.map((size) => (
               <option key={size} value={size}>
