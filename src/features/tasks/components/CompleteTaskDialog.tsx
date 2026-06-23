@@ -1,7 +1,9 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { FiCheckCircle } from "react-icons/fi";
-import Dialog, { ConfirmDialog } from "../../user-profile/components/dialogs/Dialog";
-import type { CompletionReportStep } from "../types";
+import Dialog, {
+  ConfirmDialog,
+} from "../../user-profile/components/dialogs/Dialog";
+import type { CompletionReportStep } from "../domain/types";
 import { TaskStepsEditor } from "./TaskStepsEditor";
 import styles from "./CompleteTaskDialog.module.scss";
 
@@ -26,7 +28,10 @@ export type CompleteTaskDialogLabels = {
 type CompleteTaskDialogProps = {
   open: boolean;
   onClose: () => void;
-  onSubmit: (input: { description: string; steps: CompletionReportStep[] }) => void;
+  onSubmit: (input: {
+    description: string;
+    steps: CompletionReportStep[];
+  }) => void;
   labels: CompleteTaskDialogLabels;
 };
 
@@ -102,7 +107,12 @@ export function CompleteTaskDialog({
 
   return (
     <>
-      <Dialog open={open} onClose={requestClose} showClose={false} className="dialog--form">
+      <Dialog
+        open={open}
+        onClose={requestClose}
+        showClose={false}
+        className="dialog--form"
+      >
         <header className={styles.header}>
           <div className={styles.headerMain}>
             <span className={styles.headerIcon} aria-hidden>
@@ -144,10 +154,18 @@ export function CompleteTaskDialog({
           </section>
 
           <div className={styles.actions}>
-            <button type="button" className={styles.cancelBtn} onClick={requestClose}>
+            <button
+              type="button"
+              className={styles.cancelBtn}
+              onClick={requestClose}
+            >
               {labels.cancel}
             </button>
-            <button type="submit" className={styles.submitBtn} disabled={!canSubmit}>
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={!canSubmit}
+            >
               {labels.apply}
             </button>
           </div>

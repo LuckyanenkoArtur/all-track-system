@@ -17,7 +17,10 @@ import { ManualTimeEntryDialog } from "../../components/ManualTimeEntryDialog";
 import { useTasks } from "../../hooks/useTasks";
 import { useTaskTrackingDisplay } from "../../hooks/useTaskTrackingDisplay";
 import { useTaskListState } from "../../hooks/useTaskListState";
-import { DEFAULT_FILTERS, type TasksPageNavigationState } from "../../types";
+import {
+  DEFAULT_FILTERS,
+  type TasksPageNavigationState,
+} from "../../domain/types";
 import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksPage.module.scss";
 

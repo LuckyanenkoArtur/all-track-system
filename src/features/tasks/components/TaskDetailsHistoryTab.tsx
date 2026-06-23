@@ -1,5 +1,5 @@
 import { FiCheckCircle, FiClock } from "react-icons/fi";
-import type { TaskHistoryEntry } from "../types";
+import type { TaskHistoryEntry } from "../domain/types";
 import { formatCommentDate } from "../utils/commentUtils";
 import { TaskDetailsTabPlaceholder } from "./TaskDetailsTabPlaceholder";
 import styles from "./TaskDetailsHistoryTab.module.scss";
@@ -17,7 +17,10 @@ type TaskDetailsHistoryTabProps = {
   labels: TaskHistoryLabels;
 };
 
-export function TaskDetailsHistoryTab({ entries, labels }: TaskDetailsHistoryTabProps) {
+export function TaskDetailsHistoryTab({
+  entries,
+  labels,
+}: TaskDetailsHistoryTabProps) {
   if (entries.length === 0) {
     return (
       <TaskDetailsTabPlaceholder
@@ -38,12 +41,18 @@ export function TaskDetailsHistoryTab({ entries, labels }: TaskDetailsHistoryTab
           <article className={styles.historyCard}>
             <header className={styles.historyHeader}>
               <div className={styles.summaryRow}>
-                <FiCheckCircle size={16} aria-hidden className={styles.summaryIcon} />
+                <FiCheckCircle
+                  size={16}
+                  aria-hidden
+                  className={styles.summaryIcon}
+                />
                 <strong>
                   {labels.completedSummary.replace("{{author}}", entry.author)}
                 </strong>
               </div>
-              <time dateTime={entry.createdAt}>{formatCommentDate(entry.createdAt)}</time>
+              <time dateTime={entry.createdAt}>
+                {formatCommentDate(entry.createdAt)}
+              </time>
             </header>
 
             {entry.description && (

@@ -1,4 +1,4 @@
-import type { TaskFilters, TaskStatus, TasksPageNavigationState } from "../types";
+import type { TaskFilters, TaskStatus, TasksPageNavigationState } from "../domain/types";
 import { endOfDay, endOfWeek, startOfDay, startOfWeek } from "./dateUtils";
 
 function toDateInputValue(date: Date): string {

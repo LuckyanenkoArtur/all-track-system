@@ -1,4 +1,4 @@
-import type { BudgetTransaction, Task, TaskStatus } from "../types";
+import type { BudgetTransaction, Task, TaskStatus } from "../domain/types";
 import { formatBudget, parseBudget, parseTimeMinutes } from "./taskListUtils";
 
 export type DeadlineTone = "ok" | "warning" | "critical" | "overdue";

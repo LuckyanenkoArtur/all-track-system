@@ -1,5 +1,5 @@
 import { FiCheck, FiCheckSquare } from "react-icons/fi";
-import type { TaskStep } from "../types";
+import type { TaskStep } from "../domain/types";
 import { TaskDetailsTabPlaceholder } from "./TaskDetailsTabPlaceholder";
 import styles from "./TaskDetailsStepsTab.module.scss";
 
@@ -22,7 +22,8 @@ export function TaskDetailsStepsTab({
 }: TaskDetailsStepsTabProps) {
   const completedCount = steps.filter((step) => step.completed).length;
   const total = steps.length;
-  const progressPercent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+  const progressPercent =
+    total > 0 ? Math.round((completedCount / total) * 100) : 0;
 
   if (steps.length === 0) {
     return (
@@ -43,7 +44,10 @@ export function TaskDetailsStepsTab({
         </span>
       </div>
       <div className={styles.progressBar} aria-hidden>
-        <span className={styles.progressFill} style={{ width: `${progressPercent}%` }} />
+        <span
+          className={styles.progressFill}
+          style={{ width: `${progressPercent}%` }}
+        />
       </div>
 
       <ul className={styles.list}>

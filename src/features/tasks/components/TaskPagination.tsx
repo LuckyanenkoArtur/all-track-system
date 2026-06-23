@@ -1,6 +1,6 @@
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import type { PageSize } from "../types";
-import { PAGE_SIZE_OPTIONS } from "../types";
+import type { PageSize } from "../domain/types";
+import { PAGE_SIZE_OPTIONS } from "../domain/types";
 import styles from "../pages/list/TasksPage.module.scss";
 
 type TaskPaginationProps = {

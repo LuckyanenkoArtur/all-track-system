@@ -20,7 +20,7 @@ import type {
   TaskStatus,
   TaskStep,
   UpdateTaskInput,
-} from "../types";
+} from "../domain/types";
 import {
   addElapsedToTimeSpent,
   formatTimeSpent,

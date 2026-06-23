@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { FiMaximize2, FiX } from "react-icons/fi";
 
 import { useTranslation } from "../../../i18n";
-import type { Task } from "../types";
+import type { Task } from "../domain/types";
 import { StatusBadge } from "./TaskBadges";
 import { TaskDetailsView } from "./TaskDetailsView";
 import styles from "./TaskDetailsPanel.module.scss";

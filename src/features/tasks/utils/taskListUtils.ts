@@ -4,7 +4,7 @@ import type {
   TaskSort,
   TaskListQuery,
   SortField,
-} from "../types";
+} from "../domain/types";
 
 const STATUS_ORDER = { pending: 0, inProgress: 1, done: 2 };
 const PRIORITY_ORDER = { low: 0, medium: 1, high: 2 };

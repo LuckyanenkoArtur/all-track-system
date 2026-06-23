@@ -1,8 +1,5 @@
-import {
-  FiCalendar,
-  FiFlag,
-} from "react-icons/fi";
-import type { Task, TaskPriority } from "../types";
+import { FiCalendar, FiFlag } from "react-icons/fi";
+import type { Task, TaskPriority } from "../domain/types";
 import { formatDueDateShort } from "../utils/dateUtils";
 import { useTaskContextMenu } from "../hooks/useTaskContextMenu";
 import { TaskContextMenu } from "./TaskContextMenu";

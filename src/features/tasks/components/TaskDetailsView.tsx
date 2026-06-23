@@ -6,7 +6,7 @@ import { useTranslation } from "../../../i18n";
 import { useTaskListState } from "../hooks/useTaskListState";
 import { useTasks } from "../hooks/useTasks";
 import { useTaskTrackingDisplay } from "../hooks/useTaskTrackingDisplay";
-import type { Task } from "../types";
+import type { Task } from "../domain/types";
 import { getAuthorInitials } from "../utils/commentUtils";
 import { getLiveTimeSpent } from "../utils/timeTrackingUtils";
 import { CompleteTaskDialog } from "./CompleteTaskDialog";
@@ -27,7 +27,10 @@ type TaskDetailsViewProps = {
   variant?: "page" | "panel";
 };
 
-export function TaskDetailsView({ task, variant = "page" }: TaskDetailsViewProps) {
+export function TaskDetailsView({
+  task,
+  variant = "page",
+}: TaskDetailsViewProps) {
   const { t } = useTranslation();
   const { bio } = useUserProfile();
   const { filterOptions } = useTaskListState();
@@ -44,7 +47,9 @@ export function TaskDetailsView({ task, variant = "page" }: TaskDetailsViewProps
     addManualTime,
     addBudgetExpense,
   } = useTasks();
-  const { isTracking, sessionTimer, toggleTracking } = useTaskTrackingDisplay(task.id);
+  const { isTracking, sessionTimer, toggleTracking } = useTaskTrackingDisplay(
+    task.id,
+  );
 
   const [activeTab, setActiveTab] = useState<DetailsTab>("overview");
   const [editOpen, setEditOpen] = useState(false);
@@ -56,7 +61,8 @@ export function TaskDetailsView({ task, variant = "page" }: TaskDetailsViewProps
   const detailLabels = taskLabels.details;
   const dashboardLabels = taskLabels.dashboard;
 
-  const initiatorName = `${bio.firstName} ${bio.lastName}`.trim() || bio.username;
+  const initiatorName =
+    `${bio.firstName} ${bio.lastName}`.trim() || bio.username;
 
   const groupSelectOptions = useMemo(
     () => filterOptions.groups.map((group) => ({ value: group, label: group })),
@@ -71,7 +77,12 @@ export function TaskDetailsView({ task, variant = "page" }: TaskDetailsViewProps
       initiatorName,
     ]);
     return [...users].sort().map((user) => ({ value: user, label: user }));
-  }, [filterOptions.initiators, filterOptions.responsible, filterOptions.observables, initiatorName]);
+  }, [
+    filterOptions.initiators,
+    filterOptions.responsible,
+    filterOptions.observables,
+    initiatorName,
+  ]);
 
   const liveTimeSpent = useMemo(() => {
     if (!isTracking) return task.timeSpent;
@@ -106,7 +117,12 @@ export function TaskDetailsView({ task, variant = "page" }: TaskDetailsViewProps
 
   const handleAddComment = (
     body: string,
-    attachments: { name: string; size: number; mimeType: string; dataUrl: string }[],
+    attachments: {
+      name: string;
+      size: number;
+      mimeType: string;
+      dataUrl: string;
+    }[],
   ) => {
     addTaskComment({
       taskId: task.id,
@@ -117,7 +133,10 @@ export function TaskDetailsView({ task, variant = "page" }: TaskDetailsViewProps
     });
   };
 
-  const handleCompleteTask = (input: { description: string; steps: { id: string; text: string }[] }) => {
+  const handleCompleteTask = (input: {
+    description: string;
+    steps: { id: string; text: string }[];
+  }) => {
     completeTaskWithReport({
       taskId: task.id,
       description: input.description,
@@ -407,7 +426,8 @@ export function TaskDetailsView({ task, variant = "page" }: TaskDetailsViewProps
           amount: detailLabels.budgetExpenseAmount,
           amountPlaceholder: dashboardLabels.maxBudgetPlaceholder,
           description: detailLabels.budgetExpenseDescription,
-          descriptionPlaceholder: detailLabels.budgetExpenseDescriptionPlaceholder,
+          descriptionPlaceholder:
+            detailLabels.budgetExpenseDescriptionPlaceholder,
           required: dashboardLabels.required,
           apply: detailLabels.budgetExpenseApply,
           cancel: t.common.cancel,

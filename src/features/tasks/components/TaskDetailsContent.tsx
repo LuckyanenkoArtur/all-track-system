@@ -13,7 +13,7 @@ import {
   FiUser,
   FiUsers,
 } from "react-icons/fi";
-import type { Task, TaskStatus } from "../types";
+import type { Task, TaskStatus } from "../domain/types";
 import { formatDueDate } from "../utils/dateUtils";
 import { formatDate, formatBudget } from "../utils/taskListUtils";
 import { PriorityBadge, StatusBadge } from "./TaskBadges";
@@ -88,19 +88,23 @@ export function TaskDetailsContent({
         <h3 className={styles.taskTitle}>{task.title}</h3>
         <div className={styles.heroMeta}>
           <span className={styles.priorityRow}>
-            <FiFlag size={14} aria-hidden className={styles[`priorityIcon_${task.priority}`]} />
+            <FiFlag
+              size={14}
+              aria-hidden
+              className={styles[`priorityIcon_${task.priority}`]}
+            />
             {task.priority === "high" && labels.high}
             {task.priority === "medium" && labels.medium}
-            {task.priority === "low" && labels.low}
-            {" "}
-            {labels.priority}
+            {task.priority === "low" && labels.low} {labels.priority}
           </span>
           <StatusBadge status={task.status} />
         </div>
       </div>
 
       {onToggleTracking && task.status !== "done" && (
-        <div className={`${styles.trackingBar} ${isTracking ? styles.trackingActive : ""}`}>
+        <div
+          className={`${styles.trackingBar} ${isTracking ? styles.trackingActive : ""}`}
+        >
           <div className={styles.trackingInfo}>
             <span className={styles.trackingLabel}>{labels.tracking}</span>
             {isTracking && sessionTimer ? (
@@ -202,7 +206,9 @@ export function TaskDetailsContent({
               <select
                 className={styles.statusSelect}
                 value={task.status}
-                onChange={(event) => onStatusChange(event.target.value as TaskStatus)}
+                onChange={(event) =>
+                  onStatusChange(event.target.value as TaskStatus)
+                }
                 aria-label={labels.changeStatus}
               >
                 {statusOptions.map((option) => (
@@ -222,7 +228,9 @@ export function TaskDetailsContent({
           {task.description?.trim() ? (
             <p className={styles.descriptionText}>{task.description}</p>
           ) : (
-            <p className={styles.descriptionPlaceholder}>{labels.descriptionPlaceholder}</p>
+            <p className={styles.descriptionPlaceholder}>
+              {labels.descriptionPlaceholder}
+            </p>
           )}
         </div>
         <button type="button" className={styles.attachBtn} disabled>
@@ -243,7 +251,12 @@ export function TaskDetailsContent({
             disabled
             aria-label={labels.addComment}
           />
-          <button type="button" className={styles.sendBtn} disabled aria-label="Send comment">
+          <button
+            type="button"
+            className={styles.sendBtn}
+            disabled
+            aria-label="Send comment"
+          >
             <FiSend size={16} aria-hidden />
           </button>
         </div>

@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import {
   FiCalendar,
   FiCheckSquare,
@@ -6,8 +13,15 @@ import {
   FiUser,
   FiX,
 } from "react-icons/fi";
-import Dialog, { ConfirmDialog } from "../../user-profile/components/dialogs/Dialog";
-import type { CreateTaskInput, Task, TaskPriority, TaskStep } from "../types";
+import Dialog, {
+  ConfirmDialog,
+} from "../../user-profile/components/dialogs/Dialog";
+import type {
+  CreateTaskInput,
+  Task,
+  TaskPriority,
+  TaskStep,
+} from "../domain/types";
 import { toDateTimeLocalValue } from "../utils/dateUtils";
 import {
   createPendingAttachment,
@@ -17,7 +31,10 @@ import {
   readFileAsDataUrl,
   type PendingAttachment,
 } from "../utils/commentUtils";
-import { FilterSearchMultiSelect, type FilterSelectOption } from "./FilterSearchMultiSelect";
+import {
+  FilterSearchMultiSelect,
+  type FilterSelectOption,
+} from "./FilterSearchMultiSelect";
 import { TaskStepsEditor } from "./TaskStepsEditor";
 import styles from "./CreateTaskDialog.module.scss";
 
@@ -150,7 +167,8 @@ function isFormDirty(form: FormState, baseline: FormState): boolean {
     ) ||
     form.attachments.length !== baseline.attachments.length ||
     form.attachments.some(
-      (attachment, index) => attachment.name !== baseline.attachments[index]?.name,
+      (attachment, index) =>
+        attachment.name !== baseline.attachments[index]?.name,
     )
   );
 }
@@ -229,13 +247,15 @@ export function CreateTaskDialog({
       initiator: isEditMode ? task!.initiator : initiatorName,
       responsible: isEditMode ? task!.responsible : ["Unassigned"],
       budget: form.budget.trim() ? `$${form.budget.replace(/^\$/, "")}` : "$0",
-      attachments: form.attachments.map(({ id, name, size, mimeType, dataUrl }) => ({
-        id: id.startsWith("ATT-") ? id : undefined,
-        name,
-        size,
-        mimeType,
-        dataUrl,
-      })),
+      attachments: form.attachments.map(
+        ({ id, name, size, mimeType, dataUrl }) => ({
+          id: id.startsWith("ATT-") ? id : undefined,
+          name,
+          size,
+          mimeType,
+          dataUrl,
+        }),
+      ),
       requiresResultReview: form.requiresResultReview,
     });
 
@@ -289,7 +309,9 @@ export function CreateTaskDialog({
   const removeAttachment = (attachmentId: string) => {
     setForm((current) => ({
       ...current,
-      attachments: current.attachments.filter((item) => item.id !== attachmentId),
+      attachments: current.attachments.filter(
+        (item) => item.id !== attachmentId,
+      ),
     }));
     setAttachmentError(null);
   };
@@ -323,7 +345,10 @@ export function CreateTaskDialog({
         </header>
 
         <form className={styles.form} onSubmit={handleSubmit}>
-          <section className={styles.section} aria-labelledby="create-task-details">
+          <section
+            className={styles.section}
+            aria-labelledby="create-task-details"
+          >
             <h3 id="create-task-details" className={styles.sectionTitle}>
               {labels.sectionTaskDetails}
             </h3>
@@ -336,7 +361,9 @@ export function CreateTaskDialog({
                 <input
                   type="text"
                   value={form.title}
-                  onChange={(event) => setForm({ ...form, title: event.target.value })}
+                  onChange={(event) =>
+                    setForm({ ...form, title: event.target.value })
+                  }
                   placeholder={labels.taskTitlePlaceholder}
                   required
                   autoFocus
@@ -347,7 +374,9 @@ export function CreateTaskDialog({
                 <span className={styles.fieldLabel}>{labels.description}</span>
                 <textarea
                   value={form.description}
-                  onChange={(event) => setForm({ ...form, description: event.target.value })}
+                  onChange={(event) =>
+                    setForm({ ...form, description: event.target.value })
+                  }
                   placeholder={labels.descriptionPlaceholder}
                   rows={4}
                 />
@@ -368,7 +397,10 @@ export function CreateTaskDialog({
             </div>
           </section>
 
-          <section className={styles.section} aria-labelledby="create-task-people">
+          <section
+            className={styles.section}
+            aria-labelledby="create-task-people"
+          >
             <h3 id="create-task-people" className={styles.sectionTitle}>
               {labels.sectionPeople}
             </h3>
@@ -404,7 +436,10 @@ export function CreateTaskDialog({
             </div>
           </section>
 
-          <section className={styles.section} aria-labelledby="create-task-schedule">
+          <section
+            className={styles.section}
+            aria-labelledby="create-task-schedule"
+          >
             <h3 id="create-task-schedule" className={styles.sectionTitle}>
               {labels.sectionSchedule}
             </h3>
@@ -415,7 +450,9 @@ export function CreateTaskDialog({
                   <input
                     type="datetime-local"
                     value={form.startDate}
-                    onChange={(event) => setForm({ ...form, startDate: event.target.value })}
+                    onChange={(event) =>
+                      setForm({ ...form, startDate: event.target.value })
+                    }
                   />
                   <FiCalendar size={16} aria-hidden />
                 </div>
@@ -430,7 +467,9 @@ export function CreateTaskDialog({
                   <input
                     type="datetime-local"
                     value={form.dueDate}
-                    onChange={(event) => setForm({ ...form, dueDate: event.target.value })}
+                    onChange={(event) =>
+                      setForm({ ...form, dueDate: event.target.value })
+                    }
                     required
                   />
                   <FiCalendar size={16} aria-hidden />
@@ -439,8 +478,14 @@ export function CreateTaskDialog({
             </div>
           </section>
 
-          <section className={styles.section} aria-labelledby="create-task-priority-budget">
-            <h3 id="create-task-priority-budget" className={styles.sectionTitle}>
+          <section
+            className={styles.section}
+            aria-labelledby="create-task-priority-budget"
+          >
+            <h3
+              id="create-task-priority-budget"
+              className={styles.sectionTitle}
+            >
               {labels.sectionPriorityBudget}
             </h3>
             <div className={styles.fieldRow}>
@@ -449,7 +494,10 @@ export function CreateTaskDialog({
                 <select
                   value={form.priority}
                   onChange={(event) =>
-                    setForm({ ...form, priority: event.target.value as TaskPriority })
+                    setForm({
+                      ...form,
+                      priority: event.target.value as TaskPriority,
+                    })
                   }
                 >
                   <option value="" disabled>
@@ -472,7 +520,9 @@ export function CreateTaskDialog({
                     min={0}
                     step="0.01"
                     value={form.budget}
-                    onChange={(event) => setForm({ ...form, budget: event.target.value })}
+                    onChange={(event) =>
+                      setForm({ ...form, budget: event.target.value })
+                    }
                     placeholder={labels.budgetPlaceholder}
                   />
                 </div>
@@ -480,7 +530,10 @@ export function CreateTaskDialog({
             </div>
           </section>
 
-          <section className={styles.section} aria-labelledby="create-task-attachments">
+          <section
+            className={styles.section}
+            aria-labelledby="create-task-attachments"
+          >
             <h3 id="create-task-attachments" className={styles.sectionTitle}>
               {labels.sectionAttachments}
             </h3>
@@ -491,9 +544,14 @@ export function CreateTaskDialog({
                   {form.attachments.length > 0 && (
                     <ul className={styles.attachmentList}>
                       {form.attachments.map((attachment) => (
-                        <li key={attachment.id} className={styles.attachmentItem}>
+                        <li
+                          key={attachment.id}
+                          className={styles.attachmentItem}
+                        >
                           <FiPaperclip size={14} aria-hidden />
-                          <span className={styles.attachmentName}>{attachment.name}</span>
+                          <span className={styles.attachmentName}>
+                            {attachment.name}
+                          </span>
                           <span className={styles.attachmentSize}>
                             {formatFileSize(attachment.size)}
                           </span>
@@ -509,7 +567,11 @@ export function CreateTaskDialog({
                       ))}
                     </ul>
                   )}
-                  <button type="button" className={styles.attachBtn} onClick={handleAttachClick}>
+                  <button
+                    type="button"
+                    className={styles.attachBtn}
+                    onClick={handleAttachClick}
+                  >
                     <FiPaperclip size={14} aria-hidden />
                     {labels.attachFile}
                   </button>
@@ -533,7 +595,10 @@ export function CreateTaskDialog({
                   type="checkbox"
                   checked={form.requiresResultReview}
                   onChange={(event) =>
-                    setForm({ ...form, requiresResultReview: event.target.checked })
+                    setForm({
+                      ...form,
+                      requiresResultReview: event.target.checked,
+                    })
                   }
                 />
                 <span>{labels.requiresResultReview}</span>
@@ -542,10 +607,18 @@ export function CreateTaskDialog({
           </section>
 
           <div className={styles.actions}>
-            <button type="button" className={styles.cancelBtn} onClick={requestClose}>
+            <button
+              type="button"
+              className={styles.cancelBtn}
+              onClick={requestClose}
+            >
               {labels.cancel}
             </button>
-            <button type="submit" className={styles.submitBtn} disabled={!canSubmit}>
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={!canSubmit}
+            >
               {isEditMode ? (labels.save ?? labels.create) : labels.create}
             </button>
           </div>

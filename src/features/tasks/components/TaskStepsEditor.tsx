@@ -1,5 +1,5 @@
 import { FiPlus, FiTrash2 } from "react-icons/fi";
-import type { TaskStep } from "../types";
+import type { TaskStep } from "../domain/types";
 import styles from "./TaskStepsEditor.module.scss";
 
 type TaskStepsEditorLabels = {
@@ -22,7 +22,11 @@ function createStep(text = ""): TaskStep {
   };
 }
 
-export function TaskStepsEditor({ steps, onChange, labels }: TaskStepsEditorProps) {
+export function TaskStepsEditor({
+  steps,
+  onChange,
+  labels,
+}: TaskStepsEditorProps) {
   const addStep = () => {
     onChange([...steps, createStep()]);
   };

@@ -1,4 +1,4 @@
-import type { TaskComment } from "./types";
+import type { TaskComment } from "../domain/types";
 
 export const MOCK_TASK_COMMENTS: TaskComment[] = [
   {

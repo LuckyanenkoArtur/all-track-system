@@ -1,4 +1,10 @@
-import { useRef, useState, type ChangeEvent, type FormEvent, type KeyboardEvent } from "react";
+import {
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type KeyboardEvent,
+} from "react";
 import {
   FiDownload,
   FiMessageSquare,
@@ -6,7 +12,7 @@ import {
   FiSend,
   FiX,
 } from "react-icons/fi";
-import type { TaskComment } from "../types";
+import type { TaskComment } from "../domain/types";
 import {
   createPendingAttachment,
   downloadAttachment,
@@ -45,12 +51,13 @@ export function TaskDetailsCommentsTab({
   onAddComment,
 }: TaskDetailsCommentsTabProps) {
   const [body, setBody] = useState("");
-  const [pendingAttachments, setPendingAttachments] = useState<PendingAttachment[]>([]);
+  const [pendingAttachments, setPendingAttachments] = useState<
+    PendingAttachment[]
+  >([]);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const canSubmit =
-    body.trim().length > 0 || pendingAttachments.length > 0;
+  const canSubmit = body.trim().length > 0 || pendingAttachments.length > 0;
 
   const handleAttachClick = () => {
     fileInputRef.current?.click();
@@ -83,7 +90,9 @@ export function TaskDetailsCommentsTab({
       }
 
       if (nextAttachments.length > 0) {
-        setPendingAttachments((prev) => [...prev, ...nextAttachments].slice(0, MAX_COMMENT_ATTACHMENTS));
+        setPendingAttachments((prev) =>
+          [...prev, ...nextAttachments].slice(0, MAX_COMMENT_ATTACHMENTS),
+        );
       }
     } catch {
       setError(labels.fileTooLarge);
@@ -91,7 +100,9 @@ export function TaskDetailsCommentsTab({
   };
 
   const handleRemoveAttachment = (attachmentId: string) => {
-    setPendingAttachments((prev) => prev.filter((item) => item.id !== attachmentId));
+    setPendingAttachments((prev) =>
+      prev.filter((item) => item.id !== attachmentId),
+    );
     setError(null);
   };
 
@@ -143,17 +154,20 @@ export function TaskDetailsCommentsTab({
                       {formatCommentDate(comment.createdAt)}
                     </time>
                   </header>
-                  {comment.body && <p className={styles.commentBody}>{comment.body}</p>}
-                  {comment.completionSteps && comment.completionSteps.length > 0 && (
-                    <div className={styles.completionSteps}>
-                      <h4>{labels.completionSteps}</h4>
-                      <ol>
-                        {comment.completionSteps.map((step) => (
-                          <li key={step.id}>{step.text}</li>
-                        ))}
-                      </ol>
-                    </div>
+                  {comment.body && (
+                    <p className={styles.commentBody}>{comment.body}</p>
                   )}
+                  {comment.completionSteps &&
+                    comment.completionSteps.length > 0 && (
+                      <div className={styles.completionSteps}>
+                        <h4>{labels.completionSteps}</h4>
+                        <ol>
+                          {comment.completionSteps.map((step) => (
+                            <li key={step.id}>{step.text}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
                   {comment.attachments.length > 0 && (
                     <ul className={styles.attachmentList}>
                       {comment.attachments.map((attachment) => (
@@ -170,11 +184,15 @@ export function TaskDetailsCommentsTab({
                             }
                           >
                             <FiPaperclip size={14} aria-hidden />
-                            <span className={styles.attachmentName}>{attachment.name}</span>
+                            <span className={styles.attachmentName}>
+                              {attachment.name}
+                            </span>
                             <span className={styles.attachmentSize}>
                               {formatFileSize(attachment.size)}
                             </span>
-                            {attachment.dataUrl && <FiDownload size={14} aria-hidden />}
+                            {attachment.dataUrl && (
+                              <FiDownload size={14} aria-hidden />
+                            )}
                           </button>
                         </li>
                       ))}
@@ -194,7 +212,9 @@ export function TaskDetailsCommentsTab({
               <li key={attachment.id} className={styles.pendingItem}>
                 <FiPaperclip size={14} aria-hidden />
                 <span className={styles.pendingName}>{attachment.name}</span>
-                <span className={styles.pendingSize}>{formatFileSize(attachment.size)}</span>
+                <span className={styles.pendingSize}>
+                  {formatFileSize(attachment.size)}
+                </span>
                 <button
                   type="button"
                   className={styles.removeBtn}

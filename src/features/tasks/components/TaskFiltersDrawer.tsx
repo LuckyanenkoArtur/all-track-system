@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { FiX } from "react-icons/fi";
 import Dialog from "../../user-profile/components/dialogs/Dialog";
-import type { TaskFilters, TaskPriority, TaskStatus } from "../types";
+import type { TaskFilters, TaskPriority, TaskStatus } from "../domain/types";
 import {
   areDrawerFiltersEqual,
   hasDrawerFilters,
@@ -65,18 +65,23 @@ type TaskFiltersDrawerProps = {
   };
 };
 
-const STATUS_OPTIONS: { value: TaskStatus; labelKey: keyof TaskFiltersDrawerProps["labels"] }[] = [
+const STATUS_OPTIONS: {
+  value: TaskStatus;
+  labelKey: keyof TaskFiltersDrawerProps["labels"];
+}[] = [
   { value: "done", labelKey: "done" },
   { value: "inProgress", labelKey: "inProgress" },
   { value: "pending", labelKey: "pending" },
 ];
 
-const PRIORITY_OPTIONS: { value: TaskPriority; labelKey: keyof TaskFiltersDrawerProps["labels"] }[] =
-  [
-    { value: "high", labelKey: "high" },
-    { value: "medium", labelKey: "medium" },
-    { value: "low", labelKey: "low" },
-  ];
+const PRIORITY_OPTIONS: {
+  value: TaskPriority;
+  labelKey: keyof TaskFiltersDrawerProps["labels"];
+}[] = [
+  { value: "high", labelKey: "high" },
+  { value: "medium", labelKey: "medium" },
+  { value: "low", labelKey: "low" },
+];
 
 export function TaskFiltersDrawer({
   open,
@@ -137,21 +142,29 @@ export function TaskFiltersDrawer({
   );
 
   const initiatorOptions = useMemo(
-    () => options.initiators.map((initiator) => ({ value: initiator, label: initiator })),
+    () =>
+      options.initiators.map((initiator) => ({
+        value: initiator,
+        label: initiator,
+      })),
     [options.initiators],
   );
 
   const responsibleOptions = useMemo(
-    () => options.responsible.map((person) => ({ value: person, label: person })),
+    () =>
+      options.responsible.map((person) => ({ value: person, label: person })),
     [options.responsible],
   );
 
   const observableOptions = useMemo(
-    () => options.observables.map((person) => ({ value: person, label: person })),
+    () =>
+      options.observables.map((person) => ({ value: person, label: person })),
     [options.observables],
   );
 
-  const showActions = hasDrawerFilters(filters) || !areDrawerFiltersEqual(filters, appliedFilters);
+  const showActions =
+    hasDrawerFilters(filters) ||
+    !areDrawerFiltersEqual(filters, appliedFilters);
   const canApply = !areDrawerFiltersEqual(filters, appliedFilters);
 
   const handleSaveCollection = () => {
@@ -238,7 +251,9 @@ export function TaskFiltersDrawer({
                   label={labels.status}
                   options={statusOptions}
                   selected={filters.statuses}
-                  onChange={(statuses) => update({ statuses: statuses as TaskStatus[] })}
+                  onChange={(statuses) =>
+                    update({ statuses: statuses as TaskStatus[] })
+                  }
                   placeholder={labels.selectPlaceholder}
                   searchPlaceholder={labels.searchOptions}
                   noResultsLabel={labels.noOptionsFound}
@@ -261,12 +276,16 @@ export function TaskFiltersDrawer({
               <h3 className={styles.sectionTitle}>{labels.sectionDueDate}</h3>
               <div className={styles.fieldRow}>
                 <label className={styles.field}>
-                  <span className={styles.fieldLabel}>{labels.dueDateFrom}</span>
+                  <span className={styles.fieldLabel}>
+                    {labels.dueDateFrom}
+                  </span>
                   <input
                     type="date"
                     className={styles.fieldInput}
                     value={filters.dueDateFrom}
-                    onChange={(event) => update({ dueDateFrom: event.target.value })}
+                    onChange={(event) =>
+                      update({ dueDateFrom: event.target.value })
+                    }
                   />
                 </label>
                 <label className={styles.field}>
@@ -275,7 +294,9 @@ export function TaskFiltersDrawer({
                     type="date"
                     className={styles.fieldInput}
                     value={filters.dueDateTo}
-                    onChange={(event) => update({ dueDateTo: event.target.value })}
+                    onChange={(event) =>
+                      update({ dueDateTo: event.target.value })
+                    }
                   />
                 </label>
               </div>
@@ -291,7 +312,9 @@ export function TaskFiltersDrawer({
                     min={0}
                     className={styles.fieldInput}
                     value={filters.budgetMin}
-                    onChange={(event) => update({ budgetMin: event.target.value })}
+                    onChange={(event) =>
+                      update({ budgetMin: event.target.value })
+                    }
                     placeholder="0"
                   />
                 </label>
@@ -302,7 +325,9 @@ export function TaskFiltersDrawer({
                     min={0}
                     className={styles.fieldInput}
                     value={filters.budgetMax}
-                    onChange={(event) => update({ budgetMax: event.target.value })}
+                    onChange={(event) =>
+                      update({ budgetMax: event.target.value })
+                    }
                     placeholder="10000"
                   />
                 </label>
@@ -319,7 +344,9 @@ export function TaskFiltersDrawer({
                     min={0}
                     className={styles.fieldInput}
                     value={filters.timeMin}
-                    onChange={(event) => update({ timeMin: event.target.value })}
+                    onChange={(event) =>
+                      update({ timeMin: event.target.value })
+                    }
                     placeholder="0"
                   />
                 </label>
@@ -330,7 +357,9 @@ export function TaskFiltersDrawer({
                     min={0}
                     className={styles.fieldInput}
                     value={filters.timeMax}
-                    onChange={(event) => update({ timeMax: event.target.value })}
+                    onChange={(event) =>
+                      update({ timeMax: event.target.value })
+                    }
                     placeholder="480"
                   />
                 </label>
@@ -355,7 +384,11 @@ export function TaskFiltersDrawer({
               >
                 {labels.saveCollection}
               </button>
-              <button type="button" className={styles.secondaryBtn} onClick={onReset}>
+              <button
+                type="button"
+                className={styles.secondaryBtn}
+                onClick={onReset}
+              >
                 {labels.reset}
               </button>
             </footer>

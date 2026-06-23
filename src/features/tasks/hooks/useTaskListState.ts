@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTasks } from "../hooks/useTasks";
-import type { PageSize, TaskFilters, TaskSort } from "../types";
+import type { PageSize, TaskFilters, TaskSort } from "../domain/types";
 import {
   DEFAULT_FILTERS,
   DEFAULT_PAGE_SIZE,
-} from "../types";
+} from "../domain/types";
 import {
   countActiveFilters,
   getUniqueFilterOptions,

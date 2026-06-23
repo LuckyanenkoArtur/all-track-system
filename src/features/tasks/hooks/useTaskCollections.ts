@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import type { TaskCollection, TaskFilters, TaskSort, PageSize } from "../types";
+import type { TaskCollection, TaskFilters, TaskSort, PageSize } from "../domain/types";
 
 const STORAGE_KEY = "alltrack-task-collections";
 

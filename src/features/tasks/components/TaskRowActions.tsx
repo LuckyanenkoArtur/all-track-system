@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState, type MouseEvent } from "react";
-import { FiCheckCircle, FiClock, FiDollarSign, FiMoreHorizontal, FiPlus } from "react-icons/fi";
-import type { Task } from "../types";
+import {
+  FiCheckCircle,
+  FiClock,
+  FiDollarSign,
+  FiMoreHorizontal,
+  FiPlus,
+} from "react-icons/fi";
+import type { Task } from "../domain/types";
 import styles from "./TaskRowActions.module.scss";
 
 type TaskRowActionsProps = {
@@ -71,7 +77,11 @@ export function TaskRowActions({
   if (!hasActions) return null;
 
   return (
-    <div className={styles.root} ref={rootRef} onClick={(event) => event.stopPropagation()}>
+    <div
+      className={styles.root}
+      ref={rootRef}
+      onClick={(event) => event.stopPropagation()}
+    >
       <button
         type="button"
         className={`${styles.menuBtn} ${open ? styles.active : ""}`}
@@ -91,7 +101,9 @@ export function TaskRowActions({
               className={`${styles.menuItem} ${task.status === "done" ? styles.disabled : ""}`}
               role="menuitem"
               disabled={task.status === "done"}
-              onClick={(event) => handleAction(event, () => onComplete(task.id))}
+              onClick={(event) =>
+                handleAction(event, () => onComplete(task.id))
+              }
             >
               <FiCheckCircle size={16} aria-hidden />
               {labels.completeTask}
@@ -102,7 +114,9 @@ export function TaskRowActions({
               type="button"
               className={styles.menuItem}
               role="menuitem"
-              onClick={(event) => handleAction(event, () => onToggleTracking(task.id))}
+              onClick={(event) =>
+                handleAction(event, () => onToggleTracking(task.id))
+              }
             >
               <FiClock size={16} aria-hidden />
               {isTracking ? labels.stopTracking : labels.startTracking}
@@ -113,7 +127,9 @@ export function TaskRowActions({
               type="button"
               className={styles.menuItem}
               role="menuitem"
-              onClick={(event) => handleAction(event, () => onAddManualTime(task.id))}
+              onClick={(event) =>
+                handleAction(event, () => onAddManualTime(task.id))
+              }
             >
               <FiPlus size={16} aria-hidden />
               {labels.addManualTime}
@@ -124,7 +140,9 @@ export function TaskRowActions({
               type="button"
               className={styles.menuItem}
               role="menuitem"
-              onClick={(event) => handleAction(event, () => onLogBudgetExpense(task.id))}
+              onClick={(event) =>
+                handleAction(event, () => onLogBudgetExpense(task.id))
+              }
             >
               <FiDollarSign size={16} aria-hidden />
               {labels.logBudgetExpense}

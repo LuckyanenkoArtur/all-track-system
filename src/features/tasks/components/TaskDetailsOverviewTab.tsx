@@ -13,7 +13,7 @@ import {
   FiUser,
   FiUsers,
 } from "react-icons/fi";
-import type { BudgetTransaction, Task, TaskStatus } from "../types";
+import type { BudgetTransaction, Task, TaskStatus } from "../domain/types";
 import { formatDueDate } from "../utils/dateUtils";
 import {
   formatCurrency,
@@ -125,14 +125,19 @@ export function TaskDetailsOverviewTab({
           </div>
 
           <dl className={styles.propertyList}>
-            <PropertyItem label={labels.status} value={<StatusBadge status={task.status} />} />
+            <PropertyItem
+              label={labels.status}
+              value={<StatusBadge status={task.status} />}
+            />
             <PropertyItem
               label={labels.responsible}
               value={
                 <div className={styles.assigneeList}>
                   {task.responsible.map((person) => (
                     <span key={person} className={styles.assignee}>
-                      <span className={styles.avatar}>{getInitials(person)}</span>
+                      <span className={styles.avatar}>
+                        {getInitials(person)}
+                      </span>
                       {person}
                     </span>
                   ))}
@@ -157,7 +162,9 @@ export function TaskDetailsOverviewTab({
                   <div className={styles.assigneeList}>
                     {task.observables.map((person) => (
                       <span key={person} className={styles.assignee}>
-                        <span className={styles.avatar}>{getInitials(person)}</span>
+                        <span className={styles.avatar}>
+                          {getInitials(person)}
+                        </span>
                         {person}
                       </span>
                     ))}
@@ -191,19 +198,26 @@ export function TaskDetailsOverviewTab({
               value={
                 <span className={isTracking ? styles.liveTime : undefined}>
                   {liveTimeSpent ?? task.timeSpent}
-                  {isTracking && <span className={styles.liveDot} aria-hidden />}
+                  {isTracking && (
+                    <span className={styles.liveDot} aria-hidden />
+                  )}
                 </span>
               }
             />
           </dl>
 
-          <section className={styles.descriptionSection} aria-label={labels.description}>
+          <section
+            className={styles.descriptionSection}
+            aria-label={labels.description}
+          >
             <h3 className={styles.descriptionTitle}>{labels.description}</h3>
             <div className={styles.descriptionBox}>
               {task.description?.trim() ? (
                 <p className={styles.descriptionText}>{task.description}</p>
               ) : (
-                <p className={styles.descriptionPlaceholder}>{labels.descriptionEmpty}</p>
+                <p className={styles.descriptionPlaceholder}>
+                  {labels.descriptionEmpty}
+                </p>
               )}
             </div>
           </section>
@@ -250,7 +264,10 @@ export function TaskDetailsOverviewTab({
 
           {onStatusChange && (
             <div className={styles.statusCard}>
-              <label className={styles.statusLabel} htmlFor="task-status-select">
+              <label
+                className={styles.statusLabel}
+                htmlFor="task-status-select"
+              >
                 <FiFlag size={15} aria-hidden />
                 {labels.changeStatus}
               </label>
@@ -258,7 +275,9 @@ export function TaskDetailsOverviewTab({
                 id="task-status-select"
                 className={styles.statusSelect}
                 value={task.status}
-                onChange={(event) => onStatusChange(event.target.value as TaskStatus)}
+                onChange={(event) =>
+                  onStatusChange(event.target.value as TaskStatus)
+                }
               >
                 {statusOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -269,14 +288,23 @@ export function TaskDetailsOverviewTab({
             </div>
           )}
 
-          <section className={styles.trackingSection} aria-label={labels.tracking}>
-            <div className={`${styles.trackingBar} ${isTracking ? styles.trackingActive : ""}`}>
+          <section
+            className={styles.trackingSection}
+            aria-label={labels.tracking}
+          >
+            <div
+              className={`${styles.trackingBar} ${isTracking ? styles.trackingActive : ""}`}
+            >
               <div className={styles.trackingInfo}>
                 <span className={styles.trackingLabel}>{labels.tracking}</span>
                 {isTracking && sessionTimer ? (
-                  <strong className={styles.trackingTimer}>{sessionTimer}</strong>
+                  <strong className={styles.trackingTimer}>
+                    {sessionTimer}
+                  </strong>
                 ) : (
-                  <span className={styles.trackingHint}>{liveTimeSpent ?? task.timeSpent}</span>
+                  <span className={styles.trackingHint}>
+                    {liveTimeSpent ?? task.timeSpent}
+                  </span>
                 )}
               </div>
               {onToggleTracking && task.status !== "done" && (
@@ -303,7 +331,11 @@ export function TaskDetailsOverviewTab({
             {(onAddManualTime || onLogBudgetExpense) && (
               <div className={styles.trackingActions}>
                 {onAddManualTime && (
-                  <button type="button" className={styles.secondaryActionBtn} onClick={onAddManualTime}>
+                  <button
+                    type="button"
+                    className={styles.secondaryActionBtn}
+                    onClick={onAddManualTime}
+                  >
                     <FiPlus size={14} aria-hidden />
                     {labels.addManualTime}
                   </button>
@@ -323,14 +355,22 @@ export function TaskDetailsOverviewTab({
           </section>
 
           {onCompleteTask && task.status !== "done" && (
-            <button type="button" className={styles.completeTaskBtn} onClick={onCompleteTask}>
+            <button
+              type="button"
+              className={styles.completeTaskBtn}
+              onClick={onCompleteTask}
+            >
               <FiCheckCircle size={15} aria-hidden />
               {labels.completeTask}
             </button>
           )}
 
           {onEditTask && (
-            <button type="button" className={styles.editTaskBtn} onClick={onEditTask}>
+            <button
+              type="button"
+              className={styles.editTaskBtn}
+              onClick={onEditTask}
+            >
               <FiEdit2 size={15} aria-hidden />
               {labels.editTask}
             </button>
@@ -375,7 +415,9 @@ function MetricCard({
   return (
     <article className={`${styles.metricCard} ${styles[`tone_${tone}`]}`}>
       <span className={styles.metricLabel}>{label}</span>
-      <strong className={`${styles.metricValue} ${isTimeUp ? styles.timeUp : ""}`}>
+      <strong
+        className={`${styles.metricValue} ${isTimeUp ? styles.timeUp : ""}`}
+      >
         {value}
       </strong>
     </article>

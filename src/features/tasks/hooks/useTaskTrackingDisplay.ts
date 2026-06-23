@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import type { Task } from "../types";
+import type { Task } from "../domain/types";
 import { useTasks } from "./useTasks";
 import { useTrackingTimer } from "./useTrackingTimer";
 import { formatSessionTimer, getLiveTimeSpent } from "../utils/timeTrackingUtils";
