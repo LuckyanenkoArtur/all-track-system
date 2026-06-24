@@ -8,19 +8,24 @@ import {
 import { MOCK_TASKS } from "../data/mockTasks";
 import { MOCK_TASK_COMMENTS } from "../data/mockTaskComments";
 import type {
-  AddBudgetExpenseInput,
-  AddManualTimeInput,
   AddTaskCommentInput,
   BudgetTransaction,
-  CompleteTaskReportInput,
-  CreateTaskInput,
-  Task,
-  TaskComment,
   TaskHistoryEntry,
-  TaskStatus,
-  TaskStep,
-  UpdateTaskInput,
 } from "../domain/types";
+
+import type {
+  CreateTaskInput,
+  UpdateTaskInput,
+  CompleteTaskReportInput,
+  AddManualTimeInput,
+  AddBudgetExpenseInput,
+} from "../domain/inputs";
+
+import type { Task } from "../domain/task";
+import type { TaskStep } from "../domain/step";
+import type { TaskStatus } from "../domain/status";
+import type { TaskComment } from "../domain/comment";
+
 import {
   addElapsedToTimeSpent,
   formatTimeSpent,
@@ -266,7 +271,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         next = next.map((task) => {
           if (task.id !== taskId) return task;
           if (task.status === "pending") {
-            return { ...task, status: "inProgress" as TaskStatus };
+            return { ...task, status: { id: "inProgress" } as TaskStatus };
           }
           return task;
         });
@@ -308,7 +313,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         }
 
         next = next.map((task) =>
-          task.id === taskId ? { ...task, status: "done" as TaskStatus } : task,
+          task.id === taskId
+            ? { ...task, status: { id: "done" } as TaskStatus }
+            : task,
         );
         persistTasks(next);
         return next;
@@ -339,7 +346,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
         next = next.map((task) =>
           task.id === input.taskId
-            ? { ...task, status: "done" as TaskStatus }
+            ? { ...task, status: { id: "done" } as TaskStatus }
             : task,
         );
         persistTasks(next);

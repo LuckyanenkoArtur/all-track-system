@@ -1,39 +1,11 @@
-import type { Attachment } from "../../../domains/attachment";
 import type { TaskCommentAttachment } from "./comment";
-import type { CompletionReportStep, TaskStep } from "./step";
+import type { CompletionReportStep } from "./step";
 import type { TaskPriority } from "./priority";
 import type { TaskStatus } from "./status";
-
 
 export type PageSize = 5 | 10 | 15 | 20;
 export const PAGE_SIZE_OPTIONS: PageSize[] = [5, 10, 15, 20];
 export const DEFAULT_PAGE_SIZE: PageSize = 10;
-
-export interface CreateTaskInput {
-  title: string;
-  description?: string;
-  steps?: TaskStep[];
-  priority: TaskPriority;
-  groups: string[];
-  observables: string[];
-  startDate?: string;
-  dueDate: string;
-  initiator: string;
-  responsible: string[];
-  budget: string;
-  attachments?: (Omit<Attachment, "id"> & { id?: string })[];
-  requiresResultReview: boolean;
-}
-
-export type UpdateTaskInput = CreateTaskInput;
-
-export interface CompleteTaskReportInput {
-  taskId: string;
-  description: string;
-  steps: CompletionReportStep[];
-  author: string;
-  authorInitials: string;
-}
 
 export interface BudgetTransaction {
   id: string;
@@ -42,23 +14,6 @@ export interface BudgetTransaction {
   description: string;
   createdAt: string;
   author: string;
-}
-
-export interface AddManualTimeInput {
-  taskId: string;
-  hours: number;
-  minutes: number;
-  note?: string;
-  author: string;
-  authorInitials: string;
-}
-
-export interface AddBudgetExpenseInput {
-  taskId: string;
-  amount: number;
-  description: string;
-  author: string;
-  authorInitials: string;
 }
 
 export type TaskHistoryEntryType =
