@@ -22,7 +22,7 @@ import {
 import { TaskRowActions } from "../../../features/tasks/components/TaskRowActions";
 import { TaskContextMenu } from "../../../features/tasks/components/TaskContextMenu";
 import { useTaskContextMenu } from "../../../features/tasks/hooks/useTaskContextMenu";
-import styles from "../../../features/tasks/pages/list/TasksPage.module.scss";
+import styles from "./DataTable.module.scss";
 
 type Column = {
   field: SortField | null;

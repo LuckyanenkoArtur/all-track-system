@@ -8,7 +8,7 @@ import type {
   TaskCollection,
   TaskSort,
 } from "../../domain/others";
-import styles from "./TasksPage.module.scss";
+import styles from "../../../../components/ui/data-table/DataTable.module.scss";
 
 type DataTableWrapperLabels = {
   allTasks: string;

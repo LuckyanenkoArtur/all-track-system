@@ -1,7 +1,7 @@
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import type { PageSize } from "../../../features/tasks/domain/others";
 import { PAGE_SIZE_OPTIONS } from "../../../features/tasks/domain/others";
-import styles from "../../../features/tasks/pages/list/TasksPage.module.scss";
+import styles from "./DataTable.module.scss";
 
 type TaskPaginationProps = {
   page: number;
