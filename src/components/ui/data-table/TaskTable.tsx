@@ -6,13 +6,23 @@ import {
   FiUser,
   FiUsers,
 } from "react-icons/fi";
-import type { SortField, Task, TaskSort } from "../domain/others";
-import { formatDate, formatBudget } from "../utils/taskListUtils";
-import { PriorityBadge, StatusBadge } from "./TaskBadges";
-import { TaskRowActions } from "./TaskRowActions";
-import { TaskContextMenu } from "./TaskContextMenu";
-import { useTaskContextMenu } from "../hooks/useTaskContextMenu";
-import styles from "../pages/list/TasksPage.module.scss";
+import type {
+  SortField,
+  Task,
+  TaskSort,
+} from "../../../features/tasks/domain/others";
+import {
+  formatDate,
+  formatBudget,
+} from "../../../features/tasks/utils/taskListUtils";
+import {
+  PriorityBadge,
+  StatusBadge,
+} from "../../../features/tasks/components/TaskBadges";
+import { TaskRowActions } from "../../../features/tasks/components/TaskRowActions";
+import { TaskContextMenu } from "../../../features/tasks/components/TaskContextMenu";
+import { useTaskContextMenu } from "../../../features/tasks/hooks/useTaskContextMenu";
+import styles from "../../../features/tasks/pages/list/TasksPage.module.scss";
 
 type Column = {
   field: SortField | null;

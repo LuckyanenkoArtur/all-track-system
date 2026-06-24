@@ -8,15 +8,16 @@ import { AddBudgetExpenseDialog } from "../../components/AddBudgetExpenseDialog"
 import { CompleteTaskDialog } from "../../components/CompleteTaskDialog";
 import { CreateTaskButton } from "../../components/CreateTaskButton";
 import { CreateTaskDialog } from "../../components/CreateTaskDialog";
-import { TaskCollectionsBar } from "../../components/TaskCollectionsBar";
 import { TaskFiltersDrawer } from "../../components/TaskFiltersDrawer";
-import { TaskPagination } from "../../components/TaskPagination";
+
 import { TaskDetailsPanel } from "../../components/TaskDetailsPanel";
-import { TaskTable } from "../../components/TaskTable";
 import { ManualTimeEntryDialog } from "../../components/ManualTimeEntryDialog";
 import { useTasks } from "../../hooks/useTasks";
 import { useTaskTrackingDisplay } from "../../hooks/useTaskTrackingDisplay";
 import { useTaskListState } from "../../hooks/useTaskListState";
+
+import { DataTableWrapper } from "./DataTableWrapper";
+
 import {
   DEFAULT_FILTERS,
   type TasksPageNavigationState,
@@ -227,78 +228,56 @@ export function TaskListPage() {
         </div>
       </header>
 
-      <div className={styles.tableCard}>
-        <TaskCollectionsBar
-          collections={collections}
-          activeCollectionId={activeCollectionId}
-          onSelectAll={resetFilters}
-          onSelectCollection={applyCollection}
-          onDeleteCollection={(id) => {
-            deleteCollection(id);
-            if (activeCollectionId === id) {
-              resetFilters();
-            }
-          }}
-          labels={{
-            allTasks: taskLabels.allTasks,
-          }}
-        />
-
-        <TaskTable
-          tasks={listResult.tasks}
-          sort={sort}
-          onSort={toggleSort}
-          onTaskClick={(task) => setSelectedTaskId(task.id)}
-          emptyLabel={taskLabels.noResults}
-          columns={{
-            taskDetails: taskLabels.taskDetails,
-            status: taskLabels.status,
-            priority: taskLabels.priority,
-            groups: taskLabels.groups,
-            createdAt: taskLabels.createdAt,
-            dueDate: taskLabels.dueDate,
-            initiator: taskLabels.initiator,
-            responsible: taskLabels.responsible,
-            observables: taskLabels.observables,
-            budget: taskLabels.budget,
-            totalTime: taskLabels.totalTime,
-            actions: taskLabels.actions,
-            startTracking: taskLabels.startTracking,
-            stopTracking: taskLabels.stopTracking,
-            finishTracking: taskLabels.finishTracking,
-            completeTask: taskLabels.completeTask,
-            addManualTime: taskLabels.addManualTime,
-            logBudgetExpense: taskLabels.logBudgetExpense,
-          }}
-          isTracking={isTracking}
-          getDisplayTimeSpent={getDisplayTimeSpent}
-          onToggleTracking={toggleTracking}
-          onStartTracking={startTracking}
-          onStopTracking={stopTracking}
-          onCompleteTask={(taskId) => setCompleteTaskId(taskId)}
-          onAddManualTime={(taskId) => setManualTimeTaskId(taskId)}
-          onLogBudgetExpense={(taskId) => setBudgetExpenseTaskId(taskId)}
-        />
-
-        <TaskPagination
-          page={listResult.page}
-          totalPages={listResult.totalPages}
-          total={listResult.total}
-          startIndex={listResult.startIndex}
-          endIndex={listResult.endIndex}
-          pageSize={pageSize}
-          onPageChange={setPage}
-          onPageSizeChange={setPageSize}
-          labels={{
-            showing: taskLabels.showing,
-            rowsPerPage: taskLabels.rowsPerPage,
-            page: taskLabels.page,
-            of: taskLabels.of,
-            previous: taskLabels.previous,
-            next: taskLabels.next,
-          }}
-        />
-      </div>
+      <DataTableWrapper
+        collections={collections}
+        activeCollectionId={activeCollectionId}
+        onSelectAll={resetFilters}
+        onSelectCollection={applyCollection}
+        onDeleteCollection={deleteCollection}
+        listResult={listResult}
+        sort={sort}
+        onSort={toggleSort}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={setPageSize}
+        onTaskClick={setSelectedTaskId}
+        onCompleteTask={setCompleteTaskId}
+        onAddManualTime={setManualTimeTaskId}
+        onLogBudgetExpense={setBudgetExpenseTaskId}
+        isTracking={isTracking}
+        getDisplayTimeSpent={getDisplayTimeSpent}
+        onToggleTracking={toggleTracking}
+        onStartTracking={startTracking}
+        onStopTracking={stopTracking}
+        labels={{
+          allTasks: taskLabels.allTasks,
+          noResults: taskLabels.noResults,
+          taskDetails: taskLabels.taskDetails,
+          status: taskLabels.status,
+          priority: taskLabels.priority,
+          groups: taskLabels.groups,
+          createdAt: taskLabels.createdAt,
+          dueDate: taskLabels.dueDate,
+          initiator: taskLabels.initiator,
+          responsible: taskLabels.responsible,
+          observables: taskLabels.observables,
+          budget: taskLabels.budget,
+          totalTime: taskLabels.totalTime,
+          actions: taskLabels.actions,
+          startTracking: taskLabels.startTracking,
+          stopTracking: taskLabels.stopTracking,
+          finishTracking: taskLabels.finishTracking,
+          completeTask: taskLabels.completeTask,
+          addManualTime: taskLabels.addManualTime,
+          logBudgetExpense: taskLabels.logBudgetExpense,
+          showing: taskLabels.showing,
+          rowsPerPage: taskLabels.rowsPerPage,
+          page: taskLabels.page,
+          of: taskLabels.of,
+          previous: taskLabels.previous,
+          next: taskLabels.next,
+        }}
+      />
 
       <TaskFiltersDrawer
         open={filtersOpen}
