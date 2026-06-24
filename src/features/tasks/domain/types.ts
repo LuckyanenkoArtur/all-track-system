@@ -1,20 +1,13 @@
-export type TaskStatus = "done" | "inProgress" | "pending";
-export type TaskPriority = "high" | "medium" | "low";
+import type { Attachment } from "../../../domains/attachment";
+import type { TaskCommentAttachment } from "./comment";
+import type { CompletionReportStep, TaskStep } from "./step";
+import type { TaskPriority } from "./priority";
+import type { TaskStatus } from "./status";
+
+
 export type PageSize = 5 | 10 | 15 | 20;
-
-export interface TaskStep {
-  id: string;
-  text: string;
-  completed: boolean;
-}
-
-export interface TaskAttachment {
-  id: string;
-  name: string;
-  size: number;
-  mimeType: string;
-  dataUrl: string;
-}
+export const PAGE_SIZE_OPTIONS: PageSize[] = [5, 10, 15, 20];
+export const DEFAULT_PAGE_SIZE: PageSize = 10;
 
 export interface CreateTaskInput {
   title: string;
@@ -28,57 +21,11 @@ export interface CreateTaskInput {
   initiator: string;
   responsible: string[];
   budget: string;
-  attachments?: (Omit<TaskAttachment, "id"> & { id?: string })[];
+  attachments?: (Omit<Attachment, "id"> & { id?: string })[];
   requiresResultReview: boolean;
 }
 
 export type UpdateTaskInput = CreateTaskInput;
-
-export interface Task {
-  id: string;
-  title: string;
-  status: TaskStatus;
-  priority: TaskPriority;
-  groups: string[];
-  observables: string[];
-  createdAt: string;
-  startDate: string;
-  dueDate: string;
-  initiator: string;
-  responsible: string[];
-  budget: string;
-  timeSpent: string;
-  description?: string;
-  steps?: TaskStep[];
-  attachments?: TaskAttachment[];
-  requiresResultReview?: boolean;
-  budgetSpent?: string;
-}
-
-export interface TaskCommentAttachment {
-  id: string;
-  name: string;
-  size: number;
-  mimeType: string;
-  dataUrl: string;
-}
-
-export interface TaskComment {
-  id: string;
-  taskId: string;
-  author: string;
-  authorInitials: string;
-  body: string;
-  createdAt: string;
-  attachments: TaskCommentAttachment[];
-  kind?: "default" | "completion";
-  completionSteps?: CompletionReportStep[];
-}
-
-export interface CompletionReportStep {
-  id: string;
-  text: string;
-}
 
 export interface CompleteTaskReportInput {
   taskId: string;
@@ -197,9 +144,6 @@ export interface TaskCollection {
   sort: TaskSort | null;
   pageSize: PageSize;
 }
-
-export const PAGE_SIZE_OPTIONS: PageSize[] = [5, 10, 15, 20];
-export const DEFAULT_PAGE_SIZE: PageSize = 10;
 
 export const DEFAULT_FILTERS: TaskFilters = {
   search: "",
