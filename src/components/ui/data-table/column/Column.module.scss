@@ -1,0 +1,36 @@
+.alignRight {
+  text-align: right;
+}
+
+.sortBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  white-space: normal;
+  overflow-wrap: break-word;
+  cursor: pointer;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &:hover,
+  &.sortActive {
+    color: var(--color-accent);
+  }
+}
+
+.actionsCol {
+  min-width: 56px;
+  width: 56px;
+  padding-left: 8px !important;
+  padding-right: 12px !important;
+}

@@ -1,6 +1,8 @@
-import { TaskCollectionsBar } from "../../../../components/ui/data-table/TaskCollectionsBar";
-import { TaskTable } from "../../../../components/ui/data-table/TaskTable";
-import { TaskPagination } from "../../../../components/ui/data-table/TaskPagination";
+import {
+  DataTablePagination,
+  DataTableTabs,
+  TaskTable,
+} from "../../../../components/ui/data-table/TaskTable";
 import type {
   PageSize,
   SortField,
@@ -8,7 +10,7 @@ import type {
   TaskCollection,
   TaskSort,
 } from "../../domain/others";
-import styles from "../../../../components/ui/data-table/DataTable.module.scss";
+import { PAGE_SIZE_OPTIONS } from "../../domain/others";
 
 type DataTableWrapperLabels = {
   allTasks: string;
@@ -94,68 +96,77 @@ export function DataTableWrapper({
   labels,
 }: DataTableWrapperProps) {
   return (
-    <div className={styles.tableCard}>
-      <TaskCollectionsBar
-        collections={collections}
-        activeCollectionId={activeCollectionId}
-        onSelectAll={onSelectAll}
-        onSelectCollection={onSelectCollection}
-        onDeleteCollection={(id) => {
+    <TaskTable
+      value={listResult.tasks}
+      sort={sort}
+      onSort={onSort}
+      onTaskClick={(task) => onTaskClick(task.id)}
+      emptyLabel={labels.noResults}
+      columns={{
+        taskDetails: labels.taskDetails,
+        status: labels.status,
+        priority: labels.priority,
+        groups: labels.groups,
+        createdAt: labels.createdAt,
+        dueDate: labels.dueDate,
+        initiator: labels.initiator,
+        responsible: labels.responsible,
+        observables: labels.observables,
+        budget: labels.budget,
+        totalTime: labels.totalTime,
+        actions: labels.actions,
+        startTracking: labels.startTracking,
+        stopTracking: labels.stopTracking,
+        finishTracking: labels.finishTracking,
+        completeTask: labels.completeTask,
+        addManualTime: labels.addManualTime,
+        logBudgetExpense: labels.logBudgetExpense,
+      }}
+      isTracking={isTracking}
+      getDisplayTimeSpent={getDisplayTimeSpent}
+      onToggleTracking={onToggleTracking}
+      onStartTracking={onStartTracking}
+      onStopTracking={onStopTracking}
+      onCompleteTask={onCompleteTask}
+      onAddManualTime={onAddManualTime}
+      onLogBudgetExpense={onLogBudgetExpense}
+    >
+      <DataTableTabs
+        items={collections.map((collection) => ({
+          id: collection.id,
+          label: collection.name,
+          deletable: true,
+        }))}
+        activeItemId={activeCollectionId}
+        defaultItemLabel={labels.allTasks}
+        onSelectItem={(id) => {
+          if (id === null) {
+            onSelectAll();
+            return;
+          }
+
+          onSelectCollection(id);
+        }}
+        onDeleteItem={(id) => {
           onDeleteCollection(id);
+
           if (activeCollectionId === id) {
             onSelectAll();
           }
         }}
-        labels={{
-          allTasks: labels.allTasks,
-        }}
+        ariaLabel={labels.allTasks}
       />
 
-      <TaskTable
-        tasks={listResult.tasks}
-        sort={sort}
-        onSort={onSort}
-        onTaskClick={(task) => onTaskClick(task.id)}
-        emptyLabel={labels.noResults}
-        columns={{
-          taskDetails: labels.taskDetails,
-          status: labels.status,
-          priority: labels.priority,
-          groups: labels.groups,
-          createdAt: labels.createdAt,
-          dueDate: labels.dueDate,
-          initiator: labels.initiator,
-          responsible: labels.responsible,
-          observables: labels.observables,
-          budget: labels.budget,
-          totalTime: labels.totalTime,
-          actions: labels.actions,
-          startTracking: labels.startTracking,
-          stopTracking: labels.stopTracking,
-          finishTracking: labels.finishTracking,
-          completeTask: labels.completeTask,
-          addManualTime: labels.addManualTime,
-          logBudgetExpense: labels.logBudgetExpense,
-        }}
-        isTracking={isTracking}
-        getDisplayTimeSpent={getDisplayTimeSpent}
-        onToggleTracking={onToggleTracking}
-        onStartTracking={onStartTracking}
-        onStopTracking={onStopTracking}
-        onCompleteTask={onCompleteTask}
-        onAddManualTime={onAddManualTime}
-        onLogBudgetExpense={onLogBudgetExpense}
-      />
-
-      <TaskPagination
+      <DataTablePagination
         page={listResult.page}
         totalPages={listResult.totalPages}
         total={listResult.total}
         startIndex={listResult.startIndex}
         endIndex={listResult.endIndex}
         pageSize={pageSize}
+        pageSizeOptions={PAGE_SIZE_OPTIONS}
         onPageChange={onPageChange}
-        onPageSizeChange={onPageSizeChange}
+        onPageSizeChange={(size) => onPageSizeChange(size as PageSize)}
         labels={{
           showing: labels.showing,
           rowsPerPage: labels.rowsPerPage,
@@ -165,6 +176,6 @@ export function DataTableWrapper({
           next: labels.next,
         }}
       />
-    </div>
+    </TaskTable>
   );
 }

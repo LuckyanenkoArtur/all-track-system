@@ -1,0 +1,121 @@
+.taskPrimary {
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+.createdDate,
+.dueDate {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  overflow-wrap: break-word;
+}
+
+.createdDate {
+  color: var(--color-text-muted);
+
+  svg {
+    color: var(--color-text-subtle);
+    flex-shrink: 0;
+  }
+}
+
+.dueDate {
+  color: var(--color-text);
+  font-weight: 500;
+
+  svg {
+    color: var(--color-text-subtle);
+    flex-shrink: 0;
+  }
+}
+
+.groupTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+
+.initiator {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--color-text);
+  word-break: break-word;
+
+  svg {
+    color: var(--color-text-subtle);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+}
+
+.badgeGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.userBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+
+.moreBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--color-surface-secondary);
+  border: 1px dashed var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.35;
+  cursor: default;
+}
+
+.emptyCell {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+.timePill {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-surface-secondary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.timePillActive {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  font-weight: 600;
+}

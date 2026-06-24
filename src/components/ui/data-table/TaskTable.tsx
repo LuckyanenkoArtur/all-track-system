@@ -1,7 +1,6 @@
+import { type ReactNode } from "react";
 import {
   FiCalendar,
-  FiChevronDown,
-  FiChevronUp,
   FiClock,
   FiUser,
   FiUsers,
@@ -22,16 +21,14 @@ import {
 import { TaskRowActions } from "../../../features/tasks/components/TaskRowActions";
 import { TaskContextMenu } from "../../../features/tasks/components/TaskContextMenu";
 import { useTaskContextMenu } from "../../../features/tasks/hooks/useTaskContextMenu";
-import styles from "./DataTable.module.scss";
-
-type Column = {
-  field: SortField | null;
-  label: string;
-  align?: "right";
-};
+import { Column } from "./column";
+import { DataTable } from "./DataTable";
+import columnStyles from "./column/Column.module.scss";
+import styles from "./TaskTable.module.scss";
 
 type TaskTableProps = {
-  tasks: Task[];
+  value: Task[];
+  children?: ReactNode;
   sort: TaskSort | null;
   onSort: (field: SortField) => void;
   onTaskClick?: (task: Task) => void;
@@ -65,20 +62,6 @@ type TaskTableProps = {
   onAddManualTime?: (taskId: string) => void;
   onLogBudgetExpense?: (taskId: string) => void;
 };
-
-const TABLE_COLUMNS: Column[] = [
-  { field: "title", label: "taskDetails" },
-  { field: "status", label: "status" },
-  { field: "priority", label: "priority" },
-  { field: "groups", label: "groups" },
-  { field: "createdAt", label: "createdAt" },
-  { field: "dueDate", label: "dueDate" },
-  { field: "initiator", label: "initiator" },
-  { field: "responsible", label: "responsible" },
-  { field: "observables", label: "observables" },
-  { field: "budget", label: "budget", align: "right" },
-  { field: "timeSpent", label: "totalTime", align: "right" },
-];
 
 const VISIBLE_PEOPLE_LIMIT = 3;
 
@@ -120,7 +103,8 @@ function UserBadgeList({ items, icon: Icon, emptyLabel }: UserBadgeListProps) {
 }
 
 export function TaskTable({
-  tasks,
+  value,
+  children,
   sort,
   onSort,
   onTaskClick,
@@ -136,7 +120,6 @@ export function TaskTable({
   onLogBudgetExpense,
 }: TaskTableProps) {
   const { menu, openContextMenu, closeContextMenu } = useTaskContextMenu();
-  const columnCount = TABLE_COLUMNS.length + 1;
 
   const contextMenuLabels = {
     addManualTime: columns.addManualTime,
@@ -146,160 +129,147 @@ export function TaskTable({
   };
 
   return (
-    <div className={styles.tableWrapper}>
-      <div className={styles.tableScroll}>
-        <table className={styles.taskTable}>
-          <thead>
-            <tr>
-              {TABLE_COLUMNS.map((column) => {
-                const isActive = sort?.field === column.field;
-                const label = columns[column.label as keyof typeof columns];
+    <>
+      <DataTable<Task>
+        value={value}
+        sort={sort}
+        onSort={(field) => onSort(field as SortField)}
+        emptyLabel={emptyLabel}
+        onRowClick={onTaskClick}
+        onRowContextMenu={openContextMenu}
+        getRowKey={(task) => task.id}
+      >
+        {children}
+        <Column<Task>
+          field="title"
+          header={columns.taskDetails}
+          body={(task) => (
+            <div className={styles.taskPrimary}>{task.title}</div>
+          )}
+        />
+        <Column<Task>
+          field="status"
+          header={columns.status}
+          body={(task) => <StatusBadge status={task.status} />}
+        />
+        <Column<Task>
+          field="priority"
+          header={columns.priority}
+          body={(task) => <PriorityBadge priority={task.priority} />}
+        />
+        <Column<Task>
+          field="groups"
+          header={columns.groups}
+          body={(task) => (
+            <div className={styles.badgeGroup}>
+              {task.groups.map((group) => (
+                <span key={group} className={styles.groupTag}>
+                  {group}
+                </span>
+              ))}
+            </div>
+          )}
+        />
+        <Column<Task>
+          field="createdAt"
+          header={columns.createdAt}
+          body={(task) => (
+            <div className={styles.createdDate}>
+              <FiClock size={12} aria-hidden />
+              {formatDate(task.createdAt)}
+            </div>
+          )}
+        />
+        <Column<Task>
+          field="dueDate"
+          header={columns.dueDate}
+          body={(task) => (
+            <div className={styles.dueDate}>
+              <FiCalendar size={12} aria-hidden />
+              {formatDate(task.dueDate)}
+            </div>
+          )}
+        />
+        <Column<Task>
+          field="initiator"
+          header={columns.initiator}
+          body={(task) => (
+            <div className={styles.initiator}>
+              <FiUser size={14} aria-hidden />
+              {task.initiator}
+            </div>
+          )}
+        />
+        <Column<Task>
+          field="responsible"
+          header={columns.responsible}
+          body={(task) => (
+            <UserBadgeList items={task.responsible} icon={FiUsers} />
+          )}
+        />
+        <Column<Task>
+          field="observables"
+          header={columns.observables}
+          body={(task) => (
+            <UserBadgeList
+              items={task.observables}
+              icon={FiUser}
+              emptyLabel="—"
+            />
+          )}
+        />
+        <Column<Task>
+          field="budget"
+          header={columns.budget}
+          align="right"
+          body={(task) => <strong>{formatBudget(task.budget)}</strong>}
+        />
+        <Column<Task>
+          field="timeSpent"
+          header={columns.totalTime}
+          align="right"
+          body={(task) => {
+            const tracking = isTracking?.(task.id) ?? false;
+            const timeSpent = getDisplayTimeSpent?.(task) ?? task.timeSpent;
 
-                return (
-                  <th
-                    key={column.label}
-                    className={
-                      column.align === "right" ? styles.alignRight : undefined
-                    }
-                  >
-                    {column.field ? (
-                      <button
-                        type="button"
-                        className={`${styles.sortBtn} ${isActive ? styles.sortActive : ""}`}
-                        onClick={() => onSort(column.field!)}
-                      >
-                        {label}
-                        {isActive &&
-                          (sort?.direction === "asc" ? (
-                            <FiChevronUp size={14} aria-hidden />
-                          ) : (
-                            <FiChevronDown size={14} aria-hidden />
-                          ))}
-                      </button>
-                    ) : (
-                      label
-                    )}
-                  </th>
-                );
-              })}
-              <th className={`${styles.alignRight} ${styles.actionsCol}`}>
-                {columns.actions}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {tasks.length === 0 ? (
-              <tr>
-                <td colSpan={columnCount} className={styles.emptyState}>
-                  {emptyLabel}
-                </td>
-              </tr>
-            ) : (
-              tasks.map((task) => {
-                const tracking = isTracking?.(task.id) ?? false;
-                const timeSpent = getDisplayTimeSpent?.(task) ?? task.timeSpent;
+            return (
+              <span
+                className={`${styles.timePill} ${tracking ? styles.timePillActive : ""}`}
+              >
+                {timeSpent}
+              </span>
+            );
+          }}
+        />
+        <Column<Task>
+          header={columns.actions}
+          align="right"
+          sortable={false}
+          className={columnStyles.actionsCol}
+          body={(task) => {
+            const tracking = isTracking?.(task.id) ?? false;
 
-                return (
-                  <tr
-                    key={task.id}
-                    className={onTaskClick ? styles.clickableRow : undefined}
-                    onClick={onTaskClick ? () => onTaskClick(task) : undefined}
-                    onContextMenu={(event) => openContextMenu(task, event)}
-                    onKeyDown={
-                      onTaskClick
-                        ? (event) => {
-                            if (event.key === "Enter" || event.key === " ") {
-                              event.preventDefault();
-                              onTaskClick(task);
-                            }
-                          }
-                        : undefined
-                    }
-                    tabIndex={onTaskClick ? 0 : undefined}
-                    role={onTaskClick ? "button" : undefined}
-                    aria-label={onTaskClick ? task.title : undefined}
-                  >
-                    <td>
-                      <div className={styles.taskPrimary}>{task.title}</div>
-                    </td>
-                    <td>
-                      <StatusBadge status={task.status} />
-                    </td>
-                    <td>
-                      <PriorityBadge priority={task.priority} />
-                    </td>
-                    <td>
-                      <div className={styles.badgeGroup}>
-                        {task.groups.map((group) => (
-                          <span key={group} className={styles.groupTag}>
-                            {group}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td>
-                      <div className={styles.createdDate}>
-                        <FiClock size={12} aria-hidden />
-                        {formatDate(task.createdAt)}
-                      </div>
-                    </td>
-                    <td>
-                      <div className={styles.dueDate}>
-                        <FiCalendar size={12} aria-hidden />
-                        {formatDate(task.dueDate)}
-                      </div>
-                    </td>
-                    <td>
-                      <div className={styles.initiator}>
-                        <FiUser size={14} aria-hidden />
-                        {task.initiator}
-                      </div>
-                    </td>
-                    <td>
-                      <UserBadgeList items={task.responsible} icon={FiUsers} />
-                    </td>
-                    <td>
-                      <UserBadgeList
-                        items={task.observables}
-                        icon={FiUser}
-                        emptyLabel="—"
-                      />
-                    </td>
-                    <td className={styles.alignRight}>
-                      <strong>{formatBudget(task.budget)}</strong>
-                    </td>
-                    <td className={styles.alignRight}>
-                      <span
-                        className={`${styles.timePill} ${tracking ? styles.timePillActive : ""}`}
-                      >
-                        {timeSpent}
-                      </span>
-                    </td>
-                    <td className={`${styles.alignRight} ${styles.actionsCol}`}>
-                      <TaskRowActions
-                        task={task}
-                        isTracking={tracking}
-                        labels={{
-                          actions: columns.actions,
-                          startTracking: columns.startTracking,
-                          stopTracking: columns.stopTracking,
-                          completeTask: columns.completeTask,
-                          addManualTime: columns.addManualTime,
-                          logBudgetExpense: columns.logBudgetExpense,
-                        }}
-                        onToggleTracking={onToggleTracking}
-                        onComplete={onCompleteTask}
-                        onAddManualTime={onAddManualTime}
-                        onLogBudgetExpense={onLogBudgetExpense}
-                      />
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
+            return (
+              <TaskRowActions
+                task={task}
+                isTracking={tracking}
+                labels={{
+                  actions: columns.actions,
+                  startTracking: columns.startTracking,
+                  stopTracking: columns.stopTracking,
+                  completeTask: columns.completeTask,
+                  addManualTime: columns.addManualTime,
+                  logBudgetExpense: columns.logBudgetExpense,
+                }}
+                onToggleTracking={onToggleTracking}
+                onComplete={onCompleteTask}
+                onAddManualTime={onAddManualTime}
+                onLogBudgetExpense={onLogBudgetExpense}
+              />
+            );
+          }}
+        />
+      </DataTable>
 
       <TaskContextMenu
         menu={menu}
@@ -311,6 +281,20 @@ export function TaskTable({
         onStopTracking={onStopTracking}
         onLogBudgetExpense={onLogBudgetExpense}
       />
-    </div>
+    </>
   );
 }
+
+export {
+  Column,
+  DataTable,
+  DataTablePagination,
+  DataTableTabs,
+} from "./DataTable";
+export type {
+  ColumnProps,
+  DataTablePaginationLabels,
+  DataTablePaginationProps,
+  DataTableTabItem,
+  DataTableTabsProps,
+} from "./DataTable";

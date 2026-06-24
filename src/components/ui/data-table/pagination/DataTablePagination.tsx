@@ -1,38 +1,21 @@
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import type { PageSize } from "../../../features/tasks/domain/others";
-import { PAGE_SIZE_OPTIONS } from "../../../features/tasks/domain/others";
-import styles from "./DataTable.module.scss";
+import type { DataTablePaginationProps } from "./data-table-pagination.types";
+import styles from "./DataTablePagination.module.scss";
 
-type TaskPaginationProps = {
-  page: number;
-  totalPages: number;
-  total: number;
-  startIndex: number;
-  endIndex: number;
-  pageSize: PageSize;
-  onPageChange: (page: number) => void;
-  onPageSizeChange: (size: PageSize) => void;
-  labels: {
-    showing: string;
-    rowsPerPage: string;
-    page: string;
-    of: string;
-    previous: string;
-    next: string;
-  };
-};
+const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 15, 20];
 
-export function TaskPagination({
+export function DataTablePagination({
   page,
   totalPages,
   total,
   startIndex,
   endIndex,
   pageSize,
+  pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
   onPageChange,
   onPageSizeChange,
   labels,
-}: TaskPaginationProps) {
+}: DataTablePaginationProps) {
   const from = total === 0 ? 0 : startIndex + 1;
   const to = endIndex;
 
@@ -48,10 +31,10 @@ export function TaskPagination({
           <select
             value={pageSize}
             onChange={(event) =>
-              onPageSizeChange(Number(event.target.value) as PageSize)
+              onPageSizeChange(Number(event.target.value))
             }
           >
-            {PAGE_SIZE_OPTIONS.map((size) => (
+            {pageSizeOptions.map((size) => (
               <option key={size} value={size}>
                 {size}
               </option>
