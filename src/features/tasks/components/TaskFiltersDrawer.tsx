@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { FiX } from "react-icons/fi";
 import Dialog from "../../user-profile/components/dialogs/Dialog";
-import type { TaskFilters, TaskPriority, TaskStatus } from "../domain/types";
+import type { TaskFilters, TaskPriority, TaskStatus } from "../domain/others";
 import {
   areDrawerFiltersEqual,
   hasDrawerFilters,

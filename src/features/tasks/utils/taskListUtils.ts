@@ -4,7 +4,7 @@ import type {
   TaskSort,
   TaskListQuery,
   SortField,
-} from "../domain/types";
+} from "../domain/others";
 
 const STATUS_ORDER = { pending: 0, inProgress: 1, done: 2 };
 const PRIORITY_ORDER = { low: 0, medium: 1, high: 2 };
@@ -73,7 +73,10 @@ export function matchesFilters(task: Task, filters: TaskFilters): boolean {
   }
 
   if (!includesAny(task.groups, filters.groups)) return false;
-  if (filters.initiators.length > 0 && !filters.initiators.includes(task.initiator)) {
+  if (
+    filters.initiators.length > 0 &&
+    !filters.initiators.includes(task.initiator)
+  ) {
     return false;
   }
   if (!includesAny(task.responsible, filters.responsible)) return false;

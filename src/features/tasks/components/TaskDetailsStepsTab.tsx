@@ -1,5 +1,5 @@
 import { FiCheck, FiCheckSquare } from "react-icons/fi";
-import type { TaskStep } from "../domain/types";
+import type { TaskStep } from "../domain/others";
 import { TaskDetailsTabPlaceholder } from "./TaskDetailsTabPlaceholder";
 import styles from "./TaskDetailsStepsTab.module.scss";
 

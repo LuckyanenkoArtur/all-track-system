@@ -6,7 +6,7 @@ import {
   FiUser,
   FiUsers,
 } from "react-icons/fi";
-import type { SortField, Task, TaskSort } from "../domain/types";
+import type { SortField, Task, TaskSort } from "../domain/others";
 import { formatDate, formatBudget } from "../utils/taskListUtils";
 import { PriorityBadge, StatusBadge } from "./TaskBadges";
 import { TaskRowActions } from "./TaskRowActions";

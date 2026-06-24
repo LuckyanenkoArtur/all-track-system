@@ -13,7 +13,7 @@ import {
   FiUser,
   FiUsers,
 } from "react-icons/fi";
-import type { BudgetTransaction, Task, TaskStatus } from "../domain/types";
+import type { BudgetTransaction, Task, TaskStatus } from "../domain/others";
 import { formatDueDate } from "../utils/dateUtils";
 import {
   formatCurrency,

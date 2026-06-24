@@ -1,27 +1,30 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTasks } from "../hooks/useTasks";
-import type { PageSize, TaskFilters, TaskSort } from "../domain/types";
-import {
-  DEFAULT_FILTERS,
-  DEFAULT_PAGE_SIZE,
-} from "../domain/types";
+import type { TaskFilters } from "../domain/filters";
+import type { TaskSort } from "../domain/sort";
+import { DEFAULT_FILTERS } from "../domain/filters";
 import {
   countActiveFilters,
   getUniqueFilterOptions,
   processTaskList,
 } from "../utils/taskListUtils";
 import { useTaskCollections } from "./useTaskCollections";
+import { DEFAULT_PAGE_SIZE, type PageSize } from "../domain/others";
 
 export function useTaskListState() {
   const { tasks } = useTasks();
-  const { collections, saveCollection, deleteCollection } = useTaskCollections();
+  const { collections, saveCollection, deleteCollection } =
+    useTaskCollections();
 
   const [filters, setFiltersState] = useState<TaskFilters>(DEFAULT_FILTERS);
-  const [draftFilters, setDraftFilters] = useState<TaskFilters>(DEFAULT_FILTERS);
+  const [draftFilters, setDraftFilters] =
+    useState<TaskFilters>(DEFAULT_FILTERS);
   const [sort, setSortState] = useState<TaskSort | null>(null);
   const [pageSize, setPageSizeState] = useState<PageSize>(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(1);
-  const [activeCollectionId, setActiveCollectionId] = useState<string | null>(null);
+  const [activeCollectionId, setActiveCollectionId] = useState<string | null>(
+    null,
+  );
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const filterOptions = useMemo(() => getUniqueFilterOptions(tasks), [tasks]);
@@ -87,7 +90,10 @@ export function useTaskListState() {
       clearActiveCollection();
       setSortState((current) => {
         if (current?.field === field) {
-          return { field, direction: current.direction === "asc" ? "desc" : "asc" };
+          return {
+            field,
+            direction: current.direction === "asc" ? "desc" : "asc",
+          };
         }
         return { field, direction: "asc" };
       });
@@ -159,12 +165,17 @@ export function useTaskListState() {
   );
 
   const stats = useMemo(() => {
-    const inProgress = tasks.filter((task) => task.status === "inProgress").length;
+    const inProgress = tasks.filter(
+      (task) => task.status === "inProgress",
+    ).length;
     const pending = tasks.filter((task) => task.status === "pending").length;
     return { total: tasks.length, inProgress, pending };
   }, [tasks]);
 
-  const activeFilterCount = useMemo(() => countActiveFilters(filters), [filters]);
+  const activeFilterCount = useMemo(
+    () => countActiveFilters(filters),
+    [filters],
+  );
 
   return {
     filters,

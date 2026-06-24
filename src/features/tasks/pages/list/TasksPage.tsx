@@ -20,7 +20,7 @@ import { useTaskListState } from "../../hooks/useTaskListState";
 import {
   DEFAULT_FILTERS,
   type TasksPageNavigationState,
-} from "../../domain/types";
+} from "../../domain/others";
 import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksPage.module.scss";
 

@@ -1,5 +1,5 @@
 import { useCallback, useState, type MouseEvent } from "react";
-import type { Task } from "../domain/types";
+import type { Task } from "../domain/others";
 
 export type TaskContextMenuState = {
   task: Task;

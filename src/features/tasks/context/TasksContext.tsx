@@ -7,11 +7,7 @@ import {
 } from "react";
 import { MOCK_TASKS } from "../data/mockTasks";
 import { MOCK_TASK_COMMENTS } from "../data/mockTaskComments";
-import type {
-  AddTaskCommentInput,
-  BudgetTransaction,
-  TaskHistoryEntry,
-} from "../domain/types";
+import type { BudgetTransaction } from "../domain/others";
 
 import type {
   CreateTaskInput,
@@ -19,6 +15,7 @@ import type {
   CompleteTaskReportInput,
   AddManualTimeInput,
   AddBudgetExpenseInput,
+  AddTaskCommentInput,
 } from "../domain/inputs";
 
 import type { Task } from "../domain/task";
@@ -31,6 +28,7 @@ import {
   formatTimeSpent,
 } from "../utils/timeTrackingUtils";
 import { parseTimeMinutes } from "../utils/taskListUtils";
+import type { TaskHistoryEntry } from "../domain/history-entry";
 
 const STORAGE_KEY = "alltrack-tasks";
 const COMMENTS_STORAGE_KEY = "alltrack-task-comments";

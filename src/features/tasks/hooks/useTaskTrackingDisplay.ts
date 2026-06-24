@@ -1,8 +1,11 @@
 import { useCallback } from "react";
-import type { Task } from "../domain/types";
+import type { Task } from "../domain/others";
 import { useTasks } from "./useTasks";
 import { useTrackingTimer } from "./useTrackingTimer";
-import { formatSessionTimer, getLiveTimeSpent } from "../utils/timeTrackingUtils";
+import {
+  formatSessionTimer,
+  getLiveTimeSpent,
+} from "../utils/timeTrackingUtils";
 
 export function useTaskTrackingDisplay(taskId?: string | null) {
   useTrackingTimer();

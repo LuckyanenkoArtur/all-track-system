@@ -1,5 +1,5 @@
 import { FiCheckCircle, FiClock } from "react-icons/fi";
-import type { TaskHistoryEntry } from "../domain/types";
+import type { TaskHistoryEntry } from "../domain/others";
 import { formatCommentDate } from "../utils/commentUtils";
 import { TaskDetailsTabPlaceholder } from "./TaskDetailsTabPlaceholder";
 import styles from "./TaskDetailsHistoryTab.module.scss";

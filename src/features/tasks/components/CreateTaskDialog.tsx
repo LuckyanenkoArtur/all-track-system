@@ -21,7 +21,7 @@ import type {
   Task,
   TaskPriority,
   TaskStep,
-} from "../domain/types";
+} from "../domain/others";
 import { toDateTimeLocalValue } from "../utils/dateUtils";
 import {
   createPendingAttachment,

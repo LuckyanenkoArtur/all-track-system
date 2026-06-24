@@ -6,7 +6,7 @@ import { useTranslation } from "../../../i18n";
 import { useTaskListState } from "../hooks/useTaskListState";
 import { useTasks } from "../hooks/useTasks";
 import { useTaskTrackingDisplay } from "../hooks/useTaskTrackingDisplay";
-import type { Task } from "../domain/types";
+import type { Task } from "../domain/others";
 import { getAuthorInitials } from "../utils/commentUtils";
 import { getLiveTimeSpent } from "../utils/timeTrackingUtils";
 import { CompleteTaskDialog } from "./CompleteTaskDialog";

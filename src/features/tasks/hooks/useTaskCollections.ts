@@ -1,5 +1,10 @@
 import { useCallback, useState } from "react";
-import type { TaskCollection, TaskFilters, TaskSort, PageSize } from "../domain/types";
+import type { TaskCollection } from "../domain/collection";
+import type { TaskFilters } from "../domain/filters";
+import type { TaskSort } from "../domain/sort";
+import type { PageSize } from "../domain/others";
+import type { TaskPriority } from "../domain/priority";
+import type { TaskStatus } from "../domain/status";
 
 const STORAGE_KEY = "alltrack-task-collections";
 
@@ -9,8 +14,8 @@ const DEFAULT_COLLECTIONS: TaskCollection[] = [
     name: "High priority · active",
     filters: {
       search: "",
-      statuses: ["inProgress"],
-      priorities: ["high"],
+      statuses: [{ id: "inProgress" } as TaskStatus],
+      priorities: [{ id: "high" } as TaskPriority],
       groups: [],
       initiators: [],
       responsible: [],
@@ -30,7 +35,7 @@ const DEFAULT_COLLECTIONS: TaskCollection[] = [
     name: "Pending review",
     filters: {
       search: "",
-      statuses: ["pending"],
+      statuses: [{ id: "pending" } as TaskStatus],
       priorities: [],
       groups: [],
       initiators: [],
@@ -78,10 +83,16 @@ function persistCollections(collections: TaskCollection[]) {
 }
 
 export function useTaskCollections() {
-  const [collections, setCollections] = useState<TaskCollection[]>(loadCollections);
+  const [collections, setCollections] =
+    useState<TaskCollection[]>(loadCollections);
 
   const saveCollection = useCallback(
-    (name: string, filters: TaskFilters, sort: TaskSort | null, pageSize: PageSize) => {
+    (
+      name: string,
+      filters: TaskFilters,
+      sort: TaskSort | null,
+      pageSize: PageSize,
+    ) => {
       const trimmed = name.trim();
       if (!trimmed) return null;
 

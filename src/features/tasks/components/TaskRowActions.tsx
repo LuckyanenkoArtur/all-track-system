@@ -6,7 +6,7 @@ import {
   FiMoreHorizontal,
   FiPlus,
 } from "react-icons/fi";
-import type { Task } from "../domain/types";
+import type { Task } from "../domain/others";
 import styles from "./TaskRowActions.module.scss";
 
 type TaskRowActionsProps = {

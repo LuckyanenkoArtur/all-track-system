@@ -13,7 +13,7 @@ import {
   FiUser,
   FiUsers,
 } from "react-icons/fi";
-import type { Task, TaskStatus } from "../domain/types";
+import type { Task, TaskStatus } from "../domain/others";
 import { formatDueDate } from "../utils/dateUtils";
 import { formatDate, formatBudget } from "../utils/taskListUtils";
 import { PriorityBadge, StatusBadge } from "./TaskBadges";

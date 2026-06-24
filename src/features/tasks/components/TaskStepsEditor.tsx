@@ -1,5 +1,5 @@
 import { FiPlus, FiTrash2 } from "react-icons/fi";
-import type { TaskStep } from "../domain/types";
+import type { TaskStep } from "../domain/others";
 import styles from "./TaskStepsEditor.module.scss";
 
 type TaskStepsEditorLabels = {

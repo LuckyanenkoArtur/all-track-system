@@ -12,7 +12,7 @@ import {
   FiSend,
   FiX,
 } from "react-icons/fi";
-import type { TaskComment } from "../domain/types";
+import type { TaskComment } from "../domain/others";
 import {
   createPendingAttachment,
   downloadAttachment,

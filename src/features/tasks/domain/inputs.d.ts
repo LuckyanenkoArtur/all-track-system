@@ -1,4 +1,5 @@
 import type { Attachment } from "../../../domain/attachment";
+import type { TaskCommentAttachment } from "./comment";
 import type { TaskPriority } from "./priority";
 import type { CompletionReportStep, TaskStep } from "./step";
 
@@ -43,4 +44,14 @@ export interface AddBudgetExpenseInput {
   description: string;
   author: string;
   authorInitials: string;
+}
+
+export interface AddTaskCommentInput {
+  taskId: string;
+  body: string;
+  author: string;
+  authorInitials: string;
+  attachments: Omit<TaskCommentAttachment, "id">[];
+  kind?: "default" | "completion";
+  completionSteps?: CompletionReportStep[];
 }
