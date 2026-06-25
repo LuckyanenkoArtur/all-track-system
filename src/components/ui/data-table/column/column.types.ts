@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 
-export type ColumnProps<T> = {
-  field?: keyof T & string;
+export type DataColumnProps = {
+  field?: string;
   header: string;
-  body?: (row: T) => ReactNode;
+  body?: (row: unknown) => ReactNode;
   align?: "left" | "right";
   sortable?: boolean;
   className?: string;

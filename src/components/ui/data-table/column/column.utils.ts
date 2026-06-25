@@ -1,23 +1,43 @@
 import { Children, isValidElement, type ReactNode } from "react";
-import { Column } from "./Column";
-import type { ColumnProps } from "./column.types";
-import styles from "./Column.module.scss";
+import { DataColumn } from "./DataColumn";
+import type { DataColumnProps } from "./column.types";
+import styles from "./DataColumn.module.scss";
 
-export function getColumnsFromChildren<T>(children: ReactNode): ColumnProps<T>[] {
+function isDataColumnElement(
+  child: unknown,
+): child is { props: DataColumnProps } {
+  if (typeof child !== "object" || child === null || !("type" in child)) {
+    return false;
+  }
+
+  const type = (child as { type: unknown }).type;
+
+  return (
+    type === DataColumn ||
+    (typeof type === "function" &&
+      "displayName" in type &&
+      type.displayName === "DataColumn")
+  );
+}
+
+export function getColumnsFromChildren(
+  children: ReactNode,
+): DataColumnProps[] {
   return Children.toArray(children).flatMap((child) => {
-    if (!isValidElement(child) || child.type !== Column) {
+    if (!isValidElement(child) || !isDataColumnElement(child)) {
       return [];
     }
 
-    return [child.props as ColumnProps<T>];
+    return [child.props];
   });
 }
 
-export function getCellValue<T extends object>(
-  row: T,
-  field: keyof T & string,
-): ReactNode {
-  const value = row[field];
+export function getCellValue<T>(row: T, field: string): ReactNode {
+  if (typeof row !== "object" || row === null) {
+    return null;
+  }
+
+  const value = (row as Record<string, unknown>)[field];
 
   if (value == null) {
     return null;

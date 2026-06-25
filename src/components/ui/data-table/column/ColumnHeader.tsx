@@ -1,15 +1,15 @@
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
-import type { ColumnProps, ColumnSort } from "./column.types";
+import type { ColumnSort, DataColumnProps } from "./column.types";
 import { getColumnClassName } from "./column.utils";
-import styles from "./Column.module.scss";
+import styles from "./DataColumn.module.scss";
 
-type ColumnHeaderProps<T> = {
-  column: ColumnProps<T>;
+type ColumnHeaderProps = {
+  column: DataColumnProps;
   sort?: ColumnSort;
   onSort?: (field: string) => void;
 };
 
-export function ColumnHeader<T>({ column, sort, onSort }: ColumnHeaderProps<T>) {
+export function ColumnHeader({ column, sort, onSort }: ColumnHeaderProps) {
   const isActive = sort?.field === column.field;
   const isSortable =
     column.sortable !== false && Boolean(column.field && onSort);

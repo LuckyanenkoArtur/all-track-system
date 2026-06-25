@@ -1,13 +1,14 @@
 import { type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
 
-import { ColumnCell, ColumnHeader, type ColumnSort } from "./column";
+import { ColumnCell, ColumnHeader, type ColumnSort, type DataColumnProps } from "./column";
 
 import { parseDataTableChildren } from "./utils/parseDataTableChildren";
 
 import styles from "./DataTable.module.scss";
 
-type DataTableProps<T extends object> = {
+type DataTableProps<T> = {
   value: T[];
+  columns?: DataColumnProps[];
   children: ReactNode;
   emptyLabel?: string;
   sort?: ColumnSort;
@@ -15,10 +16,12 @@ type DataTableProps<T extends object> = {
   onRowClick?: (row: T) => void;
   onRowContextMenu?: (row: T, event: MouseEvent) => void;
   getRowKey?: (row: T) => string;
+  getRowAriaLabel?: (row: T) => string | undefined;
 };
 
-export function DataTable<T extends object>({
-  value,
+export function DataTable<T>({
+  value = [],
+  columns: columnsProp,
   children,
   emptyLabel = "No results",
   sort,
@@ -26,8 +29,12 @@ export function DataTable<T extends object>({
   onRowClick,
   onRowContextMenu,
   getRowKey,
+  getRowAriaLabel,
 }: DataTableProps<T>) {
-  const { tabs, columns, pagination } = parseDataTableChildren<T>(children);
+  const { tabs, columns: parsedColumns, pagination } =
+    parseDataTableChildren(children);
+
+  const columns = columnsProp ?? parsedColumns;
 
   const columnCount = columns.length;
 
@@ -37,7 +44,7 @@ export function DataTable<T extends object>({
 
       <div className={styles.tableWrapper}>
         <div className={styles.tableScroll}>
-          <table className={styles.taskTable}>
+          <table className={styles.dataTable}>
             <thead>
               <tr>
                 {columns.map((column) => (
@@ -86,9 +93,7 @@ export function DataTable<T extends object>({
                       tabIndex={onRowClick ? 0 : undefined}
                       role={onRowClick ? "button" : undefined}
                       aria-label={
-                        onRowClick && "title" in row
-                          ? String(row.title)
-                          : undefined
+                        onRowClick ? getRowAriaLabel?.(row) : undefined
                       }
                     >
                       {columns.map((column) => (
@@ -112,9 +117,9 @@ export function DataTable<T extends object>({
   );
 }
 
-export { Column } from "./column";
+export { DataColumn } from "./column";
 
-export type { ColumnProps } from "./column";
+export type { DataColumnProps } from "./column";
 
 export { DataTableTabs } from "./tabs";
 
@@ -126,3 +131,9 @@ export type {
   DataTablePaginationLabels,
   DataTablePaginationProps,
 } from "./pagination";
+
+export {
+  TaskTableCollectionTabs,
+  type TaskTableCollection,
+  type TaskTableCollectionTabsProps,
+} from "./TaskTable";

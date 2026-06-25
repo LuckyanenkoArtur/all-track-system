@@ -1,7 +1,7 @@
-export { Column } from "./Column";
+export { DataColumn } from "./DataColumn";
 export { ColumnHeader } from "./ColumnHeader";
 export { ColumnCell } from "./ColumnCell";
-export type { ColumnProps, ColumnSort } from "./column.types";
+export type { DataColumnProps, ColumnSort } from "./column.types";
 export {
   getColumnsFromChildren,
   getCellValue,

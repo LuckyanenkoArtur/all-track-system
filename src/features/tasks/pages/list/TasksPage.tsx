@@ -16,7 +16,7 @@ import { useTasks } from "../../hooks/useTasks";
 import { useTaskTrackingDisplay } from "../../hooks/useTaskTrackingDisplay";
 import { useTaskListState } from "../../hooks/useTaskListState";
 
-import { DataTableWrapper } from "./DataTableWrapper";
+import { TaskDataTable } from "../../components/DataTables/TaskDataTable";
 
 import {
   DEFAULT_FILTERS,
@@ -228,13 +228,20 @@ export function TaskListPage() {
         </div>
       </header>
 
-      <DataTableWrapper
+      <TaskDataTable
         collections={collections}
+        tasks={listResult.tasks}
         activeCollectionId={activeCollectionId}
         onSelectAll={resetFilters}
         onSelectCollection={applyCollection}
         onDeleteCollection={deleteCollection}
-        listResult={listResult}
+        listResult={{
+          page: listResult.page,
+          totalPages: listResult.totalPages,
+          total: listResult.total,
+          startIndex: listResult.startIndex,
+          endIndex: listResult.endIndex,
+        }}
         sort={sort}
         onSort={toggleSort}
         pageSize={pageSize}

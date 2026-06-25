@@ -1,12 +1,12 @@
-import type { ColumnProps } from "./column.types";
+import type { DataColumnProps } from "./column.types";
 import { getCellValue, getColumnClassName } from "./column.utils";
 
-type ColumnCellProps<T extends object> = {
-  column: ColumnProps<T>;
+type ColumnCellProps<T> = {
+  column: DataColumnProps;
   row: T;
 };
 
-export function ColumnCell<T extends object>({ column, row }: ColumnCellProps<T>) {
+export function ColumnCell<T>({ column, row }: ColumnCellProps<T>) {
   return (
     <td className={getColumnClassName(column.align, column.className)}>
       {column.body
