@@ -8,37 +8,23 @@ import styles from "./DataTable.module.scss";
 
 type DataTableProps<T extends object> = {
   value: T[];
-
   children: ReactNode;
-
   emptyLabel?: string;
-
   sort?: ColumnSort;
-
   onSort?: (field: string) => void;
-
   onRowClick?: (row: T) => void;
-
   onRowContextMenu?: (row: T, event: MouseEvent) => void;
-
   getRowKey?: (row: T) => string;
 };
 
 export function DataTable<T extends object>({
   value,
-
   children,
-
   emptyLabel = "No results",
-
   sort,
-
   onSort,
-
   onRowClick,
-
   onRowContextMenu,
-
   getRowKey,
 }: DataTableProps<T>) {
   const { tabs, columns, pagination } = parseDataTableChildren<T>(children);

@@ -1,8 +1,17 @@
+import { FiCalendar, FiClock, FiUser, FiUsers } from "react-icons/fi";
 import {
+  Column,
+  DataTable,
   DataTablePagination,
   DataTableTabs,
-  TaskTable,
-} from "../../../../components/ui/data-table/TaskTable";
+} from "../../../../components/ui/data-table/DataTable";
+import columnStyles from "../../../../components/ui/data-table/column/Column.module.scss";
+import {
+  PriorityBadge,
+  StatusBadge,
+} from "../../components/TaskBadges";
+import { TaskContextMenu } from "../../components/TaskContextMenu";
+import { TaskRowActions } from "../../components/TaskRowActions";
 import type {
   PageSize,
   SortField,
@@ -11,6 +20,12 @@ import type {
   TaskSort,
 } from "../../domain/others";
 import { PAGE_SIZE_OPTIONS } from "../../domain/others";
+import { useTaskContextMenu } from "../../hooks/useTaskContextMenu";
+import {
+  formatBudget,
+  formatDate,
+} from "../../utils/taskListUtils";
+import styles from "./DataTableWrapper.module.scss";
 
 type DataTableWrapperLabels = {
   allTasks: string;
@@ -72,6 +87,45 @@ type DataTableWrapperProps = {
   labels: DataTableWrapperLabels;
 };
 
+const VISIBLE_PEOPLE_LIMIT = 3;
+
+type UserBadgeListProps = {
+  items: string[];
+  icon: typeof FiUser;
+  emptyLabel?: string;
+};
+
+function UserBadgeList({ items, icon: Icon, emptyLabel }: UserBadgeListProps) {
+  if (items.length === 0) {
+    return emptyLabel ? (
+      <span className={styles.emptyCell}>{emptyLabel}</span>
+    ) : null;
+  }
+
+  const visible = items.slice(0, VISIBLE_PEOPLE_LIMIT);
+  const hidden = items.slice(VISIBLE_PEOPLE_LIMIT);
+
+  return (
+    <div className={styles.badgeGroup}>
+      {visible.map((person) => (
+        <span key={person} className={styles.userBadge}>
+          <Icon size={12} aria-hidden />
+          {person}
+        </span>
+      ))}
+      {hidden.length > 0 && (
+        <span
+          className={styles.moreBadge}
+          title={hidden.join(", ")}
+          aria-label={hidden.join(", ")}
+        >
+          +{hidden.length}
+        </span>
+      )}
+    </div>
+  );
+}
+
 export function DataTableWrapper({
   collections,
   activeCollectionId,
@@ -95,87 +149,213 @@ export function DataTableWrapper({
   onStopTracking,
   labels,
 }: DataTableWrapperProps) {
+  const { menu, openContextMenu, closeContextMenu } = useTaskContextMenu();
+
+  const contextMenuLabels = {
+    addManualTime: labels.addManualTime,
+    startTracking: labels.startTracking,
+    finishTracking: labels.finishTracking,
+    logBudgetExpense: labels.logBudgetExpense,
+  };
+
   return (
-    <TaskTable
-      value={listResult.tasks}
-      sort={sort}
-      onSort={onSort}
-      onTaskClick={(task) => onTaskClick(task.id)}
-      emptyLabel={labels.noResults}
-      columns={{
-        taskDetails: labels.taskDetails,
-        status: labels.status,
-        priority: labels.priority,
-        groups: labels.groups,
-        createdAt: labels.createdAt,
-        dueDate: labels.dueDate,
-        initiator: labels.initiator,
-        responsible: labels.responsible,
-        observables: labels.observables,
-        budget: labels.budget,
-        totalTime: labels.totalTime,
-        actions: labels.actions,
-        startTracking: labels.startTracking,
-        stopTracking: labels.stopTracking,
-        finishTracking: labels.finishTracking,
-        completeTask: labels.completeTask,
-        addManualTime: labels.addManualTime,
-        logBudgetExpense: labels.logBudgetExpense,
-      }}
-      isTracking={isTracking}
-      getDisplayTimeSpent={getDisplayTimeSpent}
-      onToggleTracking={onToggleTracking}
-      onStartTracking={onStartTracking}
-      onStopTracking={onStopTracking}
-      onCompleteTask={onCompleteTask}
-      onAddManualTime={onAddManualTime}
-      onLogBudgetExpense={onLogBudgetExpense}
-    >
-      <DataTableTabs
-        items={collections.map((collection) => ({
-          id: collection.id,
-          label: collection.name,
-          deletable: true,
-        }))}
-        activeItemId={activeCollectionId}
-        defaultItemLabel={labels.allTasks}
-        onSelectItem={(id) => {
-          if (id === null) {
-            onSelectAll();
-            return;
-          }
+    <>
+      <DataTable<Task>
+        value={listResult.tasks}
+        sort={sort}
+        onSort={(field) => onSort(field as SortField)}
+        emptyLabel={labels.noResults}
+        onRowClick={(task) => onTaskClick(task.id)}
+        onRowContextMenu={openContextMenu}
+        getRowKey={(task) => task.id}
+      >
+        <DataTableTabs
+          items={collections.map((collection) => ({
+            id: collection.id,
+            label: collection.name,
+            deletable: true,
+          }))}
+          activeItemId={activeCollectionId}
+          defaultItemLabel={labels.allTasks}
+          onSelectItem={(id) => {
+            if (id === null) {
+              onSelectAll();
+              return;
+            }
 
-          onSelectCollection(id);
-        }}
-        onDeleteItem={(id) => {
-          onDeleteCollection(id);
+            onSelectCollection(id);
+          }}
+          onDeleteItem={(id) => {
+            onDeleteCollection(id);
 
-          if (activeCollectionId === id) {
-            onSelectAll();
-          }
-        }}
-        ariaLabel={labels.allTasks}
+            if (activeCollectionId === id) {
+              onSelectAll();
+            }
+          }}
+          ariaLabel={labels.allTasks}
+        />
+
+        <Column<Task>
+          field="title"
+          header={labels.taskDetails}
+          body={(task) => (
+            <div className={styles.taskPrimary}>{task.title}</div>
+          )}
+        />
+        <Column<Task>
+          field="status"
+          header={labels.status}
+          body={(task) => <StatusBadge status={task.status} />}
+        />
+        <Column<Task>
+          field="priority"
+          header={labels.priority}
+          body={(task) => <PriorityBadge priority={task.priority} />}
+        />
+        <Column<Task>
+          field="groups"
+          header={labels.groups}
+          body={(task) => (
+            <div className={styles.badgeGroup}>
+              {task.groups.map((group) => (
+                <span key={group} className={styles.groupTag}>
+                  {group}
+                </span>
+              ))}
+            </div>
+          )}
+        />
+        <Column<Task>
+          field="createdAt"
+          header={labels.createdAt}
+          body={(task) => (
+            <div className={styles.createdDate}>
+              <FiClock size={12} aria-hidden />
+              {formatDate(task.createdAt)}
+            </div>
+          )}
+        />
+        <Column<Task>
+          field="dueDate"
+          header={labels.dueDate}
+          body={(task) => (
+            <div className={styles.dueDate}>
+              <FiCalendar size={12} aria-hidden />
+              {formatDate(task.dueDate)}
+            </div>
+          )}
+        />
+        <Column<Task>
+          field="initiator"
+          header={labels.initiator}
+          body={(task) => (
+            <div className={styles.initiator}>
+              <FiUser size={14} aria-hidden />
+              {task.initiator}
+            </div>
+          )}
+        />
+        <Column<Task>
+          field="responsible"
+          header={labels.responsible}
+          body={(task) => (
+            <UserBadgeList items={task.responsible} icon={FiUsers} />
+          )}
+        />
+        <Column<Task>
+          field="observables"
+          header={labels.observables}
+          body={(task) => (
+            <UserBadgeList
+              items={task.observables}
+              icon={FiUser}
+              emptyLabel="—"
+            />
+          )}
+        />
+        <Column<Task>
+          field="budget"
+          header={labels.budget}
+          align="right"
+          body={(task) => <strong>{formatBudget(task.budget)}</strong>}
+        />
+        <Column<Task>
+          field="timeSpent"
+          header={labels.totalTime}
+          align="right"
+          body={(task) => {
+            const tracking = isTracking(task.id);
+            const timeSpent = getDisplayTimeSpent(task);
+
+            return (
+              <span
+                className={`${styles.timePill} ${tracking ? styles.timePillActive : ""}`}
+              >
+                {timeSpent}
+              </span>
+            );
+          }}
+        />
+        <Column<Task>
+          header={labels.actions}
+          align="right"
+          sortable={false}
+          className={columnStyles.actionsCol}
+          body={(task) => {
+            const tracking = isTracking(task.id);
+
+            return (
+              <TaskRowActions
+                task={task}
+                isTracking={tracking}
+                labels={{
+                  actions: labels.actions,
+                  startTracking: labels.startTracking,
+                  stopTracking: labels.stopTracking,
+                  completeTask: labels.completeTask,
+                  addManualTime: labels.addManualTime,
+                  logBudgetExpense: labels.logBudgetExpense,
+                }}
+                onToggleTracking={onToggleTracking}
+                onComplete={onCompleteTask}
+                onAddManualTime={onAddManualTime}
+                onLogBudgetExpense={onLogBudgetExpense}
+              />
+            );
+          }}
+        />
+
+        <DataTablePagination
+          page={listResult.page}
+          totalPages={listResult.totalPages}
+          total={listResult.total}
+          startIndex={listResult.startIndex}
+          endIndex={listResult.endIndex}
+          pageSize={pageSize}
+          pageSizeOptions={PAGE_SIZE_OPTIONS}
+          onPageChange={onPageChange}
+          onPageSizeChange={(size) => onPageSizeChange(size as PageSize)}
+          labels={{
+            showing: labels.showing,
+            rowsPerPage: labels.rowsPerPage,
+            page: labels.page,
+            of: labels.of,
+            previous: labels.previous,
+            next: labels.next,
+          }}
+        />
+      </DataTable>
+
+      <TaskContextMenu
+        menu={menu}
+        isTracking={isTracking}
+        labels={contextMenuLabels}
+        onClose={closeContextMenu}
+        onAddManualTime={onAddManualTime}
+        onStartTracking={onStartTracking}
+        onStopTracking={onStopTracking}
+        onLogBudgetExpense={onLogBudgetExpense}
       />
-
-      <DataTablePagination
-        page={listResult.page}
-        totalPages={listResult.totalPages}
-        total={listResult.total}
-        startIndex={listResult.startIndex}
-        endIndex={listResult.endIndex}
-        pageSize={pageSize}
-        pageSizeOptions={PAGE_SIZE_OPTIONS}
-        onPageChange={onPageChange}
-        onPageSizeChange={(size) => onPageSizeChange(size as PageSize)}
-        labels={{
-          showing: labels.showing,
-          rowsPerPage: labels.rowsPerPage,
-          page: labels.page,
-          of: labels.of,
-          previous: labels.previous,
-          next: labels.next,
-        }}
-      />
-    </TaskTable>
+    </>
   );
 }

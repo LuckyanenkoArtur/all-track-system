@@ -13,6 +13,4 @@ export type {
   DataTableTabsProps,
 } from "./DataTable";
 
-export { TaskTable } from "./TaskTable";
-
 export type { ColumnSort } from "./column";
