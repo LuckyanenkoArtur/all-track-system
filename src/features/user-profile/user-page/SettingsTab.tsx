@@ -47,7 +47,7 @@ export default function SettingsTab() {
               className={`user-page__toggle-btn${language === lang ? " user-page__toggle-btn--active" : ""}`}
               onClick={() => setLanguage(lang)}
             >
-              {lang === "en" ? "English" : "Русский"}
+              {t.common.language[lang]}
             </button>
           ))}
         </div>
