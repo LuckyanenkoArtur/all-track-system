@@ -1,7 +1,7 @@
 import { FiPlus } from "react-icons/fi";
 
-import { Tooltip, type TooltipPosition } from "../../../components/tooltip/Tooltip";
-import styles from "./CreateTaskButton.module.scss";
+import { Button } from "../../../components/ui/button/Button";
+import type { TooltipPosition } from "../../../components/tooltip/Tooltip";
 
 type CreateTaskButtonProps = {
   label: string;
@@ -18,28 +18,14 @@ export function CreateTaskButton({
   onClick,
   className,
 }: CreateTaskButtonProps) {
-  const button = (
-    <button
-      type="button"
-      className={`${styles.root} ${className ?? ""}`.trim()}
-      onClick={onClick}
-    >
-      <span className={styles.icon} aria-hidden>
-        <FiPlus size={16} />
-      </span>
-      <span className={styles.copy}>
-        <strong>{label}</strong>
-      </span>
-    </button>
-  );
-
-  if (!tooltip) {
-    return button;
-  }
-
   return (
-    <Tooltip text={tooltip} position={tooltipPosition}>
-      {button}
-    </Tooltip>
+    <Button
+      text={label}
+      icon={FiPlus}
+      tooltip={tooltip}
+      tooltipPosition={tooltipPosition}
+      onClick={onClick}
+      className={className}
+    />
   );
 }

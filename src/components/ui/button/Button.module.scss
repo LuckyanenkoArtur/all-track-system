@@ -3,7 +3,7 @@
   align-items: center;
   gap: 10px;
   height: 40px;
-  padding: 0 14px 0 6px;
+  padding: 0 14px;
   border: 1px solid color-mix(in srgb, var(--color-accent) 22%, var(--color-border));
   border-radius: 10px;
   background: linear-gradient(
@@ -26,6 +26,10 @@
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
+}
+
+.withIcon {
+  padding: 0 14px 0 6px;
 }
 
 .icon {
