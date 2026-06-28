@@ -253,6 +253,8 @@ export function TasksOverviewPage() {
         <BreadTitle title={t.sidebar.tasksOverview} />
         <CreateTaskButton
           label={labels.createTask}
+          tooltip={labels.createTaskHint}
+          tooltipPosition="bottom"
           onClick={() => setCreateOpen(true)}
         />
       </header>

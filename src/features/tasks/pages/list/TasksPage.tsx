@@ -218,6 +218,8 @@ export function TaskListPage() {
 
           <CreateTaskButton
             label={dashboardLabels.createTask}
+            tooltip={dashboardLabels.createTaskHint}
+            tooltipPosition="bottom"
             onClick={() => setCreateOpen(true)}
           />
         </div>

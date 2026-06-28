@@ -28,12 +28,6 @@
   }
 }
 
-.withHint {
-  height: auto;
-  min-height: 40px;
-  padding: 10px 16px 10px 8px;
-}
-
 .icon {
   display: inline-flex;
   align-items: center;
@@ -44,12 +38,6 @@
   background: var(--color-accent-light);
   color: var(--color-accent);
   flex-shrink: 0;
-}
-
-.withHint .icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
 }
 
 .copy {
@@ -64,22 +52,10 @@
     color: var(--color-text);
     line-height: 1.2;
   }
-
-  small {
-    font-size: 0.75rem;
-    font-weight: 400;
-    color: var(--color-text-muted);
-    line-height: 1.3;
-    white-space: normal;
-  }
-}
-
-.withHint .copy strong {
-  font-size: 0.875rem;
 }
 
 @media (max-width: 768px) {
-  .root:not(.withHint) {
+  .root {
     width: 100%;
     justify-content: center;
   }

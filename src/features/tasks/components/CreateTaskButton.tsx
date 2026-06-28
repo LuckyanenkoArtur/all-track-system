@@ -1,23 +1,27 @@
 import { FiPlus } from "react-icons/fi";
+
+import { Tooltip, type TooltipPosition } from "../../../components/tooltip/Tooltip";
 import styles from "./CreateTaskButton.module.scss";
 
 type CreateTaskButtonProps = {
   label: string;
-  hint?: string;
+  tooltip?: string;
+  tooltipPosition?: TooltipPosition;
   onClick: () => void;
   className?: string;
 };
 
 export function CreateTaskButton({
   label,
-  hint,
+  tooltip,
+  tooltipPosition = "bottom",
   onClick,
   className,
 }: CreateTaskButtonProps) {
-  return (
+  const button = (
     <button
       type="button"
-      className={`${styles.root} ${hint ? styles.withHint : ""} ${className ?? ""}`}
+      className={`${styles.root} ${className ?? ""}`.trim()}
       onClick={onClick}
     >
       <span className={styles.icon} aria-hidden>
@@ -25,8 +29,17 @@ export function CreateTaskButton({
       </span>
       <span className={styles.copy}>
         <strong>{label}</strong>
-        {hint && <small>{hint}</small>}
       </span>
     </button>
+  );
+
+  if (!tooltip) {
+    return button;
+  }
+
+  return (
+    <Tooltip text={tooltip} position={tooltipPosition}>
+      {button}
+    </Tooltip>
   );
 }
