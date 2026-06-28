@@ -9,6 +9,7 @@ import { CompleteTaskDialog } from "../../components/CompleteTaskDialog";
 import { Button } from "../../../../components/ui/button/Button";
 import { CreateTaskDialog } from "../../components/CreateTaskDialog";
 import { TaskFiltersDrawer } from "../../components/TaskFiltersDrawer";
+import { ViewSwitcher } from "../../../../components/ui/view-switcher/ViewSwitcher";
 
 import { TaskDetailsPanel } from "../../components/TaskDetailsPanel";
 import { ManualTimeEntryDialog } from "../../components/ManualTimeEntryDialog";
@@ -150,6 +151,21 @@ export function TaskListPage() {
     });
   };
 
+  const taskViewSwitcherItems = useMemo(
+    () => [
+      { id: "table", label: taskLabels.tableView, icon: BiTable },
+      { id: "kanban", label: "Kanban", icon: BiAbacus, disabled: true },
+      {
+        id: "calendar",
+        label: "Calendar",
+        icon: FiCalendar,
+        disabled: true,
+      },
+      { id: "list", label: "List", icon: FiList, disabled: true },
+    ],
+    [taskLabels.tableView],
+  );
+
   return (
     <div className={styles.page}>
       <header className={styles.pageHeader}>
@@ -177,44 +193,7 @@ export function TaskListPage() {
             )}
           </button>
 
-          <div
-            className={styles.viewToggles}
-            role="tablist"
-            aria-label="View mode"
-          >
-            <button
-              type="button"
-              className={`${styles.toggleBtn} ${styles.active}`}
-              role="tab"
-              aria-selected
-            >
-              <BiTable size={16} aria-hidden /> {taskLabels.tableView}
-            </button>
-            <button
-              type="button"
-              disabled
-              className={styles.toggleBtn}
-              role="tab"
-            >
-              <BiAbacus size={16} aria-hidden /> Kanban
-            </button>
-            <button
-              type="button"
-              disabled
-              className={styles.toggleBtn}
-              role="tab"
-            >
-              <FiCalendar size={16} aria-hidden /> Calendar
-            </button>
-            <button
-              type="button"
-              disabled
-              className={styles.toggleBtn}
-              role="tab"
-            >
-              <FiList size={16} aria-hidden /> List
-            </button>
-          </div>
+          <ViewSwitcher value="table" items={taskViewSwitcherItems} />
 
           <Button
             text={dashboardLabels.createTask}
