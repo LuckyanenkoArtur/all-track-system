@@ -7,14 +7,15 @@ import {
   FiClock,
   FiLayers,
   FiList,
+  FiPlus,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
 import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
+import { Button } from "../../../../components/ui/button/Button";
 import { AddBudgetExpenseDialog } from "../../components/AddBudgetExpenseDialog";
 import { CompleteTaskDialog } from "../../components/CompleteTaskDialog";
-import { CreateTaskButton } from "../../components/CreateTaskButton";
 import { CreateTaskDialog } from "../../components/CreateTaskDialog";
 import { ActiveTrackingCard } from "../../components/ActiveTrackingCard";
 import { ManualTimeEntryDialog } from "../../components/ManualTimeEntryDialog";
@@ -251,8 +252,9 @@ export function TasksOverviewPage() {
     <div className={styles.page}>
       <header className={styles.pageHeader}>
         <BreadTitle title={t.sidebar.tasksOverview} />
-        <CreateTaskButton
-          label={labels.createTask}
+        <Button
+          text={labels.createTask}
+          icon={FiPlus}
           tooltip={labels.createTaskHint}
           tooltipPosition="bottom"
           onClick={() => setCreateOpen(true)}

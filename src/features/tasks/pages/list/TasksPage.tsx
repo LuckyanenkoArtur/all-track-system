@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiCalendar, FiFilter, FiList } from "react-icons/fi";
+import { FiCalendar, FiFilter, FiList, FiPlus } from "react-icons/fi";
 import { BiAbacus, BiTable } from "react-icons/bi";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
 import { AddBudgetExpenseDialog } from "../../components/AddBudgetExpenseDialog";
 import { CompleteTaskDialog } from "../../components/CompleteTaskDialog";
-import { CreateTaskButton } from "../../components/CreateTaskButton";
+import { Button } from "../../../../components/ui/button/Button";
 import { CreateTaskDialog } from "../../components/CreateTaskDialog";
 import { TaskFiltersDrawer } from "../../components/TaskFiltersDrawer";
 
@@ -216,8 +216,9 @@ export function TaskListPage() {
             </button>
           </div>
 
-          <CreateTaskButton
-            label={dashboardLabels.createTask}
+          <Button
+            text={dashboardLabels.createTask}
+            icon={FiPlus}
             tooltip={dashboardLabels.createTaskHint}
             tooltipPosition="bottom"
             onClick={() => setCreateOpen(true)}
