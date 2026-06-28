@@ -7,16 +7,14 @@ import {
   FiClock,
   FiLayers,
   FiList,
-  FiPlus,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
 import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
-import { Button } from "../../../../components/ui/button/Button";
 import { AddBudgetExpenseDialog } from "../../components/AddBudgetExpenseDialog";
 import { CompleteTaskDialog } from "../../components/CompleteTaskDialog";
-import { CreateTaskDialog } from "../../components/CreateTaskDialog";
+import { TaskCreationDrawer } from "../../components/drawers/task-creation-drawer/TaskCreationDrawer";
 import { ActiveTrackingCard } from "../../components/ActiveTrackingCard";
 import { ManualTimeEntryDialog } from "../../components/ManualTimeEntryDialog";
 import { TaskDetailsPanel } from "../../components/TaskDetailsPanel";
@@ -52,7 +50,6 @@ export function TasksOverviewPage() {
   } = useTasks();
   const { filterOptions } = useTaskListState();
   const [activeTab, setActiveTab] = useState<OverviewTab>("taskList");
-  const [createOpen, setCreateOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [completeTaskId, setCompleteTaskId] = useState<string | null>(null);
   const [manualTimeTaskId, setManualTimeTaskId] = useState<string | null>(null);
@@ -73,26 +70,6 @@ export function TasksOverviewPage() {
     () => tasks.find((task) => task.id === selectedTaskId) ?? null,
     [tasks, selectedTaskId],
   );
-
-  const groupSelectOptions = useMemo(
-    () => filterOptions.groups.map((group) => ({ value: group, label: group })),
-    [filterOptions.groups],
-  );
-
-  const userSelectOptions = useMemo(() => {
-    const users = new Set<string>([
-      ...filterOptions.initiators,
-      ...filterOptions.responsible,
-      ...filterOptions.observables,
-      initiatorName,
-    ]);
-    return [...users].sort().map((user) => ({ value: user, label: user }));
-  }, [
-    filterOptions.initiators,
-    filterOptions.responsible,
-    filterOptions.observables,
-    initiatorName,
-  ]);
 
   const todayTasks = useMemo(
     () =>
@@ -252,12 +229,10 @@ export function TasksOverviewPage() {
     <div className={styles.page}>
       <header className={styles.pageHeader}>
         <BreadTitle title={t.sidebar.tasksOverview} />
-        <Button
-          text={labels.createTask}
-          icon={FiPlus}
-          tooltip={labels.createTaskHint}
-          tooltipPosition="bottom"
-          onClick={() => setCreateOpen(true)}
+        <TaskCreationDrawer
+          onSubmit={addTask}
+          initiatorName={initiatorName}
+          filterOptions={filterOptions}
         />
       </header>
 
@@ -329,60 +304,6 @@ export function TasksOverviewPage() {
           )}
         </div>
       </div>
-
-      <CreateTaskDialog
-        open={createOpen}
-        onClose={() => setCreateOpen(false)}
-        onSubmit={addTask}
-        initiatorName={initiatorName}
-        groupOptions={groupSelectOptions}
-        userOptions={userSelectOptions}
-        labels={{
-          title: labels.createTask,
-          subtitle: labels.createTaskSubtitle,
-          taskTitle: labels.taskTitle,
-          taskTitlePlaceholder: labels.taskTitle,
-          required: labels.required,
-          description: labels.taskDescription,
-          descriptionPlaceholder: labels.taskDescriptionPlaceholder,
-          steps: labels.stepsToPerform,
-          addStep: labels.addStep,
-          stepPlaceholder: labels.stepPlaceholder,
-          removeStep: labels.removeStep,
-          initiator: taskLabels.initiator,
-          groups: taskLabels.groups,
-          observables: taskLabels.observables,
-          startDate: taskLabels.startDate,
-          dueDate: taskLabels.dueDate,
-          priority: taskLabels.priority,
-          priorityPlaceholder: labels.priorityPlaceholder,
-          budget: labels.maxBudget,
-          budgetPlaceholder: labels.maxBudgetPlaceholder,
-          attachments: labels.attachments,
-          attachFile: detailLabels.attachFile,
-          removeAttachment: detailLabels.removeAttachment,
-          fileTooLarge: detailLabels.fileTooLarge,
-          maxAttachments: detailLabels.maxAttachments,
-          requiresResultReview: labels.requiresResultReview,
-          create: labels.create,
-          cancel: t.common.cancel,
-          searchOptions: taskLabels.searchOptions,
-          noOptionsFound: taskLabels.noOptionsFound,
-          selectPlaceholder: taskLabels.selectPlaceholder,
-          unsavedTitle: labels.unsavedTitle,
-          unsavedMessage: labels.unsavedMessage,
-          unsavedYes: labels.unsavedYes,
-          unsavedNo: labels.unsavedNo,
-          sectionTaskDetails: labels.sections.taskDetails,
-          sectionPeople: labels.sections.people,
-          sectionSchedule: labels.sections.schedule,
-          sectionPriorityBudget: labels.sections.priorityBudget,
-          sectionAttachments: labels.sections.attachments,
-          high: taskLabels.high,
-          medium: taskLabels.medium,
-          low: taskLabels.low,
-        }}
-      />
 
       <TaskDetailsPanel
         open={selectedTaskId !== null}

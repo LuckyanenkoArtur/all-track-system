@@ -1,14 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiCalendar, FiList, FiPlus } from "react-icons/fi";
+import { FiCalendar, FiList } from "react-icons/fi";
 import { BiAbacus, BiTable } from "react-icons/bi";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
 import { AddBudgetExpenseDialog } from "../../components/AddBudgetExpenseDialog";
 import { CompleteTaskDialog } from "../../components/CompleteTaskDialog";
-import { Button } from "../../../../components/ui/button/Button";
-import { CreateTaskDialog } from "../../components/CreateTaskDialog";
 import { FilterDrawer } from "../../components/drawers/filter-drawer/FilterDrawer";
+import { TaskCreationDrawer } from "../../components/drawers/task-creation-drawer/TaskCreationDrawer";
 import { ViewSwitcher } from "../../../../components/ui/view-switcher/ViewSwitcher";
 
 import { TaskDetailsPanel } from "../../components/TaskDetailsPanel";
@@ -46,7 +45,6 @@ export function TaskListPage() {
   } = useTasks();
   const { getDisplayTimeSpent } = useTaskTrackingDisplay();
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  const [createOpen, setCreateOpen] = useState(false);
   const [completeTaskId, setCompleteTaskId] = useState<string | null>(null);
   const [manualTimeTaskId, setManualTimeTaskId] = useState<string | null>(null);
   const [budgetExpenseTaskId, setBudgetExpenseTaskId] = useState<string | null>(
@@ -105,26 +103,6 @@ export function TaskListPage() {
 
     navigate(location.pathname, { replace: true, state: null });
   }, [location.pathname, location.state, navigate, setFilters]);
-
-  const groupSelectOptions = useMemo(
-    () => filterOptions.groups.map((group) => ({ value: group, label: group })),
-    [filterOptions.groups],
-  );
-
-  const userSelectOptions = useMemo(() => {
-    const users = new Set<string>([
-      ...filterOptions.initiators,
-      ...filterOptions.responsible,
-      ...filterOptions.observables,
-      initiatorName,
-    ]);
-    return [...users].sort().map((user) => ({ value: user, label: user }));
-  }, [
-    filterOptions.initiators,
-    filterOptions.responsible,
-    filterOptions.observables,
-    initiatorName,
-  ]);
 
   const selectedTask = useMemo(
     () => tasks.find((task) => task.id === selectedTaskId) ?? null,
@@ -202,12 +180,10 @@ export function TaskListPage() {
 
           <ViewSwitcher value="table" items={taskViewSwitcherItems} />
 
-          <Button
-            text={dashboardLabels.createTask}
-            icon={FiPlus}
-            tooltip={dashboardLabels.createTaskHint}
-            tooltipPosition="bottom"
-            onClick={() => setCreateOpen(true)}
+          <TaskCreationDrawer
+            onSubmit={addTask}
+            initiatorName={initiatorName}
+            filterOptions={filterOptions}
           />
         </div>
       </header>
@@ -268,61 +244,6 @@ export function TaskListPage() {
         task={selectedTask}
         onClose={() => setSelectedTaskId(null)}
         onExpand={handleExpandTask}
-      />
-
-      {/*! MOVE OUT with button in one section*/}
-      <CreateTaskDialog
-        open={createOpen}
-        onClose={() => setCreateOpen(false)}
-        onSubmit={addTask}
-        initiatorName={initiatorName}
-        groupOptions={groupSelectOptions}
-        userOptions={userSelectOptions}
-        labels={{
-          title: dashboardLabels.createTask,
-          subtitle: dashboardLabels.createTaskSubtitle,
-          taskTitle: dashboardLabels.taskTitle,
-          taskTitlePlaceholder: dashboardLabels.taskTitle,
-          required: dashboardLabels.required,
-          description: dashboardLabels.taskDescription,
-          descriptionPlaceholder: dashboardLabels.taskDescriptionPlaceholder,
-          steps: dashboardLabels.stepsToPerform,
-          addStep: dashboardLabels.addStep,
-          stepPlaceholder: dashboardLabels.stepPlaceholder,
-          removeStep: dashboardLabels.removeStep,
-          initiator: taskLabels.initiator,
-          groups: taskLabels.groups,
-          observables: taskLabels.observables,
-          startDate: taskLabels.startDate,
-          dueDate: taskLabels.dueDate,
-          priority: taskLabels.priority,
-          priorityPlaceholder: dashboardLabels.priorityPlaceholder,
-          budget: dashboardLabels.maxBudget,
-          budgetPlaceholder: dashboardLabels.maxBudgetPlaceholder,
-          attachments: dashboardLabels.attachments,
-          attachFile: detailLabels.attachFile,
-          removeAttachment: detailLabels.removeAttachment,
-          fileTooLarge: detailLabels.fileTooLarge,
-          maxAttachments: detailLabels.maxAttachments,
-          requiresResultReview: dashboardLabels.requiresResultReview,
-          create: dashboardLabels.create,
-          cancel: t.common.cancel,
-          searchOptions: taskLabels.searchOptions,
-          noOptionsFound: taskLabels.noOptionsFound,
-          selectPlaceholder: taskLabels.selectPlaceholder,
-          unsavedTitle: dashboardLabels.unsavedTitle,
-          unsavedMessage: dashboardLabels.unsavedMessage,
-          unsavedYes: dashboardLabels.unsavedYes,
-          unsavedNo: dashboardLabels.unsavedNo,
-          sectionTaskDetails: dashboardLabels.sections.taskDetails,
-          sectionPeople: dashboardLabels.sections.people,
-          sectionSchedule: dashboardLabels.sections.schedule,
-          sectionPriorityBudget: dashboardLabels.sections.priorityBudget,
-          sectionAttachments: dashboardLabels.sections.attachments,
-          high: taskLabels.high,
-          medium: taskLabels.medium,
-          low: taskLabels.low,
-        }}
       />
 
       <CompleteTaskDialog

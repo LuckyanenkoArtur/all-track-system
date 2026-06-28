@@ -10,7 +10,7 @@ import type { Task } from "../domain/others";
 import { getAuthorInitials } from "../utils/commentUtils";
 import { getLiveTimeSpent } from "../utils/timeTrackingUtils";
 import { CompleteTaskDialog } from "./CompleteTaskDialog";
-import { CreateTaskDialog } from "./CreateTaskDialog";
+import { CreateTaskDialog } from "./dialogs/CreateTaskDialog";
 import { ManualTimeEntryDialog } from "./ManualTimeEntryDialog";
 import { AddBudgetExpenseDialog } from "./AddBudgetExpenseDialog";
 import { TaskDetailsCommentsTab } from "./TaskDetailsCommentsTab";
@@ -208,9 +208,8 @@ export function TaskDetailsView({
             <button
               key={tab.id}
               type="button"
-              className={`${styles.tab} ${isPanel ? styles.tabPanelVariant : ""} ${
-                activeTab === tab.id ? styles.tabActive : ""
-              }`}
+              className={`${styles.tab} ${isPanel ? styles.tabPanelVariant : ""} ${activeTab === tab.id ? styles.tabActive : ""
+                }`}
               aria-selected={activeTab === tab.id}
               role="tab"
               onClick={() => setActiveTab(tab.id)}
@@ -221,9 +220,8 @@ export function TaskDetailsView({
         </nav>
 
         <div
-          className={`${styles.tabPanel} ${
-            isPanel ? styles.tabPanelPanel : styles.tabPanelPage
-          } ${activeTab === "overview" ? styles.tabPanelOverview : ""}`}
+          className={`${styles.tabPanel} ${isPanel ? styles.tabPanelPanel : styles.tabPanelPage
+            } ${activeTab === "overview" ? styles.tabPanelOverview : ""}`}
           role="tabpanel"
         >
           {activeTab === "overview" && (
