@@ -11,6 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
+import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
 import { AddBudgetExpenseDialog } from "../../components/AddBudgetExpenseDialog";
 import { CompleteTaskDialog } from "../../components/CompleteTaskDialog";
 import { CreateTaskButton } from "../../components/CreateTaskButton";
@@ -249,9 +250,7 @@ export function TasksOverviewPage() {
   return (
     <div className={styles.page}>
       <header className={styles.pageHeader}>
-        <div>
-          <h1>{t.sidebar.tasksOverview}</h1>
-        </div>
+        <BreadTitle title={t.sidebar.tasksOverview} />
         <CreateTaskButton
           label={labels.createTask}
           onClick={() => setCreateOpen(true)}

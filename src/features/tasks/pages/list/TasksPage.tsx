@@ -24,6 +24,7 @@ import {
 } from "../../domain/others";
 import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksPage.module.scss";
+import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
 
 export function TaskListPage() {
   const { t } = useTranslation();
@@ -151,10 +152,7 @@ export function TaskListPage() {
   return (
     <div className={styles.page}>
       <header className={styles.pageHeader}>
-        <div className={styles.pageHeading}>
-          <h1>{t.sidebar.workQueue}</h1>
-        </div>
-
+        <BreadTitle title={t.sidebar.workQueue} />
         <div className={styles.pageToolbar}>
           <div className={styles.searchBox}>
             <FiSearch size={16} aria-hidden />
