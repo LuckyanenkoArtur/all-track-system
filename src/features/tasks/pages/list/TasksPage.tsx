@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiCalendar, FiFilter, FiList, FiPlus } from "react-icons/fi";
+import { FiCalendar, FiList, FiPlus } from "react-icons/fi";
 import { BiAbacus, BiTable } from "react-icons/bi";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
@@ -8,7 +8,7 @@ import { AddBudgetExpenseDialog } from "../../components/AddBudgetExpenseDialog"
 import { CompleteTaskDialog } from "../../components/CompleteTaskDialog";
 import { Button } from "../../../../components/ui/button/Button";
 import { CreateTaskDialog } from "../../components/CreateTaskDialog";
-import { TaskFiltersDrawer } from "../../components/TaskFiltersDrawer";
+import { FilterDrawer } from "../../components/drawers/filter-drawer/FilterDrawer";
 import { ViewSwitcher } from "../../../../components/ui/view-switcher/ViewSwitcher";
 
 import { TaskDetailsPanel } from "../../components/TaskDetailsPanel";
@@ -180,18 +180,25 @@ export function TaskListPage() {
             />
           </div>
 
-          <button
-            type="button"
-            className={`${styles.filterToggle} ${filtersOpen ? styles.active : ""}`}
-            onClick={() => (filtersOpen ? closeFilters() : openFilters())}
-            aria-expanded={filtersOpen}
-          >
-            <FiFilter size={16} aria-hidden />
-            {taskLabels.filters}
-            {activeFilterCount > 0 && (
-              <span className={styles.filterBadge}>{activeFilterCount}</span>
-            )}
-          </button>
+          <FilterDrawer
+            open={filtersOpen}
+            activeFilterCount={activeFilterCount}
+            filters={filters}
+            draftFilters={draftFilters}
+            filterOptions={filterOptions}
+            onOpen={openFilters}
+            onClose={closeFilters}
+            onChange={setDraftFilters}
+            onApply={applyFilters}
+            onReset={resetDraftFilters}
+            onSaveCollection={(name) =>
+              handleSaveCollection(
+                name,
+                { ...draftFilters, search: filters.search },
+                false,
+              )
+            }
+          />
 
           <ViewSwitcher value="table" items={taskViewSwitcherItems} />
 
@@ -256,60 +263,6 @@ export function TaskListPage() {
         }}
       />
 
-      <TaskFiltersDrawer
-        open={filtersOpen}
-        filters={draftFilters}
-        appliedFilters={filters}
-        options={filterOptions}
-        onChange={setDraftFilters}
-        onClose={closeFilters}
-        onApply={applyFilters}
-        onReset={resetDraftFilters}
-        onSaveCollection={(name) =>
-          handleSaveCollection(
-            name,
-            { ...draftFilters, search: filters.search },
-            false,
-          )
-        }
-        labels={{
-          title: taskLabels.filters,
-          close: taskLabels.closeFilters,
-          apply: taskLabels.applyFilters,
-          reset: taskLabels.resetFilters,
-          saveCollection: taskLabels.saveCollection,
-          collectionName: taskLabels.collectionName,
-          save: t.common.save,
-          cancel: t.common.cancel,
-          searchOptions: taskLabels.searchOptions,
-          noOptionsFound: taskLabels.noOptionsFound,
-          selectPlaceholder: taskLabels.selectPlaceholder,
-          sectionPeople: taskLabels.filterSections.people,
-          sectionTaskState: taskLabels.filterSections.taskState,
-          sectionDueDate: taskLabels.filterSections.dueDate,
-          sectionBudget: taskLabels.filterSections.budget,
-          sectionTime: taskLabels.filterSections.time,
-          status: taskLabels.status,
-          priority: taskLabels.priority,
-          groups: taskLabels.groups,
-          dueDateFrom: taskLabels.dueDateFrom,
-          dueDateTo: taskLabels.dueDateTo,
-          initiator: taskLabels.initiator,
-          responsible: taskLabels.responsible,
-          observables: taskLabels.observables,
-          budgetMin: taskLabels.budgetMin,
-          budgetMax: taskLabels.budgetMax,
-          timeMin: taskLabels.timeMin,
-          timeMax: taskLabels.timeMax,
-          done: taskLabels.done,
-          inProgress: taskLabels.inProgress,
-          pending: taskLabels.pending,
-          high: taskLabels.high,
-          medium: taskLabels.medium,
-          low: taskLabels.low,
-        }}
-      />
-
       <TaskDetailsPanel
         open={selectedTaskId !== null}
         task={selectedTask}
@@ -317,6 +270,7 @@ export function TaskListPage() {
         onExpand={handleExpandTask}
       />
 
+      {/*! MOVE OUT with button in one section*/}
       <CreateTaskDialog
         open={createOpen}
         onClose={() => setCreateOpen(false)}
