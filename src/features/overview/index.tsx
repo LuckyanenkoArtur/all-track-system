@@ -1,3 +1,8 @@
+import { BreadTitle } from "../../components/bread-title/BreadTitle";
+import { useTranslation } from "../../i18n";
+
 export default function OverviewPage() {
-  return <h1>DashBoard We Display mains</h1>;
+  const { t } = useTranslation();
+
+  return <BreadTitle title={t.sidebar.dashboard} />;
 }

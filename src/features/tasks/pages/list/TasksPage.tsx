@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiCalendar, FiFilter, FiList, FiSearch } from "react-icons/fi";
+import { FiCalendar, FiList } from "react-icons/fi";
 import { BiAbacus, BiTable } from "react-icons/bi";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
 import { AddBudgetExpenseDialog } from "../../components/AddBudgetExpenseDialog";
 import { CompleteTaskDialog } from "../../components/CompleteTaskDialog";
-import { CreateTaskButton } from "../../components/CreateTaskButton";
-import { CreateTaskDialog } from "../../components/CreateTaskDialog";
-import { TaskFiltersDrawer } from "../../components/TaskFiltersDrawer";
+import { FilterDrawer } from "../../components/drawers/filter-drawer/FilterDrawer";
+import { TaskCreationDrawer } from "../../components/drawers/task-creation-drawer/TaskCreationDrawer";
+import { ViewSwitcher } from "../../../../components/ui/view-switcher/ViewSwitcher";
 
 import { TaskDetailsPanel } from "../../components/TaskDetailsPanel";
 import { ManualTimeEntryDialog } from "../../components/ManualTimeEntryDialog";
@@ -24,6 +24,8 @@ import {
 } from "../../domain/others";
 import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksPage.module.scss";
+import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
+import { SearchBar } from "../../../../components/ui/search-bar/SearchBar";
 
 export function TaskListPage() {
   const { t } = useTranslation();
@@ -43,7 +45,6 @@ export function TaskListPage() {
   } = useTasks();
   const { getDisplayTimeSpent } = useTaskTrackingDisplay();
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  const [createOpen, setCreateOpen] = useState(false);
   const [completeTaskId, setCompleteTaskId] = useState<string | null>(null);
   const [manualTimeTaskId, setManualTimeTaskId] = useState<string | null>(null);
   const [budgetExpenseTaskId, setBudgetExpenseTaskId] = useState<string | null>(
@@ -103,26 +104,6 @@ export function TaskListPage() {
     navigate(location.pathname, { replace: true, state: null });
   }, [location.pathname, location.state, navigate, setFilters]);
 
-  const groupSelectOptions = useMemo(
-    () => filterOptions.groups.map((group) => ({ value: group, label: group })),
-    [filterOptions.groups],
-  );
-
-  const userSelectOptions = useMemo(() => {
-    const users = new Set<string>([
-      ...filterOptions.initiators,
-      ...filterOptions.responsible,
-      ...filterOptions.observables,
-      initiatorName,
-    ]);
-    return [...users].sort().map((user) => ({ value: user, label: user }));
-  }, [
-    filterOptions.initiators,
-    filterOptions.responsible,
-    filterOptions.observables,
-    initiatorName,
-  ]);
-
   const selectedTask = useMemo(
     () => tasks.find((task) => task.id === selectedTaskId) ?? null,
     [tasks, selectedTaskId],
@@ -148,82 +129,61 @@ export function TaskListPage() {
     });
   };
 
+  const taskViewSwitcherItems = useMemo(
+    () => [
+      { id: "table", label: taskLabels.tableView, icon: BiTable },
+      { id: "kanban", label: "Kanban", icon: BiAbacus, disabled: true },
+      {
+        id: "calendar",
+        label: "Calendar",
+        icon: FiCalendar,
+        disabled: true,
+      },
+      { id: "list", label: "List", icon: FiList, disabled: true },
+    ],
+    [taskLabels.tableView],
+  );
+
   return (
     <div className={styles.page}>
       <header className={styles.pageHeader}>
-        <div className={styles.pageHeading}>
-          <h1>{t.sidebar.workQueue}</h1>
-        </div>
-
+        <BreadTitle title={t.sidebar.workQueue} />
         <div className={styles.pageToolbar}>
-          <div className={styles.searchBox}>
-            <FiSearch size={16} aria-hidden />
-            <input
-              type="search"
+          <div className={styles.toolbarSearch}>
+            <SearchBar
               value={filters.search}
-              onChange={(event) =>
-                setFilters({ ...filters, search: event.target.value })
-              }
+              onChange={(search) => setFilters({ ...filters, search })}
               placeholder={taskLabels.searchPlaceholder}
-              aria-label={taskLabels.searchPlaceholder}
+              ariaLabel={taskLabels.searchPlaceholder}
             />
           </div>
 
-          <button
-            type="button"
-            className={`${styles.filterToggle} ${filtersOpen ? styles.active : ""}`}
-            onClick={() => (filtersOpen ? closeFilters() : openFilters())}
-            aria-expanded={filtersOpen}
-          >
-            <FiFilter size={16} aria-hidden />
-            {taskLabels.filters}
-            {activeFilterCount > 0 && (
-              <span className={styles.filterBadge}>{activeFilterCount}</span>
-            )}
-          </button>
+          <FilterDrawer
+            open={filtersOpen}
+            activeFilterCount={activeFilterCount}
+            filters={filters}
+            draftFilters={draftFilters}
+            filterOptions={filterOptions}
+            onOpen={openFilters}
+            onClose={closeFilters}
+            onChange={setDraftFilters}
+            onApply={applyFilters}
+            onReset={resetDraftFilters}
+            onSaveCollection={(name) =>
+              handleSaveCollection(
+                name,
+                { ...draftFilters, search: filters.search },
+                false,
+              )
+            }
+          />
 
-          <div
-            className={styles.viewToggles}
-            role="tablist"
-            aria-label="View mode"
-          >
-            <button
-              type="button"
-              className={`${styles.toggleBtn} ${styles.active}`}
-              role="tab"
-              aria-selected
-            >
-              <BiTable size={16} aria-hidden /> {taskLabels.tableView}
-            </button>
-            <button
-              type="button"
-              disabled
-              className={styles.toggleBtn}
-              role="tab"
-            >
-              <BiAbacus size={16} aria-hidden /> Kanban
-            </button>
-            <button
-              type="button"
-              disabled
-              className={styles.toggleBtn}
-              role="tab"
-            >
-              <FiCalendar size={16} aria-hidden /> Calendar
-            </button>
-            <button
-              type="button"
-              disabled
-              className={styles.toggleBtn}
-              role="tab"
-            >
-              <FiList size={16} aria-hidden /> List
-            </button>
-          </div>
+          <ViewSwitcher value="table" items={taskViewSwitcherItems} />
 
-          <CreateTaskButton
-            label={dashboardLabels.createTask}
-            onClick={() => setCreateOpen(true)}
+          <TaskCreationDrawer
+            onSubmit={addTask}
+            initiatorName={initiatorName}
+            filterOptions={filterOptions}
           />
         </div>
       </header>
@@ -286,119 +246,11 @@ export function TaskListPage() {
         }}
       />
 
-      <TaskFiltersDrawer
-        open={filtersOpen}
-        filters={draftFilters}
-        appliedFilters={filters}
-        options={filterOptions}
-        onChange={setDraftFilters}
-        onClose={closeFilters}
-        onApply={applyFilters}
-        onReset={resetDraftFilters}
-        onSaveCollection={(name) =>
-          handleSaveCollection(
-            name,
-            { ...draftFilters, search: filters.search },
-            false,
-          )
-        }
-        labels={{
-          title: taskLabels.filters,
-          close: taskLabels.closeFilters,
-          apply: taskLabels.applyFilters,
-          reset: taskLabels.resetFilters,
-          saveCollection: taskLabels.saveCollection,
-          collectionName: taskLabels.collectionName,
-          save: t.common.save,
-          cancel: t.common.cancel,
-          searchOptions: taskLabels.searchOptions,
-          noOptionsFound: taskLabels.noOptionsFound,
-          selectPlaceholder: taskLabels.selectPlaceholder,
-          sectionPeople: taskLabels.filterSections.people,
-          sectionTaskState: taskLabels.filterSections.taskState,
-          sectionDueDate: taskLabels.filterSections.dueDate,
-          sectionBudget: taskLabels.filterSections.budget,
-          sectionTime: taskLabels.filterSections.time,
-          status: taskLabels.status,
-          priority: taskLabels.priority,
-          groups: taskLabels.groups,
-          dueDateFrom: taskLabels.dueDateFrom,
-          dueDateTo: taskLabels.dueDateTo,
-          initiator: taskLabels.initiator,
-          responsible: taskLabels.responsible,
-          observables: taskLabels.observables,
-          budgetMin: taskLabels.budgetMin,
-          budgetMax: taskLabels.budgetMax,
-          timeMin: taskLabels.timeMin,
-          timeMax: taskLabels.timeMax,
-          done: taskLabels.done,
-          inProgress: taskLabels.inProgress,
-          pending: taskLabels.pending,
-          high: taskLabels.high,
-          medium: taskLabels.medium,
-          low: taskLabels.low,
-        }}
-      />
-
       <TaskDetailsPanel
         open={selectedTaskId !== null}
         task={selectedTask}
         onClose={() => setSelectedTaskId(null)}
         onExpand={handleExpandTask}
-      />
-
-      <CreateTaskDialog
-        open={createOpen}
-        onClose={() => setCreateOpen(false)}
-        onSubmit={addTask}
-        initiatorName={initiatorName}
-        groupOptions={groupSelectOptions}
-        userOptions={userSelectOptions}
-        labels={{
-          title: dashboardLabels.createTask,
-          subtitle: dashboardLabels.createTaskSubtitle,
-          taskTitle: dashboardLabels.taskTitle,
-          taskTitlePlaceholder: dashboardLabels.taskTitle,
-          required: dashboardLabels.required,
-          description: dashboardLabels.taskDescription,
-          descriptionPlaceholder: dashboardLabels.taskDescriptionPlaceholder,
-          steps: dashboardLabels.stepsToPerform,
-          addStep: dashboardLabels.addStep,
-          stepPlaceholder: dashboardLabels.stepPlaceholder,
-          removeStep: dashboardLabels.removeStep,
-          initiator: taskLabels.initiator,
-          groups: taskLabels.groups,
-          observables: taskLabels.observables,
-          startDate: taskLabels.startDate,
-          dueDate: taskLabels.dueDate,
-          priority: taskLabels.priority,
-          priorityPlaceholder: dashboardLabels.priorityPlaceholder,
-          budget: dashboardLabels.maxBudget,
-          budgetPlaceholder: dashboardLabels.maxBudgetPlaceholder,
-          attachments: dashboardLabels.attachments,
-          attachFile: detailLabels.attachFile,
-          removeAttachment: detailLabels.removeAttachment,
-          fileTooLarge: detailLabels.fileTooLarge,
-          maxAttachments: detailLabels.maxAttachments,
-          requiresResultReview: dashboardLabels.requiresResultReview,
-          create: dashboardLabels.create,
-          cancel: t.common.cancel,
-          searchOptions: taskLabels.searchOptions,
-          noOptionsFound: taskLabels.noOptionsFound,
-          selectPlaceholder: taskLabels.selectPlaceholder,
-          unsavedTitle: dashboardLabels.unsavedTitle,
-          unsavedMessage: dashboardLabels.unsavedMessage,
-          unsavedYes: dashboardLabels.unsavedYes,
-          unsavedNo: dashboardLabels.unsavedNo,
-          sectionTaskDetails: dashboardLabels.sections.taskDetails,
-          sectionPeople: dashboardLabels.sections.people,
-          sectionSchedule: dashboardLabels.sections.schedule,
-          sectionPriorityBudget: dashboardLabels.sections.priorityBudget,
-          sectionAttachments: dashboardLabels.sections.attachments,
-          high: taskLabels.high,
-          medium: taskLabels.medium,
-          low: taskLabels.low,
-        }}
       />
 
       <CompleteTaskDialog

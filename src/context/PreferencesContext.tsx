@@ -7,7 +7,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { Language } from "../i18n";
+import {
+  i18nService,
+  isSupportedLanguage,
+  LanguageConfig,
+  type Language,
+} from "../i18n";
 
 export type Theme = "light" | "dark";
 
@@ -24,11 +29,11 @@ interface PreferencesContextValue extends Preferences {
   isThemeTransitioning: boolean;
 }
 
-const STORAGE_KEY = "alltrack-preferences";
+const STORAGE_KEY = LanguageConfig.preferencesStorageKey;
 
 const defaultPreferences: Preferences = {
   theme: "light",
-  language: "en",
+  language: LanguageConfig.defaultLanguage,
   sidebarCollapsed: false,
 };
 
@@ -54,7 +59,6 @@ export const PreferencesContext = createContext<PreferencesContextValue | null>(
 
 const initialPreferences = loadPreferences();
 document.documentElement.dataset.theme = initialPreferences.theme;
-document.documentElement.lang = initialPreferences.language;
 
 export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [preferences, setPreferences] = useState<Preferences>(initialPreferences);
@@ -62,9 +66,23 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.dataset.theme = preferences.theme;
-    document.documentElement.lang = preferences.language;
     savePreferences(preferences);
   }, [preferences]);
+
+  useEffect(() => {
+    const syncLanguageFromI18n = (language: string) => {
+      if (!isSupportedLanguage(language)) return;
+      setPreferences((prev) =>
+        prev.language === language ? prev : { ...prev, language },
+      );
+    };
+
+    syncLanguageFromI18n(i18nService.getCurrentLanguage());
+    i18nService.instance.on("languageChanged", syncLanguageFromI18n);
+    return () => {
+      i18nService.instance.off("languageChanged", syncLanguageFromI18n);
+    };
+  }, []);
 
   const setTheme = useCallback((theme: Theme) => {
     setIsThemeTransitioning(true);
@@ -73,7 +91,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setLanguage = useCallback((language: Language) => {
-    setPreferences((prev) => ({ ...prev, language }));
+    void i18nService.changeLanguage(language);
   }, []);
 
   const setSidebarCollapsed = useCallback((sidebarCollapsed: boolean) => {

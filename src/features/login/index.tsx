@@ -2,12 +2,14 @@ import { type FormEvent, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../auth/auth";
+import { LanguageSwitcher, useTranslation } from "../../i18n";
 import AllTrackPreview from "./login/AllTrackPreview";
 import AllTrackLogoIcon from "../../components/all-track-logo/icon";
 import "./login.scss";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -28,24 +30,27 @@ export default function LoginPage() {
       return;
     }
 
-    setError("Invalid username or password. Try user / user");
+    setError(t.login.invalidCredentials);
   };
 
   return (
     <div className="login-page">
       <section className="login-page__form-panel">
-        <header className="login-page__brand">
-          <AllTrackLogoIcon className="login-page__brand-icon" />
-          <span className="login-page__brand-text">
-            <span className="login-page__brand-all">All</span>
-            <span className="login-page__brand-track">Track</span>
-          </span>
+        <header className="login-page__topbar">
+          <div className="login-page__brand">
+            <AllTrackLogoIcon className="login-page__brand-icon" />
+            <span className="login-page__brand-text">
+              <span className="login-page__brand-all">All</span>
+              <span className="login-page__brand-track">Track</span>
+            </span>
+          </div>
+          <LanguageSwitcher variant="compact" />
         </header>
 
         <div className="login-page__form-wrap">
           <div className="login-page__intro">
-            <h1>Welcome Back</h1>
-            <p>Enter your username and password to access your account.</p>
+            <h1>{t.login.welcome}</h1>
+            <p>{t.login.subtitle}</p>
           </div>
 
           <form
@@ -54,7 +59,7 @@ export default function LoginPage() {
             noValidate
           >
             <div className="login-page__field">
-              <label htmlFor="username">Username</label>
+              <label htmlFor="username">{t.login.username}</label>
               <input
                 id="username"
                 type="text"
@@ -68,7 +73,7 @@ export default function LoginPage() {
             </div>
 
             <div className="login-page__field">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">{t.login.password}</label>
               <div className="login-page__password-wrap">
                 <input
                   id="password"
@@ -84,7 +89,9 @@ export default function LoginPage() {
                   type="button"
                   className="login-page__password-toggle"
                   onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-label={
+                    showPassword ? t.login.hidePassword : t.login.showPassword
+                  }
                   tabIndex={-1}
                 >
                   {showPassword ? <FiEyeOff /> : <FiEye />}
@@ -100,10 +107,10 @@ export default function LoginPage() {
                   onChange={(e) => setRemember(e.target.checked)}
                   disabled={loading}
                 />
-                <span>Remember Me</span>
+                <span>{t.login.rememberMe}</span>
               </label>
               <button type="button" className="login-page__link" disabled>
-                Forgot Your Password?
+                {t.login.forgotPassword}
               </button>
             </div>
 
@@ -118,11 +125,11 @@ export default function LoginPage() {
               className="login-page__submit"
               disabled={loading}
             >
-              {loading ? <span className="login-page__spinner" /> : "Log In"}
+              {loading ? <span className="login-page__spinner" /> : t.login.logIn}
             </button>
 
             <div className="login-page__divider">
-              <span>Or Login With</span>
+              <span>{t.login.orLoginWith}</span>
             </div>
 
             <div className="login-page__social">
@@ -145,29 +152,29 @@ export default function LoginPage() {
                     fill="#EA4335"
                   />
                 </svg>
-                Google
+                {t.login.google}
               </button>
               <button type="button" className="login-page__social-btn" disabled>
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M16.365 1.43c0 1.14-.46 2.2-1.21 2.96-.77.78-1.8 1.22-2.89 1.22-.05-1.15.48-2.24 1.23-3 .75-.77 1.78-1.22 2.87-1.18zm2.52 4.37c-1.61-.09-2.97.92-3.74.92-.79 0-1.95-.88-3.22-.86-1.66.03-3.18.96-4.03 2.44-1.72 2.98-.44 7.39 1.23 9.81.82 1.18 1.8 2.5 3.09 2.45 1.24-.05 1.71-.8 3.21-.8 1.5 0 1.92.8 3.23.77 1.34-.02 2.18-1.2 2.99-2.38.94-1.37 1.33-2.7 1.35-2.77-.03-.01-2.6-1-2.62-3.96-.02-2.5 2.02-3.7 2.11-3.76-1.15-1.68-2.94-1.9-3.57-1.94z" />
                 </svg>
-                Apple
+                {t.login.apple}
               </button>
             </div>
           </form>
 
           <p className="login-page__register">
-            Don&apos;t Have An Account?{" "}
+            {t.login.noAccount}{" "}
             <button type="button" className="login-page__link" disabled>
-              Register Now.
+              {t.login.registerNow}
             </button>
           </p>
         </div>
 
         <footer className="login-page__footer">
-          <span>Copyright © 2026 AllTrack Enterprises LTD.</span>
+          <span>{t.login.copyright}</span>
           <button type="button" className="login-page__link" disabled>
-            Privacy Policy
+            {t.login.privacyPolicy}
           </button>
         </footer>
       </section>

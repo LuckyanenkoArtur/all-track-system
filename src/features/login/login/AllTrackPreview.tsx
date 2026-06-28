@@ -5,17 +5,26 @@ import {
   FiDollarSign,
   FiTrendingUp,
 } from "react-icons/fi";
+import { useTranslation } from "../../../i18n";
 import "./AllTrackPreview.scss";
 
 const TASKS = [
-  { name: "API integration", assignee: "Alex M.", status: "In Progress", tone: "blue" },
-  { name: "Budget review Q2", assignee: "Sarah K.", status: "Done", tone: "green" },
-  { name: "Sprint planning", assignee: "James R.", status: "Pending", tone: "amber" },
+  { name: "API integration", assignee: "Alex M.", tone: "blue" as const },
+  { name: "Budget review Q2", assignee: "Sarah K.", tone: "green" as const },
+  { name: "Sprint planning", assignee: "James R.", tone: "amber" as const },
 ];
+
+const STATUS_KEYS = {
+  blue: "statusInProgress",
+  green: "statusDone",
+  amber: "statusPending",
+} as const;
 
 const TIME_BARS = [42, 68, 55, 82, 61, 74, 48];
 
 export default function AllTrackPreview() {
+  const { t } = useTranslation();
+  const preview = t.login.preview;
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -26,23 +35,21 @@ export default function AllTrackPreview() {
   return (
     <div className={`at-preview ${mounted ? "at-preview--ready" : ""}`}>
       <div className="at-preview__copy">
-        <h2 className="at-preview__title">
-          Time, tasks &amp; budget — all in one place.
-        </h2>
-        <p className="at-preview__subtitle">
-          Log in to access your AllTrack workspace and manage your team
-          operations effortlessly.
-        </p>
+        <h2 className="at-preview__title">{preview.title}</h2>
+        <p className="at-preview__subtitle">{preview.subtitle}</p>
       </div>
 
       <div className="at-preview__board">
         <div className="at-preview__stats">
-          <div className="at-preview__stat at-preview__anim" style={{ "--delay": "0.1s" } as CSSProperties}>
+          <div
+            className="at-preview__stat at-preview__anim"
+            style={{ "--delay": "0.1s" } as CSSProperties}
+          >
             <div className="at-preview__stat-icon at-preview__stat-icon--time">
               <FiClock />
             </div>
             <div>
-              <span className="at-preview__stat-label">Hours Tracked</span>
+              <span className="at-preview__stat-label">{preview.hoursTracked}</span>
               <strong className="at-preview__stat-value">1,284h</strong>
               <span className="at-preview__stat-trend at-preview__stat-trend--up">
                 <FiTrendingUp /> +12.4%
@@ -50,36 +57,45 @@ export default function AllTrackPreview() {
             </div>
           </div>
 
-          <div className="at-preview__stat at-preview__anim" style={{ "--delay": "0.2s" } as CSSProperties}>
+          <div
+            className="at-preview__stat at-preview__anim"
+            style={{ "--delay": "0.2s" } as CSSProperties}
+          >
             <div className="at-preview__stat-icon at-preview__stat-icon--task">
               <FiCheckSquare />
             </div>
             <div>
-              <span className="at-preview__stat-label">Active Tasks</span>
+              <span className="at-preview__stat-label">{preview.activeTasks}</span>
               <strong className="at-preview__stat-value">48</strong>
               <span className="at-preview__stat-trend at-preview__stat-trend--up">
-                <FiTrendingUp /> +6 today
+                <FiTrendingUp /> {preview.trendToday}
               </span>
             </div>
           </div>
 
-          <div className="at-preview__stat at-preview__anim" style={{ "--delay": "0.3s" } as CSSProperties}>
+          <div
+            className="at-preview__stat at-preview__anim"
+            style={{ "--delay": "0.3s" } as CSSProperties}
+          >
             <div className="at-preview__stat-icon at-preview__stat-icon--finance">
               <FiDollarSign />
             </div>
             <div>
-              <span className="at-preview__stat-label">Budget Used</span>
+              <span className="at-preview__stat-label">{preview.budgetUsed}</span>
               <strong className="at-preview__stat-value">$84,210</strong>
-              <span className="at-preview__stat-trend">72% of plan</span>
+              <span className="at-preview__stat-trend">{preview.percentOfPlan}</span>
             </div>
           </div>
         </div>
 
         <div className="at-preview__grid">
-          <div className="at-preview__card at-preview__anim" style={{ "--delay": "0.35s" } as CSSProperties}>
+          <div
+            className="at-preview__card at-preview__anim"
+            style={{ "--delay": "0.35s" } as CSSProperties}
+          >
             <div className="at-preview__card-head">
-              <h3>Weekly Time</h3>
-              <span>Team hours</span>
+              <h3>{preview.weeklyTime}</h3>
+              <span>{preview.teamHours}</span>
             </div>
             <div className="at-preview__bars">
               {TIME_BARS.map((height, i) => (
@@ -93,10 +109,13 @@ export default function AllTrackPreview() {
             </div>
           </div>
 
-          <div className="at-preview__card at-preview__card--gauge at-preview__anim" style={{ "--delay": "0.45s" } as CSSProperties}>
+          <div
+            className="at-preview__card at-preview__card--gauge at-preview__anim"
+            style={{ "--delay": "0.45s" } as CSSProperties}
+          >
             <div className="at-preview__card-head">
-              <h3>Budget</h3>
-              <span>Q2 overview</span>
+              <h3>{preview.budget}</h3>
+              <span>{preview.q2Overview}</span>
             </div>
             <div className="at-preview__gauge">
               <svg viewBox="0 0 120 70" className="at-preview__gauge-svg">
@@ -126,29 +145,32 @@ export default function AllTrackPreview() {
               </svg>
               <div className="at-preview__gauge-value">
                 <strong>72%</strong>
-                <span>utilized</span>
+                <span>{preview.utilized}</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="at-preview__card at-preview__card--table at-preview__anim" style={{ "--delay": "0.55s" } as CSSProperties}>
+        <div
+          className="at-preview__card at-preview__card--table at-preview__anim"
+          style={{ "--delay": "0.55s" } as CSSProperties}
+        >
           <div className="at-preview__card-head">
-            <h3>Recent Tasks</h3>
-            <span>Assigned to team</span>
+            <h3>{preview.recentTasks}</h3>
+            <span>{preview.assignedToTeam}</span>
           </div>
           <div className="at-preview__table">
             <div className="at-preview__table-row at-preview__table-row--head">
-              <span>Task</span>
-              <span>Member</span>
-              <span>Status</span>
+              <span>{preview.taskColumn}</span>
+              <span>{preview.memberColumn}</span>
+              <span>{preview.statusColumn}</span>
             </div>
             {TASKS.map((task) => (
               <div key={task.name} className="at-preview__table-row">
                 <span className="at-preview__task-name">{task.name}</span>
                 <span>{task.assignee}</span>
                 <span className={`at-preview__pill at-preview__pill--${task.tone}`}>
-                  {task.status}
+                  {preview[STATUS_KEYS[task.tone]]}
                 </span>
               </div>
             ))}

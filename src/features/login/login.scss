@@ -29,13 +29,20 @@
   overflow-y: auto;
 }
 
+.login-page__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 48px;
+  animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
+}
+
 .login-page__brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 48px;
   user-select: none;
-  animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
 }
 
 .login-page__brand-icon {

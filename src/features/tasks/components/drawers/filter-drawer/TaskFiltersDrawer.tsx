@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { FiX } from "react-icons/fi";
-import Dialog from "../../user-profile/components/dialogs/Dialog";
-import type { TaskFilters, TaskPriority, TaskStatus } from "../domain/others";
+import Dialog from "../../../../user-profile/components/dialogs/Dialog";
+import type { TaskFilters, TaskPriority, TaskStatus } from "../../../domain/others";
 import {
   areDrawerFiltersEqual,
   hasDrawerFilters,
-} from "../utils/taskListUtils";
-import { FilterSearchMultiSelect } from "./FilterSearchMultiSelect";
+} from "../../../utils/taskListUtils";
+import { FilterSearchMultiSelect } from "../../FilterSearchMultiSelect";
 import styles from "./TaskFiltersDrawer.module.scss";
 
 type FilterOptions = {
@@ -69,19 +69,19 @@ const STATUS_OPTIONS: {
   value: TaskStatus;
   labelKey: keyof TaskFiltersDrawerProps["labels"];
 }[] = [
-  { value: "done", labelKey: "done" },
-  { value: "inProgress", labelKey: "inProgress" },
-  { value: "pending", labelKey: "pending" },
-];
+    { value: "done", labelKey: "done" },
+    { value: "inProgress", labelKey: "inProgress" },
+    { value: "pending", labelKey: "pending" },
+  ];
 
 const PRIORITY_OPTIONS: {
   value: TaskPriority;
   labelKey: keyof TaskFiltersDrawerProps["labels"];
 }[] = [
-  { value: "high", labelKey: "high" },
-  { value: "medium", labelKey: "medium" },
-  { value: "low", labelKey: "low" },
-];
+    { value: "high", labelKey: "high" },
+    { value: "medium", labelKey: "medium" },
+    { value: "low", labelKey: "low" },
+  ];
 
 export function TaskFiltersDrawer({
   open,
