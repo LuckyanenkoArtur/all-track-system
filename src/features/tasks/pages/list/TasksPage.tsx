@@ -25,7 +25,7 @@ import {
 import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksPage.module.scss";
 import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
-import { SearchBar } from "../../../../components/search-bar/SearchBar";
+import { SearchBar } from "../../../../components/ui/search-bar/SearchBar";
 
 export function TaskListPage() {
   const { t } = useTranslation();

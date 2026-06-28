@@ -1,7 +1,7 @@
 import { FiFilter } from "react-icons/fi";
 import { useTranslation } from "../../../../../i18n";
 import type { TaskFilters } from "../../../domain/filters";
-import { TaskFiltersDrawer } from "../../TaskFiltersDrawer";
+import { TaskFiltersDrawer } from "./TaskFiltersDrawer";
 import styles from "./FilterDrawer.module.scss";
 
 type FilterOptions = {
