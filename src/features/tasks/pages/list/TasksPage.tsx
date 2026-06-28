@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiCalendar, FiFilter, FiList, FiSearch } from "react-icons/fi";
+import { FiCalendar, FiFilter, FiList } from "react-icons/fi";
 import { BiAbacus, BiTable } from "react-icons/bi";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
@@ -25,6 +25,7 @@ import {
 import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksPage.module.scss";
 import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
+import { SearchBar } from "../../../../components/search-bar/SearchBar";
 
 export function TaskListPage() {
   const { t } = useTranslation();
@@ -154,16 +155,12 @@ export function TaskListPage() {
       <header className={styles.pageHeader}>
         <BreadTitle title={t.sidebar.workQueue} />
         <div className={styles.pageToolbar}>
-          <div className={styles.searchBox}>
-            <FiSearch size={16} aria-hidden />
-            <input
-              type="search"
+          <div className={styles.toolbarSearch}>
+            <SearchBar
               value={filters.search}
-              onChange={(event) =>
-                setFilters({ ...filters, search: event.target.value })
-              }
+              onChange={(search) => setFilters({ ...filters, search })}
               placeholder={taskLabels.searchPlaceholder}
-              aria-label={taskLabels.searchPlaceholder}
+              ariaLabel={taskLabels.searchPlaceholder}
             />
           </div>
 

@@ -24,45 +24,17 @@
   gap: 12px;
   flex: 1;
   min-width: min(100%, 320px);
+}
 
-  .searchBox {
-    flex: 0 1 260px;
-    min-width: 180px;
-  }
+.toolbarSearch {
+  flex: 0 1 260px;
+  min-width: 180px;
 }
 
 .pageSubtitle {
   margin: 0;
   font-size: 0.875rem;
   color: var(--color-text-muted);
-}
-
-.searchBox {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  min-width: min(100%, 280px);
-  padding: 0 14px;
-  height: 40px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  color: var(--color-text-muted);
-
-  input {
-    flex: 1;
-    min-width: 0;
-    border: none;
-    background: transparent;
-    color: var(--color-text);
-    font-size: 0.875rem;
-    outline: none;
-
-    &::placeholder {
-      color: var(--color-text-muted);
-    }
-  }
 }
 
 .filterToggle {
@@ -426,11 +398,11 @@
   .pageToolbar {
     flex-direction: column;
     align-items: stretch;
+  }
 
-    .searchBox {
-      flex: 1 1 auto;
-      min-width: 0;
-    }
+  .toolbarSearch {
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .viewToggles {
