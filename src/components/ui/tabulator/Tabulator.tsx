@@ -1,6 +1,6 @@
 import type { FC, PropsWithChildren } from "react";
 import { createContext, useContext, useState } from "react";
-import styles from "../../../features/tasks/components/tabulator/Tabulator.module.scss";
+import styles from "./Tabulator.module.scss";
 
 type TabContextType = {
   active: string;
@@ -38,19 +38,17 @@ export const Tabulator: TabulatorComponent = ({ children, defaultValue }) => {
   const [active, setActive] = useState(defaultValue);
 
   return (
-      <TabContext.Provider value={{ active, setActive }}>
-        <div className={styles.contentCard}>
-          {children}
-        </div>
-      </TabContext.Provider>
+    <TabContext.Provider value={{ active, setActive }}>
+      <div className={styles.contentCard}>{children}</div>
+    </TabContext.Provider>
   );
 };
 
 Tabulator.Tabs = ({ children }) => {
   return (
-      <div className={styles.tabs} aria-label="tabs-nav">
-        {children}
-      </div>
+    <div className={styles.tabs} aria-label="tabs-nav">
+      {children}
+    </div>
   );
 };
 
@@ -60,14 +58,14 @@ Tabulator.Tab = ({ children, value }) => {
   const isActive = active === value;
 
   return (
-      <button
-          className={`${styles.tab} ${isActive ? styles.tabActive : ""}`}
-          onClick={() => setActive(value)}
-          role="tab"
-          aria-selected={isActive}
-      >
-        {children}
-      </button>
+    <button
+      className={`${styles.tab} ${isActive ? styles.tabActive : ""}`}
+      onClick={() => setActive(value)}
+      role="tab"
+      aria-selected={isActive}
+    >
+      {children}
+    </button>
   );
 };
 

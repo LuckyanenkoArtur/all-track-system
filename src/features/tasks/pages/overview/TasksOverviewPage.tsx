@@ -9,7 +9,6 @@ import { TaskCreationDrawer } from "../../components/drawers/task-creation-drawe
 import { ActiveTrackingCard } from "../../components/cards/ActiveTrackingCard";
 import { ManualTimeEntryDialog } from "../../components/ManualTimeEntryDialog";
 import { TaskDetailsPanel } from "../../components/TaskDetailsPanel";
-import { Tabulator } from "../../components/tabulator/Tabulator";
 import { useTasks } from "../../hooks/useTasks";
 import { useTaskListState } from "../../hooks/useTaskListState";
 import { getAuthorInitials } from "../../utils/commentUtils";
@@ -89,12 +88,6 @@ export function TasksOverviewPage() {
           stop: t.tasks.stopTracking,
         }}
       />
-
-      {/*<Tabulator*/}
-      {/*  onTaskClick={setSelectedTaskId}*/}
-      {/*  onAddManualTime={setManualTimeTaskId}*/}
-      {/*  onLogBudgetExpense={setBudgetExpenseTaskId}*/}
-      {/*/>*/}
 
       <TaskTabulator
         onTaskClick={setSelectedTaskId}
