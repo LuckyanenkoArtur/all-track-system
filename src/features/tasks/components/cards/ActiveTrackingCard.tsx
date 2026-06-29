@@ -1,10 +1,10 @@
 import { FiSquare } from "react-icons/fi";
-import { useTasks } from "../hooks/useTasks";
-import { useTrackingTimer } from "../hooks/useTrackingTimer";
+import { useTasks } from "../../hooks/useTasks";
+import { useTrackingTimer } from "../../hooks/useTrackingTimer";
 import {
   formatSessionTimer,
   getLiveTimeSpent,
-} from "../utils/timeTrackingUtils";
+} from "../../utils/timeTrackingUtils";
 import styles from "./ActiveTrackingCard.module.scss";
 
 type ActiveTrackingCardProps = {
@@ -39,7 +39,9 @@ export function ActiveTrackingCard({ labels }: ActiveTrackingCardProps) {
         <div className={styles.metrics}>
           <div className={styles.metric}>
             <span className={styles.metricLabel}>{labels.session}</span>
-            <strong className={styles.sessionTimer}>{formatSessionTimer(elapsedMs)}</strong>
+            <strong className={styles.sessionTimer}>
+              {formatSessionTimer(elapsedMs)}
+            </strong>
           </div>
           <div className={styles.metric}>
             <span className={styles.metricLabel}>{labels.totalTime}</span>
