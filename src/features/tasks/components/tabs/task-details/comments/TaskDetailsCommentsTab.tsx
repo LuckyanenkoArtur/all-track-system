@@ -12,7 +12,7 @@ import {
   FiSend,
   FiX,
 } from "react-icons/fi";
-import type { TaskComment } from "../../domain/others.ts";
+import type { TaskComment } from "../../../../domain/others.ts";
 import {
   createPendingAttachment,
   downloadAttachment,
@@ -22,8 +22,8 @@ import {
   MAX_COMMENT_FILE_SIZE,
   readFileAsDataUrl,
   type PendingAttachment,
-} from "../../utils/commentUtils.ts";
-import { TaskDetailsTabPlaceholder } from "../TaskDetailsTabPlaceholder.tsx";
+} from "../../../../utils/commentUtils.ts";
+import { TaskDetailsTabPlaceholder } from "../../../TaskDetailsTabPlaceholder.tsx";
 import styles from "./TaskDetailsCommentsTab.module.scss";
 
 export type TaskCommentsLabels = {

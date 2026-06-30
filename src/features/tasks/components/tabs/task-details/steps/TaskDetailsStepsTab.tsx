@@ -1,25 +1,22 @@
 import { FiCheck, FiCheckSquare } from "react-icons/fi";
-import type { TaskStep } from "../../domain/others.ts";
-import { TaskDetailsTabPlaceholder } from "../TaskDetailsTabPlaceholder.tsx";
+import type { TaskStep } from "../../../../domain/others.ts";
+import { TaskDetailsTabPlaceholder } from "../../../TaskDetailsTabPlaceholder.tsx";
 import styles from "./TaskDetailsStepsTab.module.scss";
+import {useTranslation} from "../../../../../../i18n";
 
 type TaskDetailsStepsTabProps = {
   steps: TaskStep[];
-  labels: {
-    title: string;
-    empty: string;
-    completed: string;
-    pending: string;
-    progress: string;
-  };
   onToggleStep?: (stepId: string) => void;
 };
 
 export function TaskDetailsStepsTab({
   steps,
-  labels,
   onToggleStep,
 }: TaskDetailsStepsTabProps) {
+
+  const { t } = useTranslation();
+  const labels = t.tasks.details.tabs;
+
   const completedCount = steps.filter((step) => step.completed).length;
   const total = steps.length;
   const progressPercent =
@@ -29,8 +26,8 @@ export function TaskDetailsStepsTab({
     return (
       <TaskDetailsTabPlaceholder
         icon={<FiCheckSquare size={22} aria-hidden />}
-        title={labels.title}
-        message={labels.empty}
+        title={labels.steps}
+        message={labels.stepsEmpty}
       />
     );
   }
@@ -38,7 +35,7 @@ export function TaskDetailsStepsTab({
   return (
     <div className={styles.root}>
       <div className={styles.progressHeader}>
-        <span className={styles.progressLabel}>{labels.progress}</span>
+        <span className={styles.progressLabel}>{labels.stepsProgress}</span>
         <span className={styles.progressValue}>
           {completedCount}/{total} ({progressPercent}%)
         </span>
@@ -61,7 +58,7 @@ export function TaskDetailsStepsTab({
                 type="button"
                 className={`${styles.checkBtn} ${step.completed ? styles.checked : ""}`}
                 onClick={() => onToggleStep(step.id)}
-                aria-label={step.completed ? labels.completed : labels.pending}
+                aria-label={step.completed ? labels.stepCompleted : labels.stepPending}
                 aria-pressed={step.completed}
               >
                 {step.completed && <FiCheck size={12} aria-hidden />}

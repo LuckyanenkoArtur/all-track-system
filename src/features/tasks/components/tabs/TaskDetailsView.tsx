@@ -13,10 +13,10 @@ import { CompleteTaskDialog } from "../CompleteTaskDialog.tsx";
 import { CreateTaskDialog } from "../dialogs/CreateTaskDialog.tsx";
 import { ManualTimeEntryDialog } from "../ManualTimeEntryDialog.tsx";
 import { AddBudgetExpenseDialog } from "../AddBudgetExpenseDialog.tsx";
-import { TaskDetailsCommentsTab } from "./TaskDetailsCommentsTab.tsx";
+import { TaskDetailsCommentsTab } from "./task-details/comments/TaskDetailsCommentsTab.tsx";
 import { TaskDetailsHistoryTab } from "./TaskDetailsHistoryTab.tsx";
 import { TaskDetailsOverviewTab } from "./TaskDetailsOverviewTab.tsx";
-import { TaskDetailsStepsTab } from "./TaskDetailsStepsTab.tsx";
+import { TaskDetailsStepsTab } from "./task-details/steps/TaskDetailsStepsTab.tsx";
 import { TaskDetailsTabPlaceholder } from "../TaskDetailsTabPlaceholder.tsx";
 import styles from "../TaskDetailsView.module.scss";
 
@@ -244,13 +244,6 @@ export function TaskDetailsView({
           {activeTab === "steps" && (
             <TaskDetailsStepsTab
               steps={task.steps ?? []}
-              labels={{
-                title: detailLabels.tabs.steps,
-                empty: detailLabels.tabs.stepsEmpty,
-                progress: detailLabels.tabs.stepsProgress,
-                completed: detailLabels.tabs.stepCompleted,
-                pending: detailLabels.tabs.stepPending,
-              }}
               onToggleStep={handleToggleStep}
             />
           )}

@@ -7,6 +7,8 @@ import {LuListTodo} from "react-icons/lu";
 import {FaComments} from "react-icons/fa6";
 import {IoDocuments} from "react-icons/io5";
 import {MdOutlineHistory} from "react-icons/md";
+import {TaskDetailsStepsTab} from "../tabs/task-details/steps/TaskDetailsStepsTab.tsx";
+import {useTasks} from "../../hooks/useTasks.ts";
 
 interface TaskDetailsTabulatorProps {
     task: Task;
@@ -15,6 +17,31 @@ interface TaskDetailsTabulatorProps {
 export default function TaskDetailsTabulator({task}: TaskDetailsTabulatorProps){
     const { t } = useTranslation();
     const labels = t.tasks.details;
+
+    //! -------------------REFACTORING----------------
+    const {
+        updateTask,
+        updateTaskSteps,
+        updateTaskStatus,
+        getTrackingElapsedMs,
+        getTaskComments,
+        addTaskComment,
+        completeTaskWithReport,
+        getTaskHistory,
+        getBudgetTransactions,
+        addManualTime,
+        addBudgetExpense,
+    } = useTasks();
+    //! ------------------------------------------------------------
+
+    //! -------------------FUNCTIONALITY OF STEP TAB----------------
+    const handleToggleStep = (stepId: string) => {
+        const nextSteps = (task.steps ?? []).map((step) =>
+            step.id === stepId ? { ...step, completed: !step.completed } : step,
+        );
+        updateTaskSteps(task.id, nextSteps);
+    };
+    //! ------------------------------------------------------------
 
     const tabs = [
         {
@@ -48,22 +75,37 @@ export default function TaskDetailsTabulator({task}: TaskDetailsTabulatorProps){
 
     const panels = [
         {
-            value: "taskList",
+            id: "overview",
             content: (
                 <div>Hell</div>
-            ),
+            )
         },
         {
-            value: "cards",
+            id: "steps",
             content: (
-                <div>Card</div>
-            ),
+                <TaskDetailsStepsTab
+                    steps={task.steps ?? []}
+                    onToggleStep={handleToggleStep}
+                />
+            )
         },
         {
-            value: "analytics",
+            id: "comments",
             content: (
-                <div>Anal</div>
-            ),
+                <div>Hell</div>
+            )
+        },
+        {
+            id: "documents",
+            content: (
+                <div>Hell</div>
+            )
+        },
+        {
+            id: "history",
+            content: (
+                <div>Hell</div>
+            )
         },
     ];
 
@@ -81,7 +123,7 @@ export default function TaskDetailsTabulator({task}: TaskDetailsTabulatorProps){
 
             <Tabulator.Panels>
                 {panels.map((panel) => (
-                    <Tabulator.Panel value={panel.value}>{panel.content}</Tabulator.Panel>
+                    <Tabulator.Panel value={panel.id}>{panel.content}</Tabulator.Panel>
                 ))}
             </Tabulator.Panels>
         </Tabulator>
