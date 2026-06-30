@@ -1,24 +1,24 @@
 import { useEffect, useMemo, useState } from "react";
 import { FiFileText } from "react-icons/fi";
 
-import { useUserProfile } from "../../../context/UserProfileContext";
-import { useTranslation } from "../../../i18n";
-import { useTaskListState } from "../hooks/useTaskListState";
-import { useTasks } from "../hooks/useTasks";
-import { useTaskTrackingDisplay } from "../hooks/useTaskTrackingDisplay";
-import type { Task } from "../domain/others";
-import { getAuthorInitials } from "../utils/commentUtils";
-import { getLiveTimeSpent } from "../utils/timeTrackingUtils";
-import { CompleteTaskDialog } from "./CompleteTaskDialog";
-import { CreateTaskDialog } from "./dialogs/CreateTaskDialog";
-import { ManualTimeEntryDialog } from "./ManualTimeEntryDialog";
-import { AddBudgetExpenseDialog } from "./AddBudgetExpenseDialog";
-import { TaskDetailsCommentsTab } from "./TaskDetailsCommentsTab";
-import { TaskDetailsHistoryTab } from "./TaskDetailsHistoryTab";
-import { TaskDetailsOverviewTab } from "./TaskDetailsOverviewTab";
-import { TaskDetailsStepsTab } from "./TaskDetailsStepsTab";
-import { TaskDetailsTabPlaceholder } from "./TaskDetailsTabPlaceholder";
-import styles from "./TaskDetailsView.module.scss";
+import { useUserProfile } from "../../../../context/UserProfileContext.tsx";
+import { useTranslation } from "../../../../i18n";
+import { useTaskListState } from "../../hooks/useTaskListState.ts";
+import { useTasks } from "../../hooks/useTasks.ts";
+import { useTaskTrackingDisplay } from "../../hooks/useTaskTrackingDisplay.ts";
+import type { Task } from "../../domain/others.ts";
+import { getAuthorInitials } from "../../utils/commentUtils.ts";
+import { getLiveTimeSpent } from "../../utils/timeTrackingUtils.ts";
+import { CompleteTaskDialog } from "../CompleteTaskDialog.tsx";
+import { CreateTaskDialog } from "../dialogs/CreateTaskDialog.tsx";
+import { ManualTimeEntryDialog } from "../ManualTimeEntryDialog.tsx";
+import { AddBudgetExpenseDialog } from "../AddBudgetExpenseDialog.tsx";
+import { TaskDetailsCommentsTab } from "./TaskDetailsCommentsTab.tsx";
+import { TaskDetailsHistoryTab } from "./TaskDetailsHistoryTab.tsx";
+import { TaskDetailsOverviewTab } from "./TaskDetailsOverviewTab.tsx";
+import { TaskDetailsStepsTab } from "./TaskDetailsStepsTab.tsx";
+import { TaskDetailsTabPlaceholder } from "../TaskDetailsTabPlaceholder.tsx";
+import styles from "../TaskDetailsView.module.scss";
 
 type DetailsTab = "overview" | "steps" | "comments" | "documents" | "history";
 

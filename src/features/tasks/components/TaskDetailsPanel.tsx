@@ -5,7 +5,7 @@ import { FiMaximize2, FiX } from "react-icons/fi";
 import { useTranslation } from "../../../i18n";
 import type { Task } from "../domain/others";
 import { StatusBadge } from "./TaskBadges";
-import { TaskDetailsView } from "./TaskDetailsView";
+import { TaskDetailsView } from "./tabs/TaskDetailsView.tsx";
 import styles from "./TaskDetailsPanel.module.scss";
 
 type TaskDetailsPanelProps = {

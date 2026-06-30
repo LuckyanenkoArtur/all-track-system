@@ -13,16 +13,16 @@ import {
   FiUser,
   FiUsers,
 } from "react-icons/fi";
-import type { BudgetTransaction, Task, TaskStatus } from "../domain/others";
-import { formatDueDate } from "../utils/dateUtils";
+import type { BudgetTransaction, Task, TaskStatus } from "../../domain/others.ts";
+import { formatDueDate } from "../../utils/dateUtils.ts";
 import {
   formatCurrency,
   getBudgetInfo,
   getDeadlineInfo,
-} from "../utils/taskDetailsUtils";
-import { formatDate, formatBudget } from "../utils/taskListUtils";
-import { PriorityBadge, StatusBadge } from "./TaskBadges";
-import { TaskBudgetChart } from "./TaskBudgetChart";
+} from "../../utils/taskDetailsUtils.ts";
+import { formatDate, formatBudget } from "../../utils/taskListUtils.ts";
+import { PriorityBadge, StatusBadge } from "../TaskBadges.tsx";
+import { TaskBudgetChart } from "../TaskBudgetChart.tsx";
 import styles from "./TaskDetailsOverviewTab.module.scss";
 
 export type TaskOverviewLabels = {
