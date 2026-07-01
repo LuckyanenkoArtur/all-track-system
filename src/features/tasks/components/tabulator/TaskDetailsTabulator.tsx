@@ -7,7 +7,7 @@ import { LuListTodo } from "react-icons/lu";
 import { FaComments } from "react-icons/fa6";
 import { IoDocuments } from "react-icons/io5";
 import { MdOutlineHistory } from "react-icons/md";
-import { TaskDetailsStepsTab } from "../tabs/task-details/steps/TaskDetailsStepsTab.tsx";
+import { TaskDetailsStepsTab } from "../tabs/task-details/steps/Tab.tsx";
 import { useTasks } from "../../hooks/useTasks.ts";
 
 interface TaskDetailsTabulatorProps {

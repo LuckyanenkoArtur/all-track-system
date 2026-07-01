@@ -16,7 +16,7 @@ import { AddBudgetExpenseDialog } from "../AddBudgetExpenseDialog.tsx";
 import { TaskDetailsCommentsTab } from "./task-details/comments/TaskDetailsCommentsTab.tsx";
 import { TaskDetailsHistoryTab } from "./TaskDetailsHistoryTab.tsx";
 import { TaskDetailsOverviewTab } from "./TaskDetailsOverviewTab.tsx";
-import { TaskDetailsStepsTab } from "./task-details/steps/TaskDetailsStepsTab.tsx";
+import { TaskDetailsStepsTab } from "./task-details/steps/Tab.tsx";
 import { TaskDetailsTabPlaceholder } from "../TaskDetailsTabPlaceholder.tsx";
 import styles from "../TaskDetailsView.module.scss";
 
@@ -208,8 +208,9 @@ export function TaskDetailsView({
             <button
               key={tab.id}
               type="button"
-              className={`${styles.tab} ${isPanel ? styles.tabPanelVariant : ""} ${activeTab === tab.id ? styles.tabActive : ""
-                }`}
+              className={`${styles.tab} ${isPanel ? styles.tabPanelVariant : ""} ${
+                activeTab === tab.id ? styles.tabActive : ""
+              }`}
               aria-selected={activeTab === tab.id}
               role="tab"
               onClick={() => setActiveTab(tab.id)}
@@ -220,8 +221,9 @@ export function TaskDetailsView({
         </nav>
 
         <div
-          className={`${styles.tabPanel} ${isPanel ? styles.tabPanelPanel : styles.tabPanelPage
-            } ${activeTab === "overview" ? styles.tabPanelOverview : ""}`}
+          className={`${styles.tabPanel} ${
+            isPanel ? styles.tabPanelPanel : styles.tabPanelPage
+          } ${activeTab === "overview" ? styles.tabPanelOverview : ""}`}
           role="tabpanel"
         >
           {activeTab === "overview" && (
