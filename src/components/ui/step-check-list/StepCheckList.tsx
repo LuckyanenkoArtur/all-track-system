@@ -8,7 +8,7 @@ import {
 import { FiCheck } from "react-icons/fi";
 import type { CheckListStep } from "./step.d.ts";
 import { useTranslation } from "../../../i18n/index.ts";
-import "./CheckList.scss";
+import "./StepCheckList.scss";
 
 type StepCheckListContextValue = {
   onToggleStep?: (stepId: string) => void;

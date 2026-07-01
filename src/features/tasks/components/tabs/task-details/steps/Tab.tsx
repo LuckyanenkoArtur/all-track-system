@@ -5,7 +5,7 @@ import { TaskDetailsTabPlaceholder } from "../../../TaskDetailsTabPlaceholder.ts
 
 import ProgressBar from "../../../../../../components/ui/progress-bar/ProgressBar.tsx";
 import StepCheckList from "../../../../../../components/ui/step-check-list/StepCheckList.tsx";
-import styles from "./TaskDetailsStepsTab.module.scss";
+import styles from "./Tab.module.scss";
 
 type TaskDetailsStepsTabProps = {
   steps: CheckListStep[];
