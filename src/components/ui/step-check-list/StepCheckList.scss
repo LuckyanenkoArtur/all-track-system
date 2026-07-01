@@ -1,0 +1,71 @@
+.check-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface-secondary);
+    transition:
+      border-color 0.2s ease,
+      opacity 0.2s ease;
+
+    &--completed {
+      opacity: 0.75;
+
+      .check-list__text {
+        text-decoration: line-through;
+        color: var(--color-text-muted);
+      }
+    }
+  }
+
+  &__check-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+    color: #fff;
+    cursor: pointer;
+
+    &--checked {
+      border-color: var(--color-accent);
+      background: var(--color-accent);
+    }
+  }
+
+  &__index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 9999px;
+    background: var(--color-surface-hover);
+    color: var(--color-text-muted);
+    font-size: 0.6875rem;
+    font-weight: 700;
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.875rem;
+    color: var(--color-text);
+    line-height: 1.4;
+  }
+}

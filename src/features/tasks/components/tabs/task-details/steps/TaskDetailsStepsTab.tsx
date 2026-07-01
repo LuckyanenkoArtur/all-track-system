@@ -1,12 +1,14 @@
-import { FiCheck, FiCheckSquare } from "react-icons/fi";
-import type { TaskStep } from "../../../../domain/others.ts";
-import { TaskDetailsTabPlaceholder } from "../../../TaskDetailsTabPlaceholder.tsx";
-import styles from "./TaskDetailsStepsTab.module.scss";
+import { FiCheckSquare } from "react-icons/fi";
+import type { CheckListStep } from "../../../../../../components/ui/step-check-list/step";
 import { useTranslation } from "../../../../../../i18n";
+import { TaskDetailsTabPlaceholder } from "../../../TaskDetailsTabPlaceholder.tsx";
+
 import ProgressBar from "../../../../../../components/ui/progress-bar/ProgressBar.tsx";
+import StepCheckList from "../../../../../../components/ui/step-check-list/StepCheckList.tsx";
+import styles from "./TaskDetailsStepsTab.module.scss";
 
 type TaskDetailsStepsTabProps = {
-  steps: TaskStep[];
+  steps: CheckListStep[];
   onToggleStep?: (stepId: string) => void;
 };
 
@@ -20,6 +22,7 @@ export function TaskDetailsStepsTab({
   const completed = steps.filter((step) => step.completed).length;
   const total = steps.length;
 
+  // !------NEED TO BE REFACTORED----------------
   if (steps.length === 0) {
     return (
       <TaskDetailsTabPlaceholder
@@ -29,45 +32,20 @@ export function TaskDetailsStepsTab({
       />
     );
   }
+  //! ------------------------------------------------
 
   return (
-    <div>
+    <div className={styles.root}>
       <ProgressBar completed={completed} total={total}>
         <ProgressBar.Header text={labels.stepsProgress} />
         <ProgressBar.Body />
       </ProgressBar>
 
-      <ul className={styles.list}>
+      <StepCheckList onToggleStep={onToggleStep}>
         {steps.map((step, index) => (
-          <li
-            key={step.id}
-            className={`${styles.item} ${step.completed ? styles.completed : ""}`}
-          >
-            {onToggleStep ? (
-              <button
-                type="button"
-                className={`${styles.checkBtn} ${step.completed ? styles.checked : ""}`}
-                onClick={() => onToggleStep(step.id)}
-                aria-label={
-                  step.completed ? labels.stepCompleted : labels.stepPending
-                }
-                aria-pressed={step.completed}
-              >
-                {step.completed && <FiCheck size={12} aria-hidden />}
-              </button>
-            ) : (
-              <span
-                className={`${styles.checkBtn} ${step.completed ? styles.checked : ""}`}
-                aria-hidden
-              >
-                {step.completed && <FiCheck size={12} />}
-              </span>
-            )}
-            <span className={styles.index}>{index + 1}</span>
-            <span className={styles.text}>{step.text}</span>
-          </li>
+          <StepCheckList.Item key={step.id} step={step} index={index} />
         ))}
-      </ul>
+      </StepCheckList>
     </div>
   );
 }
