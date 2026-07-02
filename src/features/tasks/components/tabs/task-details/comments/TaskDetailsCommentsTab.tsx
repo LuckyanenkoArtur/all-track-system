@@ -25,6 +25,7 @@ import {
 } from "../../../../utils/commentUtils.ts";
 import { TaskDetailsTabPlaceholder } from "../../../TaskDetailsTabPlaceholder.tsx";
 import styles from "./TaskDetailsCommentsTab.module.scss";
+import { useTranslation } from "../../../../../../i18n/index.ts";
 
 export type TaskCommentsLabels = {
   title: string;
@@ -41,15 +42,16 @@ export type TaskCommentsLabels = {
 
 type TaskDetailsCommentsTabProps = {
   comments: TaskComment[];
-  labels: TaskCommentsLabels;
   onAddComment: (body: string, attachments: PendingAttachment[]) => void;
 };
 
 export function TaskDetailsCommentsTab({
   comments,
-  labels,
   onAddComment,
 }: TaskDetailsCommentsTabProps) {
+  const { t } = useTranslation();
+  const labels = t.tasks.details;
+
   const [body, setBody] = useState("");
   const [pendingAttachments, setPendingAttachments] = useState<
     PendingAttachment[]
@@ -128,12 +130,13 @@ export function TaskDetailsCommentsTab({
 
   return (
     <div className={styles.commentsTab}>
+      {/* Area for displaying comments */}
       <div className={styles.thread}>
         {comments.length === 0 ? (
           <TaskDetailsTabPlaceholder
             icon={<FiMessageSquare size={22} aria-hidden />}
-            title={labels.title}
-            message={labels.empty}
+            title={labels.tabs.comments}
+            message={labels.tabs.commentsEmpty}
           />
         ) : (
           <ul className={styles.commentList}>
@@ -205,6 +208,7 @@ export function TaskDetailsCommentsTab({
         )}
       </div>
 
+      {/* Panel for Writing Comments */}
       <form className={styles.composer} onSubmit={handleSubmit}>
         {pendingAttachments.length > 0 && (
           <ul className={styles.pendingList}>
@@ -235,8 +239,8 @@ export function TaskDetailsCommentsTab({
             type="button"
             className={styles.attachBtn}
             onClick={handleAttachClick}
-            aria-label={labels.attach}
-            title={labels.attach}
+            aria-label={labels.attachFile}
+            title={labels.attachFile}
           >
             <FiPaperclip size={18} aria-hidden />
           </button>
@@ -254,9 +258,9 @@ export function TaskDetailsCommentsTab({
           <textarea
             value={body}
             onChange={(event) => setBody(event.target.value)}
-            placeholder={labels.placeholder}
+            placeholder={labels.commentPlaceholder}
             rows={2}
-            aria-label={labels.placeholder}
+            aria-label={labels.commentPlaceholder}
             onKeyDown={handleKeyDown}
           />
 
@@ -264,7 +268,7 @@ export function TaskDetailsCommentsTab({
             type="submit"
             className={styles.sendBtn}
             disabled={!canSubmit}
-            aria-label={labels.send}
+            aria-label={labels.sendComment}
           >
             <FiSend size={16} aria-hidden />
           </button>

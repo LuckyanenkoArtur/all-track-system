@@ -1,0 +1,266 @@
+.timeline {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 4px 0 0;
+  list-style: none;
+}
+
+$icon-size: 40px;
+$header-line-height: calc(0.875rem * 1.5);
+
+.entry {
+  display: grid;
+  grid-template-columns: $icon-size 1fr;
+  column-gap: 14px;
+  position: relative;
+  padding: 0 0 20px;
+
+  &:last-child {
+    padding-bottom: 0;
+
+    .iconColumn::after {
+      display: none;
+    }
+  }
+}
+
+.entryWithActivity {
+  .iconColumn {
+    grid-row: 1 / 3;
+  }
+}
+
+.iconColumn {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  width: $icon-size;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: calc(50% + $icon-size / 2);
+    bottom: -20px;
+    left: 50%;
+    width: 0;
+    border-left: 1px dashed var(--color-border);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+}
+
+.iconWrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $icon-size;
+  height: $icon-size;
+  border-radius: 10px;
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.contentColumn {
+  display: contents;
+}
+
+.header {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  min-height: $header-line-height;
+  min-width: 0;
+}
+
+.headerMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.summary {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-text);
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.inlineSummaryRow {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.createdBy {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+.timestamp {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.meta {
+  margin: 6px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.activitySection {
+  display: contents;
+}
+
+.activityRow {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+  min-width: 0;
+}
+
+.detailText {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+
+.highlightValue {
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.ellipsisToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 22px;
+  margin: 0;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-accent-hover);
+    background: var(--color-accent-light);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+.descriptionPanel {
+  grid-column: 2;
+  grid-row: 3;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface-secondary);
+  min-width: 0;
+}
+
+.stepsSection {
+  &:not(:first-child) {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--color-border);
+  }
+}
+
+.descriptionText {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.stepsCard {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface-secondary);
+}
+
+.stepsTitle {
+  margin: 0 0 8px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.stepsList {
+  margin: 0;
+  padding-left: 1.15rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-text);
+
+  li + li {
+    margin-top: 4px;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .timestamp {
+    white-space: normal;
+  }
+}
+
+[data-theme="dark"] {
+  .descriptionPanel,
+  .stepsCard {
+    background: rgba(255, 255, 255, 0.03);
+  }
+}

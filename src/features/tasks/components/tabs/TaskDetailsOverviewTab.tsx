@@ -5,6 +5,7 @@ import {
   FiClock,
   FiDollarSign,
   FiEdit2,
+  FiFileText,
   FiFlag,
   FiLayers,
   FiPlay,
@@ -55,6 +56,7 @@ export type TaskOverviewLabels = {
   completeTask: string;
   addManualTime: string;
   logBudgetExpense: string;
+  addNote: string;
 };
 
 type TaskDetailsOverviewTabProps = {
@@ -68,6 +70,7 @@ type TaskDetailsOverviewTabProps = {
   onToggleTracking?: () => void;
   onAddManualTime?: () => void;
   onLogBudgetExpense?: () => void;
+  onAddNote?: () => void;
   onEditTask?: () => void;
   onCompleteTask?: () => void;
 };
@@ -92,6 +95,7 @@ export function TaskDetailsOverviewTab({
   onToggleTracking,
   onAddManualTime,
   onLogBudgetExpense,
+  onAddNote,
   onEditTask,
   onCompleteTask,
 }: TaskDetailsOverviewTabProps) {
@@ -328,7 +332,7 @@ export function TaskDetailsOverviewTab({
               )}
             </div>
 
-            {(onAddManualTime || onLogBudgetExpense) && (
+            {(onAddManualTime || onLogBudgetExpense || onAddNote) && (
               <div className={styles.trackingActions}>
                 {onAddManualTime && (
                   <button
@@ -348,6 +352,16 @@ export function TaskDetailsOverviewTab({
                   >
                     <FiDollarSign size={14} aria-hidden />
                     {labels.logBudgetExpense}
+                  </button>
+                )}
+                {onAddNote && (
+                  <button
+                    type="button"
+                    className={styles.secondaryActionBtn}
+                    onClick={onAddNote}
+                  >
+                    <FiFileText size={14} aria-hidden />
+                    {labels.addNote}
                   </button>
                 )}
               </div>

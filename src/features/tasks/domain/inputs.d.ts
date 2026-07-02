@@ -55,3 +55,10 @@ export interface AddTaskCommentInput {
   kind?: "default" | "completion";
   completionSteps?: CompletionReportStep[];
 }
+
+export interface AddTaskNoteInput {
+  taskId: string;
+  body: string;
+  author: string;
+  authorInitials: string;
+}

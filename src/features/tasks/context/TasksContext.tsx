@@ -16,6 +16,7 @@ import type {
   AddManualTimeInput,
   AddBudgetExpenseInput,
   AddTaskCommentInput,
+  AddTaskNoteInput,
 } from "../domain/inputs";
 
 import type { Task } from "../domain/task";
@@ -62,6 +63,7 @@ interface TasksContextValue {
   getTaskComments: (taskId: string) => TaskComment[];
   getTaskHistory: (taskId: string) => TaskHistoryEntry[];
   addTaskComment: (input: AddTaskCommentInput) => TaskComment;
+  addTaskNote: (input: AddTaskNoteInput) => TaskHistoryEntry;
 }
 
 const TasksContext = createContext<TasksContextValue | null>(null);
@@ -438,6 +440,15 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateTask = useCallback((id: string, input: UpdateTaskInput) => {
+    const now = new Date().toISOString();
+    const author = input.initiator.trim();
+    const authorInitials = author
+      .split(/\s+/)
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+
     setTasks((prev) => {
       const next = prev.map((task) =>
         task.id === id
@@ -472,6 +483,23 @@ export function TasksProvider({ children }: { children: ReactNode }) {
           : task,
       );
       persistTasks(next);
+      return next;
+    });
+
+    setHistory((prev) => {
+      const entry: TaskHistoryEntry = {
+        id: createHistoryId(prev),
+        taskId: id,
+        type: "task_updated",
+        author,
+        authorInitials,
+        description: input.description?.trim() || input.title.trim(),
+        steps: [],
+        createdAt: now,
+      };
+
+      const next = [...prev, entry];
+      persistHistory(next);
       return next;
     });
   }, []);
@@ -519,6 +547,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
   const addTaskComment = useCallback((input: AddTaskCommentInput) => {
     let createdComment: TaskComment | null = null;
+    const now = new Date().toISOString();
 
     setComments((prev) => {
       createdComment = {
@@ -527,7 +556,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         author: input.author,
         authorInitials: input.authorInitials,
         body: input.body,
-        createdAt: new Date().toISOString(),
+        createdAt: now,
         attachments: input.attachments.map((attachment) => ({
           ...attachment,
           id: createAttachmentId(),
@@ -541,7 +570,55 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       return next;
     });
 
+    if (input.kind !== "completion") {
+      setHistory((prev) => {
+        const entry: TaskHistoryEntry = {
+          id: createHistoryId(prev),
+          taskId: input.taskId,
+          type: "comment_added",
+          author: input.author,
+          authorInitials: input.authorInitials,
+          description: input.body.trim(),
+          steps: [],
+          createdAt: now,
+        };
+
+        const next = [...prev, entry];
+        persistHistory(next);
+        return next;
+      });
+    }
+
     return createdComment!;
+  }, []);
+
+  const addTaskNote = useCallback((input: AddTaskNoteInput) => {
+    const body = input.body.trim();
+    if (!body) {
+      throw new Error("Note body is required");
+    }
+
+    const now = new Date().toISOString();
+    let createdEntry: TaskHistoryEntry | null = null;
+
+    setHistory((prev) => {
+      createdEntry = {
+        id: createHistoryId(prev),
+        taskId: input.taskId,
+        type: "note_added",
+        author: input.author,
+        authorInitials: input.authorInitials,
+        description: body,
+        steps: [],
+        createdAt: now,
+      };
+
+      const next = [...prev, createdEntry];
+      persistHistory(next);
+      return next;
+    });
+
+    return createdEntry!;
   }, []);
 
   const getTaskHistory = useCallback(
@@ -550,7 +627,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         .filter((entry) => entry.taskId === taskId)
         .sort(
           (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
         ),
     [history],
   );
@@ -596,7 +673,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         type: "manual_time_added",
         author: input.author,
         authorInitials: input.authorInitials,
-        description: note || `Added ${totalMinutes} minutes manually`,
+        description: note,
         steps: [],
         createdAt: now,
         minutesAdded: totalMinutes,
@@ -671,6 +748,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       getTaskComments,
       getTaskHistory,
       addTaskComment,
+      addTaskNote,
     }),
     [
       tasks,
@@ -693,6 +771,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       getTaskComments,
       getTaskHistory,
       addTaskComment,
+      addTaskNote,
     ],
   );
 

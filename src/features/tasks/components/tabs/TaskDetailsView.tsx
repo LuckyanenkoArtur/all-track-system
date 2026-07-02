@@ -13,8 +13,9 @@ import { CompleteTaskDialog } from "../CompleteTaskDialog.tsx";
 import { CreateTaskDialog } from "../dialogs/CreateTaskDialog.tsx";
 import { ManualTimeEntryDialog } from "../ManualTimeEntryDialog.tsx";
 import { AddBudgetExpenseDialog } from "../AddBudgetExpenseDialog.tsx";
+import { AddNoteDialog } from "../AddNoteDialog.tsx";
 import { TaskDetailsCommentsTab } from "./task-details/comments/TaskDetailsCommentsTab.tsx";
-import { TaskDetailsHistoryTab } from "./TaskDetailsHistoryTab.tsx";
+import { TaskDetailsHistoryTab } from "./task-details/history/TaskDetailsHistoryTab.tsx";
 import { TaskDetailsOverviewTab } from "./TaskDetailsOverviewTab.tsx";
 import { TaskDetailsStepsTab } from "./task-details/steps/Tab.tsx";
 import { TaskDetailsTabPlaceholder } from "../TaskDetailsTabPlaceholder.tsx";
@@ -46,6 +47,7 @@ export function TaskDetailsView({
     getBudgetTransactions,
     addManualTime,
     addBudgetExpense,
+    addTaskNote,
   } = useTasks();
   const { isTracking, sessionTimer, toggleTracking } = useTaskTrackingDisplay(
     task.id,
@@ -56,6 +58,7 @@ export function TaskDetailsView({
   const [completeOpen, setCompleteOpen] = useState(false);
   const [manualTimeOpen, setManualTimeOpen] = useState(false);
   const [budgetExpenseOpen, setBudgetExpenseOpen] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
 
   const taskLabels = t.tasks;
   const detailLabels = taskLabels.details;
@@ -113,6 +116,7 @@ export function TaskDetailsView({
     setCompleteOpen(false);
     setManualTimeOpen(false);
     setBudgetExpenseOpen(false);
+    setNoteOpen(false);
   }, [task.id]);
 
   const handleAddComment = (
@@ -191,6 +195,7 @@ export function TaskDetailsView({
     completeTask: detailLabels.completeTask,
     addManualTime: taskLabels.addManualTime,
     logBudgetExpense: taskLabels.logBudgetExpense,
+    addNote: taskLabels.addNote,
   };
 
   const isPanel = variant === "panel";
@@ -237,6 +242,7 @@ export function TaskDetailsView({
               onToggleTracking={() => toggleTracking(task.id)}
               onAddManualTime={() => setManualTimeOpen(true)}
               onLogBudgetExpense={() => setBudgetExpenseOpen(true)}
+              onAddNote={() => setNoteOpen(true)}
               onStatusChange={(status) => updateTaskStatus(task.id, status)}
               onEditTask={() => setEditOpen(true)}
               onCompleteTask={() => setCompleteOpen(true)}
@@ -253,18 +259,6 @@ export function TaskDetailsView({
           {activeTab === "comments" && (
             <TaskDetailsCommentsTab
               comments={taskComments}
-              labels={{
-                title: detailLabels.tabs.comments,
-                empty: detailLabels.tabs.commentsEmpty,
-                placeholder: detailLabels.commentPlaceholder,
-                attach: detailLabels.attachFile,
-                send: detailLabels.sendComment,
-                removeAttachment: detailLabels.removeAttachment,
-                fileTooLarge: detailLabels.fileTooLarge,
-                maxAttachments: detailLabels.maxAttachments,
-                attachmentUnavailable: detailLabels.attachmentUnavailable,
-                completionSteps: detailLabels.completionSteps,
-              }}
               onAddComment={handleAddComment}
             />
           )}
@@ -278,16 +272,7 @@ export function TaskDetailsView({
           )}
 
           {activeTab === "history" && (
-            <TaskDetailsHistoryTab
-              entries={taskHistory}
-              labels={{
-                title: detailLabels.tabs.history,
-                empty: detailLabels.tabs.historyEmpty,
-                completedSummary: detailLabels.historyCompletedSummary,
-                description: detailLabels.completionDescription,
-                steps: detailLabels.completionSteps,
-              }}
-            />
+            <TaskDetailsHistoryTab entries={taskHistory} />
           )}
         </div>
       </div>
@@ -428,6 +413,32 @@ export function TaskDetailsView({
           unsavedMessage: detailLabels.budgetExpenseUnsavedMessage,
           unsavedYes: detailLabels.budgetExpenseUnsavedYes,
           unsavedNo: detailLabels.budgetExpenseUnsavedNo,
+        }}
+      />
+
+      <AddNoteDialog
+        open={noteOpen}
+        onClose={() => setNoteOpen(false)}
+        onSubmit={(input) =>
+          addTaskNote({
+            taskId: task.id,
+            body: input.body,
+            author: authorName,
+            authorInitials,
+          })
+        }
+        labels={{
+          title: detailLabels.noteDialogTitle,
+          subtitle: detailLabels.noteDialogSubtitle,
+          body: detailLabels.noteBody,
+          bodyPlaceholder: detailLabels.noteBodyPlaceholder,
+          required: dashboardLabels.required,
+          apply: detailLabels.noteApply,
+          cancel: t.common.cancel,
+          unsavedTitle: detailLabels.noteUnsavedTitle,
+          unsavedMessage: detailLabels.noteUnsavedMessage,
+          unsavedYes: detailLabels.noteUnsavedYes,
+          unsavedNo: detailLabels.noteUnsavedNo,
         }}
       />
     </>

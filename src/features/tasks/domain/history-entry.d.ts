@@ -1,7 +1,10 @@
 export type TaskHistoryEntryType =
   | "task_completed"
+  | "comment_added"
+  | "note_added"
+  | "budget_expense_added"
   | "manual_time_added"
-  | "budget_expense_added";
+  | "task_updated";
 
 export interface TaskHistoryEntry {
   id: string;

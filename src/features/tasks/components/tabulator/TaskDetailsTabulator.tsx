@@ -9,6 +9,11 @@ import { IoDocuments } from "react-icons/io5";
 import { MdOutlineHistory } from "react-icons/md";
 import { TaskDetailsStepsTab } from "../tabs/task-details/steps/Tab.tsx";
 import { useTasks } from "../../hooks/useTasks.ts";
+import { TaskDetailsCommentsTab } from "../tabs/task-details/comments/TaskDetailsCommentsTab.tsx";
+import { useMemo } from "react";
+import { getAuthorInitials } from "../../utils/commentUtils.ts";
+import { useUserProfile } from "../../../../context/UserProfileContext.tsx";
+import { TaskDetailsHistoryTab } from "../tabs/task-details/history/TaskDetailsHistoryTab.tsx";
 
 interface TaskDetailsTabulatorProps {
   task: Task;
@@ -36,7 +41,7 @@ export default function TaskDetailsTabulator({
   } = useTasks();
   //! ------------------------------------------------------------
 
-  //! -------------------FUNCTIONALITY OF STEP TAB----------------
+  //! -------------------FUNCTIONALITY OF STEPS TAB----------------
   const handleToggleStep = (stepId: string) => {
     const nextSteps = (task.steps ?? []).map((step) =>
       step.id === stepId ? { ...step, completed: !step.completed } : step,
@@ -44,6 +49,42 @@ export default function TaskDetailsTabulator({
     updateTaskSteps(task.id, nextSteps);
   };
   //! ------------------------------------------------------------
+
+  //! -------------------FUNCTIONALITY OF COMMENTS TAB----------------
+  const { bio } = useUserProfile();
+  const authorName = `${bio.firstName} ${bio.lastName}`.trim() || bio.username;
+  const authorInitials = getAuthorInitials(authorName);
+
+  const taskComments = useMemo(
+    () => getTaskComments(task.id),
+    [task.id, getTaskComments],
+  );
+
+  const handleAddComment = (
+    body: string,
+    attachments: {
+      name: string;
+      size: number;
+      mimeType: string;
+      dataUrl: string;
+    }[],
+  ) => {
+    addTaskComment({
+      taskId: task.id,
+      body,
+      author: authorName,
+      authorInitials,
+      attachments,
+    });
+  };
+  //! ------------------------------------------------------------
+
+  const taskHistory = useMemo(
+    () => getTaskHistory(task.id),
+    [task.id, getTaskHistory],
+  );
+
+  //! -------------------FUNCTIONALITY OF HISTORY TAB----------------
 
   const tabs = [
     {
@@ -91,7 +132,12 @@ export default function TaskDetailsTabulator({
     },
     {
       id: "comments",
-      content: <div>Hell</div>,
+      content: (
+        <TaskDetailsCommentsTab
+          comments={taskComments}
+          onAddComment={handleAddComment}
+        />
+      ),
     },
     {
       id: "documents",
@@ -99,7 +145,7 @@ export default function TaskDetailsTabulator({
     },
     {
       id: "history",
-      content: <div>Hell</div>,
+      content: <TaskDetailsHistoryTab entries={taskHistory} />,
     },
   ];
 
