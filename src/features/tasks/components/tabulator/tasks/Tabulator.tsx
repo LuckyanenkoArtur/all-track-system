@@ -1,4 +1,4 @@
-import { Tabulator } from "../../../../components/ui/tabulator/Tabulator.tsx";
+import { Tabulator } from "../../../../../components/ui/tabulator/Tabulator.tsx";
 import {
   FiAlertCircle,
   FiBarChart2,
@@ -8,15 +8,15 @@ import {
   FiLayers,
   FiList,
 } from "react-icons/fi";
-import { useTranslation } from "../../../../i18n";
-import { TodoGrid } from "./TodoGrid.tsx";
-import { TaskInfoCards } from "../cards/TaskInfoCards.tsx";
-import { TaskDetailsTabPlaceholder } from "../TaskDetailsTabPlaceholder.tsx";
+import { useTranslation } from "../../../../../i18n";
+import { TodoGrid } from "../TodoGrid.tsx";
+import { TaskInfoCards } from "../../cards/TaskInfoCards.tsx";
+import { TaskDetailsTabPlaceholder } from "../../TaskDetailsTabPlaceholder.tsx";
 import { useNavigate } from "react-router-dom";
-import { useTasks } from "../../hooks/useTasks.ts";
+import { useTasks } from "../../../hooks/useTasks.ts";
 import { useCallback, useMemo } from "react";
-import { useTodoScheduleTasks } from "./useTodoScheduleTasks.ts";
-import { getOverviewCardNavigation } from "../../utils/tasksNavigation.ts";
+import { useTodoScheduleTasks } from "../useTodoScheduleTasks.ts";
+import { getOverviewCardNavigation } from "../../../utils/tasksNavigation.ts";
 
 type TaskTabulatorProps = {
   onTaskClick: (taskId: string) => void;

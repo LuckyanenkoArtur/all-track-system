@@ -13,7 +13,7 @@ import { useTasks } from "../../hooks/useTasks";
 import { useTaskListState } from "../../hooks/useTaskListState";
 import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksOverviewPage.module.scss";
-import TaskTabulator from "../../components/tabulator/TaskTabulator.tsx";
+import TaskTabulator from "../../components/tabulator/tasks/Tabulator.tsx";
 
 export function TasksOverviewPage() {
   const { t } = useTranslation();

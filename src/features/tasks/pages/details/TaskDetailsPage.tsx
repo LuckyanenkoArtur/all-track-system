@@ -2,10 +2,9 @@ import { FiArrowLeft } from "react-icons/fi";
 import { Link, Navigate, useParams } from "react-router-dom";
 
 import { useTranslation } from "../../../../i18n";
-import { TaskDetailsView } from "../../components/tabs/TaskDetailsView.tsx";
 import { useTasks } from "../../hooks/useTasks";
 import styles from "./TaskDetailsPage.module.scss";
-import TaskDetailsTabulator from "../../components/tabulator/TaskDetailsTabulator.tsx";
+import TaskDetailsTabulator from "../../components/tabulator/details/Tabulator.tsx";
 
 export function TaskDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -44,7 +43,7 @@ export function TaskDetailsPage() {
       </header>
 
       {/*<TaskDetailsView task={task} variant="page" />*/}
-        <TaskDetailsTabulator task={task}/>
+      <TaskDetailsTabulator task={task} />
     </div>
   );
 }
