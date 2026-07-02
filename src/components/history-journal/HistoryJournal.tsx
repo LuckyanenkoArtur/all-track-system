@@ -17,9 +17,10 @@ import {
 import type {
   CompletionReportStep,
   TaskHistoryEntryType,
-} from "../../../../domain/others.ts";
-import { formatBudget } from "../../../../utils/taskListUtils.ts";
-import { formatTimeSpent } from "../../../../utils/timeTrackingUtils.ts";
+} from "../../features/tasks/domain/others.ts";
+import { useTranslation } from "../../i18n/index.ts";
+import { formatBudget } from "../../features/tasks/utils/taskListUtils.ts";
+import { formatTimeSpent } from "../../features/tasks/utils/timeTrackingUtils.ts";
 import styles from "./HistoryJournal.module.scss";
 
 export type HistoryJournalLabels = {
@@ -49,7 +50,52 @@ type HistoryEntryContextValue = {
   labels: HistoryJournalLabels;
 };
 
-const HistoryEntryContext = createContext<HistoryEntryContextValue | null>(null);
+const HistoryLabelsContext = createContext<HistoryJournalLabels | null>(null);
+const HistoryEntryContext = createContext<HistoryEntryContextValue | null>(
+  null,
+);
+
+function useHistoryLabels() {
+  const context = useContext(HistoryLabelsContext);
+  if (!context) {
+    throw new Error(
+      "HistoryJournal subcomponents must be used within HistoryJournal",
+    );
+  }
+  return context;
+}
+
+export function useHistoryTabPlaceholder() {
+  const { t } = useTranslation();
+  return {
+    title: t.tasks.details.tabs.history,
+    message: t.tasks.details.tabs.historyEmpty,
+  };
+}
+
+function useHistoryJournalLabels(): HistoryJournalLabels {
+  const { t } = useTranslation();
+  const details = t.tasks.details;
+
+  return useMemo(
+    () => ({
+      historyCompletedSummary: details.historyCompletedSummary,
+      historyCommentAddedSummary: details.historyCommentAddedSummary,
+      historyCommentDetail: details.historyCommentDetail,
+      historyNoteAddedSummary: details.historyNoteAddedSummary,
+      historyTransactionAddedSummary: details.historyTransactionAddedSummary,
+      historyTimeAddedSummary: details.historyTimeAddedSummary,
+      historyBudgetSpendingDetail: details.historyBudgetSpendingDetail,
+      historyTimeAddedDetail: details.historyTimeAddedDetail,
+      historyTaskUpdatedSummary: details.historyTaskUpdatedSummary,
+      historyCreatedBy: details.historyCreatedBy,
+      historyShowDescription: details.historyShowDescription,
+      historyHideDescription: details.historyHideDescription,
+      completionSteps: details.completionSteps,
+    }),
+    [details],
+  );
+}
 
 function useHistoryEntry() {
   const context = useContext(HistoryEntryContext);
@@ -62,7 +108,13 @@ function useHistoryEntry() {
 type HistoryJournalProps = PropsWithChildren;
 
 export default function HistoryJournal({ children }: HistoryJournalProps) {
-  return <ul className={styles.timeline}>{children}</ul>;
+  const labels = useHistoryJournalLabels();
+
+  return (
+    <HistoryLabelsContext.Provider value={labels}>
+      <ul className={styles.timeline}>{children}</ul>
+    </HistoryLabelsContext.Provider>
+  );
 }
 
 type HistoryJournalEntryProps = {
@@ -73,7 +125,6 @@ type HistoryJournalEntryProps = {
   steps?: CompletionReportStep[];
   minutesAdded?: number;
   amount?: number;
-  labels: HistoryJournalLabels;
   children?: ReactNode;
 };
 
@@ -205,8 +256,8 @@ HistoryJournal.Entry = function HistoryJournalEntry({
   steps,
   minutesAdded,
   amount,
-  labels,
 }: HistoryJournalEntryProps) {
+  const labels = useHistoryLabels();
   const contextValue = useMemo(
     () => ({
       createdBy,
@@ -262,7 +313,7 @@ HistoryJournal.Entry = function HistoryJournalEntry({
   );
 };
 
-HistoryJournal.Header = function HistoryJournalHeader() {
+HistoryJournal.Header = () => {
   const { createdBy, type, createdAt, labels } = useHistoryEntry();
   const summary = getSummaryTemplate(type, labels);
   const parts = summary.split("{{author}}");
@@ -330,8 +381,7 @@ HistoryJournal.Activity = function HistoryJournalActivity() {
     (type === "manual_time_added" && minutesAdded != null) ||
     (type === "budget_expense_added" && amount != null);
   const isComment = type === "comment_added" && Boolean(note);
-  const completionSteps =
-    type === "task_completed" ? (steps ?? []) : [];
+  const completionSteps = type === "task_completed" ? (steps ?? []) : [];
   const hasCompletionSteps = completionSteps.length > 0;
   const showToggle = Boolean(note) || hasCompletionSteps;
 
