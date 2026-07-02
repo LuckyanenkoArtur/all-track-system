@@ -14,54 +14,25 @@ import {
   FiUser,
   FiUsers,
 } from "react-icons/fi";
-import type { BudgetTransaction, Task, TaskStatus } from "../../domain/others.ts";
-import { formatDueDate } from "../../utils/dateUtils.ts";
+import type {
+  BudgetTransaction,
+  Task,
+  TaskStatus,
+} from "../../../../domain/others.ts";
+import { formatDueDate } from "../../../../utils/dateUtils.ts";
 import {
   formatCurrency,
   getBudgetInfo,
   getDeadlineInfo,
-} from "../../utils/taskDetailsUtils.ts";
-import { formatDate, formatBudget } from "../../utils/taskListUtils.ts";
-import { PriorityBadge, StatusBadge } from "../TaskBadges.tsx";
-import { TaskBudgetChart } from "../TaskBudgetChart.tsx";
+} from "../../../../utils/taskDetailsUtils.ts";
+import { formatDate, formatBudget } from "../../../../utils/taskListUtils.ts";
+import { PriorityBadge, StatusBadge } from "../../../TaskBadges.tsx";
+import { TaskBudgetChart } from "../../../TaskBudgetChart.tsx";
 import styles from "./TaskDetailsOverviewTab.module.scss";
-
-export type TaskOverviewLabels = {
-  initiator: string;
-  status: string;
-  responsible: string;
-  observables: string;
-  startDate: string;
-  dueDate: string;
-  groups: string;
-  budget: string;
-  totalTime: string;
-  changeStatus: string;
-  pending: string;
-  inProgress: string;
-  done: string;
-  timeLeft: string;
-  budgetRemaining: string;
-  budgetSpent: string;
-  budgetChart: string;
-  spent: string;
-  remaining: string;
-  tracking: string;
-  startTracking: string;
-  stopTracking: string;
-  description: string;
-  descriptionEmpty: string;
-  requiresResultReview: string;
-  editTask: string;
-  completeTask: string;
-  addManualTime: string;
-  logBudgetExpense: string;
-  addNote: string;
-};
+import { useTranslation } from "../../../../../../i18n/index.ts";
 
 type TaskDetailsOverviewTabProps = {
   task: Task;
-  labels: TaskOverviewLabels;
   budgetTransactions?: BudgetTransaction[];
   liveTimeSpent?: string;
   isTracking?: boolean;
@@ -86,7 +57,6 @@ function getInitials(name: string) {
 
 export function TaskDetailsOverviewTab({
   task,
-  labels,
   budgetTransactions = [],
   liveTimeSpent,
   isTracking = false,
@@ -99,13 +69,14 @@ export function TaskDetailsOverviewTab({
   onEditTask,
   onCompleteTask,
 }: TaskDetailsOverviewTabProps) {
+  const { t } = useTranslation();
   const deadline = getDeadlineInfo(task.dueDate, task.status);
   const budget = getBudgetInfo(task, budgetTransactions);
 
   const statusOptions: { value: TaskStatus; label: string }[] = [
-    { value: "pending", label: labels.pending },
-    { value: "inProgress", label: labels.inProgress },
-    { value: "done", label: labels.done },
+    { value: "pending" as unknown as TaskStatus, label: t.tasks.pending },
+    { value: "inProgress" as unknown as TaskStatus, label: t.tasks.inProgress },
+    { value: "done" as unknown as TaskStatus, label: t.tasks.done },
   ];
 
   return (
@@ -130,11 +101,11 @@ export function TaskDetailsOverviewTab({
 
           <dl className={styles.propertyList}>
             <PropertyItem
-              label={labels.status}
+              label={t.tasks.status}
               value={<StatusBadge status={task.status} />}
             />
             <PropertyItem
-              label={labels.responsible}
+              label={t.tasks.responsible}
               value={
                 <div className={styles.assigneeList}>
                   {task.responsible.map((person) => (
@@ -149,17 +120,17 @@ export function TaskDetailsOverviewTab({
               }
             />
             <PropertyItem
-              label={labels.dueDate}
+              label={t.tasks.dueDate}
               icon={<FiCalendar size={15} aria-hidden />}
               value={formatDueDate(task.dueDate)}
             />
             <PropertyItem
-              label={labels.startDate}
+              label={t.tasks.details.startDate}
               icon={<FiCalendar size={15} aria-hidden />}
               value={formatDueDate(task.startDate)}
             />
             <PropertyItem
-              label={labels.observables}
+              label={t.tasks.observables}
               icon={<FiUsers size={15} aria-hidden />}
               value={
                 task.observables.length > 0 ? (
@@ -179,7 +150,7 @@ export function TaskDetailsOverviewTab({
               }
             />
             <PropertyItem
-              label={labels.groups}
+              label={t.tasks.groups}
               icon={<FiLayers size={15} aria-hidden />}
               value={
                 <div className={styles.tagList}>
@@ -192,12 +163,12 @@ export function TaskDetailsOverviewTab({
               }
             />
             <PropertyItem
-              label={labels.budget}
+              label={t.tasks.budget}
               icon={<FiDollarSign size={15} aria-hidden />}
               value={formatBudget(task.budget)}
             />
             <PropertyItem
-              label={labels.totalTime}
+              label={t.tasks.totalTime}
               icon={<FiClock size={15} aria-hidden />}
               value={
                 <span className={isTracking ? styles.liveTime : undefined}>
@@ -212,15 +183,17 @@ export function TaskDetailsOverviewTab({
 
           <section
             className={styles.descriptionSection}
-            aria-label={labels.description}
+            aria-label={t.tasks.details.description}
           >
-            <h3 className={styles.descriptionTitle}>{labels.description}</h3>
+            <h3 className={styles.descriptionTitle}>
+              {t.tasks.details.description}
+            </h3>
             <div className={styles.descriptionBox}>
               {task.description?.trim() ? (
                 <p className={styles.descriptionText}>{task.description}</p>
               ) : (
                 <p className={styles.descriptionPlaceholder}>
-                  {labels.descriptionEmpty}
+                  {t.tasks.details.descriptionEmpty}
                 </p>
               )}
             </div>
@@ -228,7 +201,7 @@ export function TaskDetailsOverviewTab({
 
           {task.requiresResultReview && (
             <div className={styles.reviewFlag}>
-              {labels.requiresResultReview}
+              {t.tasks.details.requiresResultReview}
             </div>
           )}
         </section>
@@ -236,18 +209,18 @@ export function TaskDetailsOverviewTab({
         <section className={styles.rightPanel} aria-label="Task metrics">
           <div className={styles.metricGrid}>
             <MetricCard
-              label={labels.timeLeft}
+              label={t.tasks.details.timeLeft}
               value={deadline.label}
               tone={deadline.tone}
               isTimeUp={deadline.isTimeUp}
             />
             <MetricCard
-              label={labels.budgetRemaining}
+              label={t.tasks.details.budgetRemaining}
               value={formatCurrency(budget.remaining)}
               tone={budget.remainingTone}
             />
             <MetricCard
-              label={labels.budgetSpent}
+              label={t.tasks.details.budgetSpent}
               value={formatCurrency(budget.spent)}
               tone={budget.spentTone}
             />
@@ -259,10 +232,10 @@ export function TaskDetailsOverviewTab({
             remaining={budget.remaining}
             compact
             labels={{
-              title: labels.budgetChart,
-              spent: labels.spent,
-              remaining: labels.remaining,
-              budget: labels.budget,
+              title: t.tasks.details.budgetChart,
+              spent: t.tasks.details.spent,
+              remaining: t.tasks.details.remaining,
+              budget: t.tasks.budget,
             }}
           />
 
@@ -273,18 +246,21 @@ export function TaskDetailsOverviewTab({
                 htmlFor="task-status-select"
               >
                 <FiFlag size={15} aria-hidden />
-                {labels.changeStatus}
+                {t.tasks.details.changeStatus}
               </label>
               <select
                 id="task-status-select"
                 className={styles.statusSelect}
                 value={task.status}
                 onChange={(event) =>
-                  onStatusChange(event.target.value as TaskStatus)
+                  onStatusChange(event.target.value as unknown as TaskStatus)
                 }
               >
                 {statusOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    key={option.value as unknown as string}
+                    value={option.value as unknown as string}
+                  >
                     {option.label}
                   </option>
                 ))}
@@ -294,13 +270,13 @@ export function TaskDetailsOverviewTab({
 
           <section
             className={styles.trackingSection}
-            aria-label={labels.tracking}
+            aria-label={t.tasks.tracking}
           >
             <div
               className={`${styles.trackingBar} ${isTracking ? styles.trackingActive : ""}`}
             >
               <div className={styles.trackingInfo}>
-                <span className={styles.trackingLabel}>{labels.tracking}</span>
+                <span className={styles.trackingLabel}>{t.tasks.tracking}</span>
                 {isTracking && sessionTimer ? (
                   <strong className={styles.trackingTimer}>
                     {sessionTimer}
@@ -320,12 +296,12 @@ export function TaskDetailsOverviewTab({
                   {isTracking ? (
                     <>
                       <FiSquare size={14} aria-hidden />
-                      {labels.stopTracking}
+                      {t.tasks.stopTracking}
                     </>
                   ) : (
                     <>
                       <FiPlay size={14} aria-hidden />
-                      {labels.startTracking}
+                      {t.tasks.startTracking}
                     </>
                   )}
                 </button>
@@ -341,7 +317,7 @@ export function TaskDetailsOverviewTab({
                     onClick={onAddManualTime}
                   >
                     <FiPlus size={14} aria-hidden />
-                    {labels.addManualTime}
+                    {t.tasks.addManualTime}
                   </button>
                 )}
                 {onLogBudgetExpense && (
@@ -351,7 +327,7 @@ export function TaskDetailsOverviewTab({
                     onClick={onLogBudgetExpense}
                   >
                     <FiDollarSign size={14} aria-hidden />
-                    {labels.logBudgetExpense}
+                    {t.tasks.logBudgetExpense}
                   </button>
                 )}
                 {onAddNote && (
@@ -361,7 +337,7 @@ export function TaskDetailsOverviewTab({
                     onClick={onAddNote}
                   >
                     <FiFileText size={14} aria-hidden />
-                    {labels.addNote}
+                    {t.tasks.addNote}
                   </button>
                 )}
               </div>
@@ -375,7 +351,7 @@ export function TaskDetailsOverviewTab({
               onClick={onCompleteTask}
             >
               <FiCheckCircle size={15} aria-hidden />
-              {labels.completeTask}
+              {t.tasks.details.completeTask}
             </button>
           )}
 
@@ -386,7 +362,7 @@ export function TaskDetailsOverviewTab({
               onClick={onEditTask}
             >
               <FiEdit2 size={15} aria-hidden />
-              {labels.editTask}
+              {t.tasks.details.editTask}
             </button>
           )}
         </section>

@@ -15,8 +15,8 @@ import { ManualTimeEntryDialog } from "../ManualTimeEntryDialog.tsx";
 import { AddBudgetExpenseDialog } from "../AddBudgetExpenseDialog.tsx";
 import { AddNoteDialog } from "../AddNoteDialog.tsx";
 import { TaskDetailsCommentsTab } from "./task-details/comments/TaskDetailsCommentsTab.tsx";
-import { TaskDetailsHistoryTab } from "./task-details/history/TaskDetailsHistoryTab.tsx";
-import { TaskDetailsOverviewTab } from "./TaskDetailsOverviewTab.tsx";
+import { TaskDetailsHistoryTab } from "./task-details/history/Tab.tsx";
+import { TaskDetailsOverviewTab } from "./task-details/overview/TaskDetailsOverviewTab.tsx";
 import { TaskDetailsStepsTab } from "./task-details/steps/Tab.tsx";
 import { TaskDetailsTabPlaceholder } from "../TaskDetailsTabPlaceholder.tsx";
 import styles from "../TaskDetailsView.module.scss";
@@ -49,6 +49,7 @@ export function TaskDetailsView({
     addBudgetExpense,
     addTaskNote,
   } = useTasks();
+
   const { isTracking, sessionTimer, toggleTracking } = useTaskTrackingDisplay(
     task.id,
   );
@@ -165,39 +166,6 @@ export function TaskDetailsView({
     { id: "history", label: detailLabels.tabs.history },
   ];
 
-  const overviewLabels = {
-    initiator: taskLabels.initiator,
-    status: taskLabels.status,
-    responsible: taskLabels.responsible,
-    observables: taskLabels.observables,
-    startDate: detailLabels.startDate,
-    dueDate: taskLabels.dueDate,
-    groups: taskLabels.groups,
-    budget: taskLabels.budget,
-    totalTime: taskLabels.totalTime,
-    changeStatus: detailLabels.changeStatus,
-    pending: taskLabels.pending,
-    inProgress: taskLabels.inProgress,
-    done: taskLabels.done,
-    timeLeft: detailLabels.timeLeft,
-    budgetRemaining: detailLabels.budgetRemaining,
-    budgetSpent: detailLabels.budgetSpent,
-    budgetChart: detailLabels.budgetChart,
-    spent: detailLabels.spent,
-    remaining: detailLabels.remaining,
-    tracking: taskLabels.tracking,
-    startTracking: taskLabels.startTracking,
-    stopTracking: taskLabels.stopTracking,
-    description: detailLabels.description,
-    descriptionEmpty: detailLabels.descriptionEmpty,
-    requiresResultReview: detailLabels.requiresResultReview,
-    editTask: detailLabels.editTask,
-    completeTask: detailLabels.completeTask,
-    addManualTime: taskLabels.addManualTime,
-    logBudgetExpense: taskLabels.logBudgetExpense,
-    addNote: taskLabels.addNote,
-  };
-
   const isPanel = variant === "panel";
 
   return (
@@ -234,7 +202,6 @@ export function TaskDetailsView({
           {activeTab === "overview" && (
             <TaskDetailsOverviewTab
               task={task}
-              labels={overviewLabels}
               budgetTransactions={budgetTransactions}
               liveTimeSpent={liveTimeSpent}
               isTracking={isTracking}
