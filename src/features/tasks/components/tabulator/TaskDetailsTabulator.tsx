@@ -23,6 +23,8 @@ import { CompleteTaskDialog } from "../CompleteTaskDialog.tsx";
 import { ManualTimeEntryDialog } from "../ManualTimeEntryDialog.tsx";
 import { AddBudgetExpenseDialog } from "../AddBudgetExpenseDialog.tsx";
 import { AddNoteDialog } from "../AddNoteDialog.tsx";
+import { FiFileText } from "react-icons/fi";
+import { TaskDetailsTabPlaceholder } from "../TaskDetailsTabPlaceholder.tsx";
 
 interface TaskDetailsTabulatorProps {
   task: Task;
@@ -230,7 +232,13 @@ export default function TaskDetailsTabulator({
     },
     {
       id: "documents",
-      content: <div>Hell</div>,
+      content: (
+        <TaskDetailsTabPlaceholder
+          icon={<FiFileText size={22} aria-hidden />}
+          title={detailLabels.tabs.documents}
+          message={detailLabels.tabs.documentsEmpty}
+        />
+      ),
     },
     {
       id: "history",

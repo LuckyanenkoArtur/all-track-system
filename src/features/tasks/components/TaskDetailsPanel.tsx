@@ -5,8 +5,8 @@ import { FiMaximize2, FiX } from "react-icons/fi";
 import { useTranslation } from "../../../i18n";
 import type { Task } from "../domain/others";
 import { StatusBadge } from "./TaskBadges";
-import { TaskDetailsView } from "./tabs/TaskDetailsView.tsx";
 import styles from "./TaskDetailsPanel.module.scss";
+import TaskDetailsTabulator from "./tabulator/TaskDetailsTabulator.tsx";
 
 type TaskDetailsPanelProps = {
   open: boolean;
@@ -98,7 +98,7 @@ export function TaskDetailsPanel({
         </header>
 
         <div className={styles.body}>
-          <TaskDetailsView task={task} variant="panel" />
+          <TaskDetailsTabulator task={task} />
         </div>
       </aside>
     </div>,
