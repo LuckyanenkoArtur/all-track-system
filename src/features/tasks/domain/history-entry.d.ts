@@ -6,6 +6,7 @@ export type TaskHistoryEntryType =
   | "note_added"
   | "budget_expense_added"
   | "manual_time_added"
+  | "time_tracked"
   | "task_updated"
   | "status_changed";
 

@@ -10,11 +10,15 @@ import styles from "./Tab.module.scss";
 type TaskDetailsStepsTabProps = {
   steps: CheckListStep[];
   onToggleStep?: (stepId: string) => void;
+  readOnly?: boolean;
+  embedded?: boolean;
 };
 
 export function TaskDetailsStepsTab({
   steps,
   onToggleStep,
+  readOnly = false,
+  embedded = false,
 }: TaskDetailsStepsTabProps) {
   const { t } = useTranslation();
   const labels = t.tasks.details.tabs;
@@ -22,8 +26,11 @@ export function TaskDetailsStepsTab({
   const completed = steps.filter((step) => step.completed).length;
   const total = steps.length;
 
-  // !------NEED TO BE REFACTORED----------------
   if (steps.length === 0) {
+    if (embedded) {
+      return <p className={styles.empty}>{labels.stepsEmpty}</p>;
+    }
+
     return (
       <TaskDetailsTabPlaceholder
         icon={<FiCheckSquare size={22} aria-hidden />}
@@ -32,7 +39,6 @@ export function TaskDetailsStepsTab({
       />
     );
   }
-  //! ------------------------------------------------
 
   return (
     <div className={styles.root}>
@@ -46,6 +52,10 @@ export function TaskDetailsStepsTab({
           <StepCheckList.Item key={step.id} step={step} index={index} />
         ))}
       </StepCheckList>
+
+      {readOnly && (
+        <p className={styles.readOnlyHint}>{labels.stepsReadOnlyResponsible}</p>
+      )}
     </div>
   );
 }

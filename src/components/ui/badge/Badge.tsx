@@ -16,9 +16,9 @@ const Badge = ({ children, variant }: BadgeProps) => {
 export default Badge;
 
 Badge.Icon = ({ children }: PropsWithChildren) => {
-  return <>{children}</>;
+  return <span className={styles.icon}>{children}</span>;
 };
 
 Badge.Label = ({ children }: PropsWithChildren) => {
-  return <span>{children}</span>;
+  return <span className={styles.label}>{children}</span>;
 };

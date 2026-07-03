@@ -33,6 +33,7 @@ export type HistoryJournalLabels = {
   historyNoteAddedSummary: string;
   historyTransactionAddedSummary: string;
   historyTimeAddedSummary: string;
+  historyTimeTrackedSummary: string;
   historyBudgetSpendingDetail: string;
   historyTimeAddedDetail: string;
   historyTaskUpdatedSummary: string;
@@ -91,6 +92,7 @@ function useHistoryJournalLabels(): HistoryJournalLabels {
       historyNoteAddedSummary: details.historyNoteAddedSummary,
       historyTransactionAddedSummary: details.historyTransactionAddedSummary,
       historyTimeAddedSummary: details.historyTimeAddedSummary,
+      historyTimeTrackedSummary: details.historyTimeTrackedSummary,
       historyBudgetSpendingDetail: details.historyBudgetSpendingDetail,
       historyTimeAddedDetail: details.historyTimeAddedDetail,
       historyTaskUpdatedSummary: details.historyTaskUpdatedSummary,
@@ -149,6 +151,8 @@ function getEntryIcon(type: TaskHistoryEntryType) {
       return FiDollarSign;
     case "manual_time_added":
       return FiClock;
+    case "time_tracked":
+      return FiClock;
     case "task_updated":
       return FiEdit3;
     case "status_changed":
@@ -186,6 +190,8 @@ function getSummaryTemplate(
       return labels.historyTransactionAddedSummary;
     case "manual_time_added":
       return labels.historyTimeAddedSummary;
+    case "time_tracked":
+      return labels.historyTimeTrackedSummary;
     case "task_updated":
       return labels.historyTaskUpdatedSummary;
     case "status_changed":
@@ -252,7 +258,8 @@ function shouldRenderActivity(
 ) {
   const hasNote = Boolean(getEntryNoteText(type, description, minutesAdded));
   const hasDetail =
-    (type === "manual_time_added" && minutesAdded != null) ||
+    ((type === "manual_time_added" || type === "time_tracked") &&
+      minutesAdded != null) ||
     (type === "budget_expense_added" && amount != null);
   const hasCompletionSteps =
     type === "task_completed" && Boolean(steps && steps.length > 0);
@@ -395,6 +402,18 @@ HistoryJournal.Metadata = function HistoryJournalMetadata() {
     );
   }
 
+  if (type === "time_tracked" && minutesAdded != null) {
+    return (
+      <p className={styles.detailText}>
+        {renderPlaceholderSummary(
+          labels.historyTimeAddedDetail,
+          { time: formatTimeSpent(minutesAdded) },
+          styles.highlightValue,
+        )}
+      </p>
+    );
+  }
+
   if (type === "budget_expense_added" && amount != null) {
     return (
       <p className={styles.detailText}>
@@ -417,7 +436,8 @@ HistoryJournal.Activity = function HistoryJournalActivity() {
 
   const note = getEntryNoteText(type, description, minutesAdded);
   const hasDetail =
-    (type === "manual_time_added" && minutesAdded != null) ||
+    ((type === "manual_time_added" || type === "time_tracked") &&
+      minutesAdded != null) ||
     (type === "budget_expense_added" && amount != null);
   const isComment = type === "comment_added" && Boolean(note);
   const completionSteps = type === "task_completed" ? (steps ?? []) : [];

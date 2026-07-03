@@ -42,7 +42,6 @@ export function TaskDetailsPage() {
         </Link>
       </header>
 
-      {/*<TaskDetailsView task={task} variant="page" />*/}
       <TaskDetailsTabulator task={task} />
     </div>
   );

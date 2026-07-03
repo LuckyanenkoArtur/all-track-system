@@ -29,6 +29,11 @@ export interface CompleteTaskReportInput {
   authorInitials: string;
 }
 
+export interface TrackingMeta {
+  author: string;
+  authorInitials: string;
+}
+
 export interface AddManualTimeInput {
   taskId: string;
   hours: number;

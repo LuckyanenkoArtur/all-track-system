@@ -26,6 +26,18 @@ export function formatCurrency(amount: number): string {
   return formatBudget(amount);
 }
 
+export function isUserTaskResponsible(
+  userName: string,
+  responsible: string[],
+): boolean {
+  const normalizedUser = userName.trim().toLowerCase();
+  if (!normalizedUser) return false;
+
+  return responsible.some(
+    (person) => person.trim().toLowerCase() === normalizedUser,
+  );
+}
+
 export function getTaskBudgetSpent(
   task: Task,
   transactions: BudgetTransaction[] = [],

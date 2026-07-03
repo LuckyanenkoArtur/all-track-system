@@ -17,6 +17,7 @@ import type {
   AddBudgetExpenseInput,
   AddTaskCommentInput,
   AddTaskNoteInput,
+  TrackingMeta,
 } from "../domain/inputs";
 
 import type { Task } from "../domain/task";
@@ -41,6 +42,8 @@ const BUDGET_TRANSACTIONS_STORAGE_KEY = "alltrack-task-budget-transactions";
 export interface TaskTracking {
   taskId: string;
   startedAt: number;
+  author?: string;
+  authorInitials?: string;
 }
 
 interface TasksContextValue {
@@ -55,9 +58,9 @@ interface TasksContextValue {
     status: TaskStatus,
     changeAuthor?: { author: string; authorInitials: string },
   ) => void;
-  startTracking: (taskId: string) => void;
+  startTracking: (taskId: string, meta?: TrackingMeta) => void;
   stopTracking: () => void;
-  toggleTracking: (taskId: string) => void;
+  toggleTracking: (taskId: string, meta?: TrackingMeta) => void;
   completeTask: (taskId: string) => void;
   completeTaskWithReport: (input: CompleteTaskReportInput) => void;
   addManualTime: (input: AddManualTimeInput) => void;
@@ -228,6 +231,13 @@ function createAttachmentId() {
   return `ATT-${crypto.randomUUID().slice(0, 8)}`;
 }
 
+function getTrackingMinutes(
+  tracking: TaskTracking,
+  endedAt = Date.now(),
+): number {
+  return Math.round((endedAt - tracking.startedAt) / 60000);
+}
+
 function applyTrackingElapsed(tasks: Task[], tracking: TaskTracking): Task[] {
   const elapsedMs = Date.now() - tracking.startedAt;
   return tasks.map((task) =>
@@ -251,30 +261,58 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     return taskExists ? saved : null;
   });
 
-  const flushTracking = useCallback((currentTracking: TaskTracking | null) => {
-    if (!currentTracking) return;
+  const commitTrackingSession = useCallback((session: TaskTracking) => {
+    const minutesAdded = getTrackingMinutes(session);
 
     setTasks((prev) => {
-      const next = applyTrackingElapsed(prev, currentTracking);
+      const next = applyTrackingElapsed(prev, session);
       persistTasks(next);
       return next;
     });
-    setTracking(null);
-    persistTracking(null);
+
+    if (minutesAdded > 0 && session.author) {
+      const now = new Date().toISOString();
+      setHistory((prev) => {
+        const entry: TaskHistoryEntry = {
+          id: createHistoryId(prev),
+          taskId: session.taskId,
+          type: "time_tracked",
+          author: session.author!,
+          authorInitials: session.authorInitials ?? session.author!.slice(0, 2),
+          description: "",
+          steps: [],
+          createdAt: now,
+          minutesAdded,
+        };
+
+        const next = [...prev, entry];
+        persistHistory(next);
+        return next;
+      });
+    }
   }, []);
 
+  const flushTracking = useCallback(
+    (currentTracking: TaskTracking | null) => {
+      if (!currentTracking) return;
+
+      commitTrackingSession(currentTracking);
+      setTracking(null);
+      persistTracking(null);
+    },
+    [commitTrackingSession],
+  );
+
   const startTracking = useCallback(
-    (taskId: string) => {
+    (taskId: string, meta?: TrackingMeta) => {
       if (tracking?.taskId === taskId) return;
 
+      if (tracking) {
+        commitTrackingSession(tracking);
+      }
+
       setTasks((prev) => {
-        let next = prev;
-
-        if (tracking) {
-          next = applyTrackingElapsed(next, tracking);
-        }
-
-        next = next.map((task) => {
+        const next = prev.map((task) => {
           if (task.id !== taskId) return task;
           if (task.status === "open") {
             return { ...task, status: "inProgress" };
@@ -286,11 +324,18 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         return next;
       });
 
-      const nextTracking = { taskId, startedAt: Date.now() };
+      const nextTracking: TaskTracking = {
+        taskId,
+        startedAt: Date.now(),
+        ...(meta && {
+          author: meta.author,
+          authorInitials: meta.authorInitials,
+        }),
+      };
       setTracking(nextTracking);
       persistTracking(nextTracking);
     },
-    [tracking],
+    [tracking, commitTrackingSession],
   );
 
   const stopTracking = useCallback(() => {
@@ -299,40 +344,33 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   }, [flushTracking, tracking]);
 
   const toggleTracking = useCallback(
-    (taskId: string) => {
+    (taskId: string, meta?: TrackingMeta) => {
       if (tracking?.taskId === taskId) {
         stopTracking();
         return;
       }
-      startTracking(taskId);
+      startTracking(taskId, meta);
     },
     [startTracking, stopTracking, tracking],
   );
 
   const completeTask = useCallback(
     (taskId: string) => {
+      if (tracking?.taskId === taskId) {
+        commitTrackingSession(tracking);
+        setTracking(null);
+        persistTracking(null);
+      }
+
       setTasks((prev) => {
-        let next = prev;
-
-        if (tracking?.taskId === taskId) {
-          next = applyTrackingElapsed(next, tracking);
-        }
-
-        next = next.map((task) =>
-          task.id === taskId
-            ? { ...task, status: "completed" }
-            : task,
+        const next = prev.map((task) =>
+          task.id === taskId ? { ...task, status: "completed" } : task,
         );
         persistTasks(next);
         return next;
       });
-
-      if (tracking?.taskId === taskId) {
-        setTracking(null);
-        persistTracking(null);
-      }
     },
-    [tracking],
+    [tracking, commitTrackingSession],
   );
 
   const completeTaskWithReport = useCallback(
@@ -343,26 +381,19 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         .filter((step) => step.text.length > 0);
       const now = new Date().toISOString();
 
+      if (tracking?.taskId === input.taskId) {
+        commitTrackingSession(tracking);
+        setTracking(null);
+        persistTracking(null);
+      }
+
       setTasks((prev) => {
-        let next = prev;
-
-        if (tracking?.taskId === input.taskId) {
-          next = applyTrackingElapsed(next, tracking);
-        }
-
-        next = next.map((task) =>
-          task.id === input.taskId
-            ? { ...task, status: "completed" }
-            : task,
+        const next = prev.map((task) =>
+          task.id === input.taskId ? { ...task, status: "completed" } : task,
         );
         persistTasks(next);
         return next;
       });
-
-      if (tracking?.taskId === input.taskId) {
-        setTracking(null);
-        persistTracking(null);
-      }
 
       setComments((prev) => {
         const createdComment: TaskComment = {
@@ -399,7 +430,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         return next;
       });
     },
-    [tracking],
+    [tracking, commitTrackingSession],
   );
 
   const addTask = useCallback((input: CreateTaskInput) => {

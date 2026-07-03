@@ -3,28 +3,31 @@ import { Tabulator } from "../../../../../components/ui/tabulator/Tabulator.tsx"
 import { useTranslation } from "../../../../../i18n/index.ts";
 
 import { AiOutlineDashboard } from "react-icons/ai";
-import { LuListTodo } from "react-icons/lu";
 import { FaComments } from "react-icons/fa6";
 import { IoDocuments } from "react-icons/io5";
 import { MdOutlineHistory } from "react-icons/md";
-import { TaskDetailsStepsTab } from "../../tabs/task-details/steps/Tab.tsx";
-import { useTasks } from "../../../hooks/useTasks.ts";
 import { TaskDetailsCommentsTab } from "../../tabs/task-details/comments/TaskDetailsCommentsTab.tsx";
-import { useMemo, useState } from "react";
+import { useTasks } from "../../../hooks/useTasks.ts";
+import { useMemo, useState, useCallback } from "react";
 import { getAuthorInitials } from "../../../utils/commentUtils.ts";
 import { useUserProfile } from "../../../../../context/UserProfileContext.tsx";
 import { TaskDetailsHistoryTab } from "../../tabs/task-details/history/Tab.tsx";
 import { useTaskTrackingDisplay } from "../../../hooks/useTaskTrackingDisplay.ts";
 import { getLiveTimeSpent } from "../../../utils/timeTrackingUtils.ts";
 import { TaskDetailsOverviewTab } from "../../tabs/task-details/overview/TaskDetailsOverviewTab.tsx";
+import { TaskDetailsActionBar } from "../../action-bar/TaskDetailsActionBar.tsx";
+import { TaskDetailsMetricsTab } from "../../tabs/task-details/metrics/TaskDetailsMetricsTab.tsx";
 import { useTaskListState } from "../../../hooks/useTaskListState.ts";
 import { CreateTaskDialog } from "../../dialogs/CreateTaskDialog.tsx";
 import { CompleteTaskDialog } from "../../CompleteTaskDialog.tsx";
 import { ManualTimeEntryDialog } from "../../ManualTimeEntryDialog.tsx";
 import { AddBudgetExpenseDialog } from "../../AddBudgetExpenseDialog.tsx";
-import { AddNoteDialog } from "../../AddNoteDialog.tsx";
-import { FiFileText } from "react-icons/fi";
+import { FiFileText, FiBarChart2, FiClipboard, FiClock, FiDollarSign } from "react-icons/fi";
+import { TaskDetailsNotesTab } from "../../tabs/task-details/notes/TaskDetailsNotesTab.tsx";
+import { TaskDetailsTimeTab } from "../../tabs/task-details/time/TaskDetailsTimeTab.tsx";
+import { TaskDetailsTransactionsTab } from "../../tabs/task-details/transactions/TaskDetailsTransactionsTab.tsx";
 import { TaskDetailsTabPlaceholder } from "../../TaskDetailsTabPlaceholder.tsx";
+import { isUserTaskResponsible } from "../../../utils/taskDetailsUtils.ts";
 
 interface TaskDetailsTabulatorProps {
   task: Task;
@@ -53,19 +56,32 @@ export default function TaskDetailsTabulator({
   } = useTasks();
   //! ------------------------------------------------------------
 
-  //! -------------------FUNCTIONALITY OF STEPS TAB----------------
-  const handleToggleStep = (stepId: string) => {
-    const nextSteps = (task.steps ?? []).map((step) =>
-      step.id === stepId ? { ...step, completed: !step.completed } : step,
-    );
-    updateTaskSteps(task.id, nextSteps);
-  };
-  //! ------------------------------------------------------------
-
   //! -------------------FUNCTIONALITY OF COMMENTS TAB----------------
   const { bio } = useUserProfile();
   const authorName = `${bio.firstName} ${bio.lastName}`.trim() || bio.username;
   const authorInitials = getAuthorInitials(authorName);
+
+  const canToggleSteps = useMemo(
+    () => isUserTaskResponsible(authorName, task.responsible),
+    [authorName, task.responsible],
+  );
+
+  const handleToggleStep = useCallback(
+    (stepId: string) => {
+      if (!canToggleSteps) return;
+
+      const nextSteps = (task.steps ?? []).map((step) =>
+        step.id === stepId ? { ...step, completed: !step.completed } : step,
+      );
+      updateTaskSteps(task.id, nextSteps);
+    },
+    [canToggleSteps, task.id, task.steps, updateTaskSteps],
+  );
+  //! ------------------------------------------------------------
+
+  //! -------------------FUNCTIONALITY OF STEPS TAB----------------
+  //! (steps live in overview tab; toggle restricted to responsible users)
+  //! ------------------------------------------------------------
 
   const taskComments = useMemo(
     () => getTaskComments(task.id),
@@ -96,6 +112,26 @@ export default function TaskDetailsTabulator({
     () => getTaskHistory(task.id),
     [task.id, getTaskHistory],
   );
+
+  const taskNotes = useMemo(
+    () => taskHistory.filter((entry) => entry.type === "note_added"),
+    [taskHistory],
+  );
+
+  const taskTimeEntries = useMemo(
+    () =>
+      taskHistory
+        .filter(
+          (entry) =>
+            entry.type === "manual_time_added" ||
+            entry.type === "time_tracked",
+        )
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        ),
+    [taskHistory],
+  );
   //! ------------------------------------------------------------
 
   //! -------------------FUNCTIONALITY OF OVERVIEW TAB-------------
@@ -108,8 +144,6 @@ export default function TaskDetailsTabulator({
   const [completeOpen, setCompleteOpen] = useState(false);
   const [manualTimeOpen, setManualTimeOpen] = useState(false);
   const [budgetExpenseOpen, setBudgetExpenseOpen] = useState(false);
-  const [noteOpen, setNoteOpen] = useState(false);
-
   const { isTracking, sessionTimer, toggleTracking } = useTaskTrackingDisplay(
     task.id,
   );
@@ -169,14 +203,29 @@ export default function TaskDetailsTabulator({
       icon: <AiOutlineDashboard size={15} aria-hidden />,
     },
     {
-      id: "steps",
-      label: labels.tabs.steps,
-      icon: <LuListTodo size={15} aria-hidden />,
+      id: "metrics",
+      label: labels.tabs.metrics,
+      icon: <FiBarChart2 size={15} aria-hidden />,
+    },
+    {
+      id: "time",
+      label: labels.tabs.time,
+      icon: <FiClock size={15} aria-hidden />,
+    },
+    {
+      id: "transactions",
+      label: labels.tabs.transactions,
+      icon: <FiDollarSign size={15} aria-hidden />,
     },
     {
       id: "comments",
       label: labels.tabs.comments,
       icon: <FaComments size={15} aria-hidden />,
+    },
+    {
+      id: "notes",
+      label: labels.tabs.notes,
+      icon: <FiClipboard size={15} aria-hidden />,
     },
     {
       id: "documents",
@@ -198,31 +247,37 @@ export default function TaskDetailsTabulator({
       content: (
         <TaskDetailsOverviewTab
           task={task}
-          budgetTransactions={budgetTransactions}
-          liveTimeSpent={liveTimeSpent}
-          isTracking={isTracking}
-          sessionTimer={sessionTimer}
-          onToggleTracking={() => toggleTracking(task.id)}
-          onAddManualTime={() => setManualTimeOpen(true)}
-          onLogBudgetExpense={() => setBudgetExpenseOpen(true)}
-          onAddNote={() => setNoteOpen(true)}
-          onStatusChange={(status) =>
-            updateTaskStatus(task.id, status, {
-              author: authorName,
-              authorInitials,
-            })
-          }
-          onEditTask={() => setEditOpen(true)}
-          onCompleteTask={() => setCompleteOpen(true)}
+          onToggleStep={canToggleSteps ? handleToggleStep : undefined}
+          stepsReadOnly={!canToggleSteps}
         />
       ),
     },
     {
-      id: "steps",
+      id: "metrics",
       content: (
-        <TaskDetailsStepsTab
-          steps={task.steps ?? []}
-          onToggleStep={handleToggleStep}
+        <TaskDetailsMetricsTab
+          task={task}
+          budgetTransactions={budgetTransactions}
+          liveTimeSpent={liveTimeSpent}
+          isTracking={isTracking}
+        />
+      ),
+    },
+    {
+      id: "time",
+      content: (
+        <TaskDetailsTimeTab
+          entries={taskTimeEntries}
+          onAddManualTime={() => setManualTimeOpen(true)}
+        />
+      ),
+    },
+    {
+      id: "transactions",
+      content: (
+        <TaskDetailsTransactionsTab
+          transactions={budgetTransactions}
+          onLogBudgetExpense={() => setBudgetExpenseOpen(true)}
         />
       ),
     },
@@ -232,6 +287,22 @@ export default function TaskDetailsTabulator({
         <TaskDetailsCommentsTab
           comments={taskComments}
           onAddComment={handleAddComment}
+        />
+      ),
+    },
+    {
+      id: "notes",
+      content: (
+        <TaskDetailsNotesTab
+          notes={taskNotes}
+          onAddNote={(body) =>
+            addTaskNote({
+              taskId: task.id,
+              body,
+              author: authorName,
+              authorInitials,
+            })
+          }
         />
       ),
     },
@@ -253,7 +324,31 @@ export default function TaskDetailsTabulator({
 
   return (
     <>
-      <Tabulator defaultValue={defaultTab}>
+      <Tabulator
+        defaultValue={defaultTab}
+        header={
+          <TaskDetailsActionBar
+            task={task}
+            liveTimeSpent={liveTimeSpent}
+            isTracking={isTracking}
+            sessionTimer={sessionTimer}
+            onToggleTracking={() =>
+              toggleTracking(task.id, {
+                author: authorName,
+                authorInitials,
+              })
+            }
+            onStatusChange={(status) =>
+              updateTaskStatus(task.id, status, {
+                author: authorName,
+                authorInitials,
+              })
+            }
+            onEditTask={() => setEditOpen(true)}
+            onCompleteTask={() => setCompleteOpen(true)}
+          />
+        }
+      >
         <Tabulator.Tabs>
           {tabs.map((tab) => (
             <Tabulator.Tab key={tab.id} value={tab.id}>
@@ -409,31 +504,6 @@ export default function TaskDetailsTabulator({
         }}
       />
 
-      <AddNoteDialog
-        open={noteOpen}
-        onClose={() => setNoteOpen(false)}
-        onSubmit={(input) =>
-          addTaskNote({
-            taskId: task.id,
-            body: input.body,
-            author: authorName,
-            authorInitials,
-          })
-        }
-        labels={{
-          title: detailLabels.noteDialogTitle,
-          subtitle: detailLabels.noteDialogSubtitle,
-          body: detailLabels.noteBody,
-          bodyPlaceholder: detailLabels.noteBodyPlaceholder,
-          required: dashboardLabels.required,
-          apply: detailLabels.noteApply,
-          cancel: t.common.cancel,
-          unsavedTitle: detailLabels.noteUnsavedTitle,
-          unsavedMessage: detailLabels.noteUnsavedMessage,
-          unsavedYes: detailLabels.noteUnsavedYes,
-          unsavedNo: detailLabels.noteUnsavedNo,
-        }}
-      />
     </>
   );
 }

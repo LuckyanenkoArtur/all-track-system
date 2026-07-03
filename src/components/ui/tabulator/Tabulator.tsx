@@ -1,4 +1,4 @@
-import type { FC, PropsWithChildren } from "react";
+import type { FC, PropsWithChildren, ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
 import styles from "./Tabulator.module.scss";
 
@@ -24,6 +24,7 @@ interface TabulatorComponent extends FC<TabulatorProps> {
 
 type TabulatorProps = PropsWithChildren & {
   defaultValue: string;
+  header?: ReactNode;
 };
 
 type TabProps = PropsWithChildren & {
@@ -34,12 +35,19 @@ type TabulatorPanelProps = PropsWithChildren & {
   value: string;
 };
 
-export const Tabulator: TabulatorComponent = ({ children, defaultValue }) => {
+export const Tabulator: TabulatorComponent = ({
+  children,
+  defaultValue,
+  header,
+}) => {
   const [active, setActive] = useState(defaultValue);
 
   return (
     <TabContext.Provider value={{ active, setActive }}>
-      <div className={styles.contentCard}>{children}</div>
+      <div className={styles.contentCard}>
+        {header}
+        {children}
+      </div>
     </TabContext.Provider>
   );
 };
@@ -78,5 +86,9 @@ Tabulator.Panel = ({ children, value }) => {
 
   if (active !== value) return null;
 
-  return <div role="tabpanel">{children}</div>;
+  return (
+    <div role="tabpanel" className={styles.panelContent}>
+      {children}
+    </div>
+  );
 };
