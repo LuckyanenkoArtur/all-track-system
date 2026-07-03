@@ -26,7 +26,11 @@ import {
   getDeadlineInfo,
 } from "../../../../utils/taskDetailsUtils.ts";
 import { formatDate, formatBudget } from "../../../../utils/taskListUtils.ts";
-import { PriorityBadge, StatusBadge } from "../../../TaskBadges.tsx";
+import {
+  getTaskStatusOptions,
+  isTerminalTaskStatus,
+} from "../../../../utils/taskStatusUtils.ts";
+import { PriorityBadge, StatusBadge } from "../../../badges/TaskBadges.tsx";
 import { TaskBudgetChart } from "../../../TaskBudgetChart.tsx";
 import styles from "./TaskDetailsOverviewTab.module.scss";
 import { useTranslation } from "../../../../../../i18n/index.ts";
@@ -73,11 +77,13 @@ export function TaskDetailsOverviewTab({
   const deadline = getDeadlineInfo(task.dueDate, task.status);
   const budget = getBudgetInfo(task, budgetTransactions);
 
-  const statusOptions: { value: TaskStatus; label: string }[] = [
-    { value: "pending" as unknown as TaskStatus, label: t.tasks.pending },
-    { value: "inProgress" as unknown as TaskStatus, label: t.tasks.inProgress },
-    { value: "done" as unknown as TaskStatus, label: t.tasks.done },
-  ];
+  const statusOptions = getTaskStatusOptions({
+    open: t.tasks.open,
+    onHold: t.tasks.onHold,
+    inProgress: t.tasks.inProgress,
+    completed: t.tasks.completed,
+    cancelled: t.tasks.cancelled,
+  });
 
   return (
     <div className={styles.overview}>
@@ -287,7 +293,7 @@ export function TaskDetailsOverviewTab({
                   </span>
                 )}
               </div>
-              {onToggleTracking && task.status !== "done" && (
+              {onToggleTracking && !isTerminalTaskStatus(task.status) && (
                 <button
                   type="button"
                   className={`${styles.trackingBtn} ${isTracking ? styles.stop : styles.start}`}
@@ -344,7 +350,7 @@ export function TaskDetailsOverviewTab({
             )}
           </section>
 
-          {onCompleteTask && task.status !== "done" && (
+          {onCompleteTask && !isTerminalTaskStatus(task.status) && (
             <button
               type="button"
               className={styles.completeTaskBtn}

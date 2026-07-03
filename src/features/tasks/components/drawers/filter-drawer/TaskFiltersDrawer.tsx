@@ -56,9 +56,11 @@ type TaskFiltersDrawerProps = {
     budgetMax: string;
     timeMin: string;
     timeMax: string;
-    done: string;
+    open: string;
+    onHold: string;
     inProgress: string;
-    pending: string;
+    completed: string;
+    cancelled: string;
     high: string;
     medium: string;
     low: string;
@@ -69,10 +71,12 @@ const STATUS_OPTIONS: {
   value: TaskStatus;
   labelKey: keyof TaskFiltersDrawerProps["labels"];
 }[] = [
-    { value: "done", labelKey: "done" },
-    { value: "inProgress", labelKey: "inProgress" },
-    { value: "pending", labelKey: "pending" },
-  ];
+  { value: "open", labelKey: "open" },
+  { value: "onHold", labelKey: "onHold" },
+  { value: "inProgress", labelKey: "inProgress" },
+  { value: "completed", labelKey: "completed" },
+  { value: "cancelled", labelKey: "cancelled" },
+];
 
 const PRIORITY_OPTIONS: {
   value: TaskPriority;

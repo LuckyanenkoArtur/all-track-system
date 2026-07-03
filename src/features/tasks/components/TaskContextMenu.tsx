@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "re
 import { createPortal } from "react-dom";
 import { FiClock, FiDollarSign, FiPlus, FiSquare } from "react-icons/fi";
 import type { TaskContextMenuState } from "../hooks/useTaskContextMenu";
+import { isTerminalTaskStatus } from "../utils/taskStatusUtils";
 import styles from "./TaskContextMenu.module.scss";
 
 export type TaskContextMenuLabels = {
@@ -86,7 +87,7 @@ export function TaskContextMenu({
   if (!menu) return null;
 
   const tracking = isTracking(menu.task.id);
-  const isDone = menu.task.status === "done";
+  const isTerminal = isTerminalTaskStatus(menu.task.status);
 
   const items: MenuItem[] = [];
 
@@ -104,7 +105,7 @@ export function TaskContextMenu({
       id: "start-tracking",
       label: labels.startTracking,
       icon: <FiClock size={16} aria-hidden />,
-      disabled: isDone || tracking,
+      disabled: isTerminal || tracking,
       onSelect: () => onStartTracking(menu.task.id),
     });
   }

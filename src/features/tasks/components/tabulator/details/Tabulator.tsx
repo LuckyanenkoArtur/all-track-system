@@ -206,7 +206,12 @@ export default function TaskDetailsTabulator({
           onAddManualTime={() => setManualTimeOpen(true)}
           onLogBudgetExpense={() => setBudgetExpenseOpen(true)}
           onAddNote={() => setNoteOpen(true)}
-          onStatusChange={(status) => updateTaskStatus(task.id, status)}
+          onStatusChange={(status) =>
+            updateTaskStatus(task.id, status, {
+              author: authorName,
+              authorInitials,
+            })
+          }
           onEditTask={() => setEditOpen(true)}
           onCompleteTask={() => setCompleteOpen(true)}
         />

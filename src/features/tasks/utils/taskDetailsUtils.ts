@@ -55,7 +55,7 @@ export function getDeadlineInfo(
 ): DeadlineInfo {
   const msLeft = new Date(dueDate).getTime() - Date.now();
 
-  if (status === "done") {
+  if (status === "completed") {
     return {
       tone: "ok",
       label: "Completed on time",

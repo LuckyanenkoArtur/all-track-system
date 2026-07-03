@@ -26,14 +26,14 @@ export function getOverviewCardNavigation(
       return {};
     case "inProgress":
       return { presetFilters: withStatuses(["inProgress"]) };
-    case "pending":
-      return { presetFilters: withStatuses(["pending"]) };
-    case "done":
-      return { presetFilters: withStatuses(["done"]) };
+    case "open":
+      return { presetFilters: withStatuses(["open"]) };
+    case "completed":
+      return { presetFilters: withStatuses(["completed"]) };
     case "dueToday":
       return {
         presetFilters: {
-          statuses: ["pending", "inProgress"],
+          statuses: ["open", "onHold", "inProgress"],
           dueDateFrom: toDateInputValue(startOfDay(today)),
           dueDateTo: toDateInputValue(endOfDay(today)),
         },
@@ -43,7 +43,7 @@ export function getOverviewCardNavigation(
       const rangeStart = tomorrow > weekStart ? tomorrow : weekStart;
       return {
         presetFilters: {
-          statuses: ["pending", "inProgress"],
+          statuses: ["open", "onHold", "inProgress"],
           dueDateFrom: toDateInputValue(rangeStart),
           dueDateTo: toDateInputValue(endOfWeek(today)),
         },

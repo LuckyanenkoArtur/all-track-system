@@ -5,8 +5,18 @@ import type {
   TaskListQuery,
   SortField,
 } from "../domain/others";
+import { normalizeTaskStatus } from "./taskStatusUtils";
 
-const STATUS_ORDER = { pending: 0, inProgress: 1, done: 2 };
+const STATUS_ORDER: Record<
+  import("../domain/status").TaskStatusId,
+  number
+> = {
+  open: 0,
+  onHold: 1,
+  inProgress: 2,
+  completed: 3,
+  cancelled: 4,
+};
 const PRIORITY_ORDER = { low: 0, medium: 1, high: 2 };
 
 export function parseBudget(value: string): number {
@@ -108,7 +118,10 @@ function compareField(a: Task, b: Task, field: SortField): number {
     case "title":
       return a.title.localeCompare(b.title);
     case "status":
-      return STATUS_ORDER[a.status] - STATUS_ORDER[b.status];
+      return (
+        STATUS_ORDER[normalizeTaskStatus(a.status)] -
+        STATUS_ORDER[normalizeTaskStatus(b.status)]
+      );
     case "priority":
       return PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority];
     case "groups":

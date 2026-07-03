@@ -1,6 +1,8 @@
-export type TaskStatusId = "done" | "inProgress" | "pending";
+export type TaskStatusId =
+  | "open"
+  | "onHold"
+  | "inProgress"
+  | "completed"
+  | "cancelled";
 
-export interface TaskStatus {
-    id: TaskStatusId;
-    name: string;
-}
+export type TaskStatus = TaskStatusId;

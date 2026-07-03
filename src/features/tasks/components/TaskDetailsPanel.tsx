@@ -4,7 +4,7 @@ import { FiMaximize2, FiX } from "react-icons/fi";
 
 import { useTranslation } from "../../../i18n";
 import type { Task } from "../domain/others";
-import { StatusBadge } from "./TaskBadges";
+import { StatusBadge } from "./badges/TaskBadges.tsx";
 import styles from "./TaskDetailsPanel.module.scss";
 import TaskDetailsTabulator from "./tabulator/details/Tabulator.tsx";
 

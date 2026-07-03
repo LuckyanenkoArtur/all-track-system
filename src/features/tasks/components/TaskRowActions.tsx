@@ -7,6 +7,7 @@ import {
   FiPlus,
 } from "react-icons/fi";
 import type { Task } from "../domain/others";
+import { isTerminalTaskStatus } from "../utils/taskStatusUtils";
 import styles from "./TaskRowActions.module.scss";
 
 type TaskRowActionsProps = {
@@ -98,9 +99,9 @@ export function TaskRowActions({
           {onComplete && (
             <button
               type="button"
-              className={`${styles.menuItem} ${task.status === "done" ? styles.disabled : ""}`}
+              className={`${styles.menuItem} ${isTerminalTaskStatus(task.status) ? styles.disabled : ""}`}
               role="menuitem"
-              disabled={task.status === "done"}
+              disabled={isTerminalTaskStatus(task.status)}
               onClick={(event) =>
                 handleAction(event, () => onComplete(task.id))
               }
@@ -109,7 +110,7 @@ export function TaskRowActions({
               {labels.completeTask}
             </button>
           )}
-          {onToggleTracking && task.status !== "done" && (
+          {onToggleTracking && !isTerminalTaskStatus(task.status) && (
             <button
               type="button"
               className={styles.menuItem}

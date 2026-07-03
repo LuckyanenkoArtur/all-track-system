@@ -34,6 +34,8 @@ export function TaskDetailsHistoryTab({ entries }: TaskDetailsHistoryTabProps) {
           steps={entry.steps}
           minutesAdded={entry.minutesAdded}
           amount={entry.amount}
+          statusFrom={entry.statusFrom}
+          statusTo={entry.statusTo}
         />
       ))}
     </HistoryJournal>

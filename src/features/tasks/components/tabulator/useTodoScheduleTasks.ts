@@ -2,8 +2,11 @@ import { useMemo } from "react";
 import { useTasks } from "../../hooks/useTasks";
 import { isThisWeek, isToday } from "../../utils/dateUtils";
 
-function isOpenTask(status: string) {
-  return status === "pending" || status === "inProgress";
+import { isSchedulableTaskStatus } from "../../utils/taskStatusUtils";
+import type { TaskStatus } from "../../domain/status";
+
+function isOpenTask(status: TaskStatus) {
+  return isSchedulableTaskStatus(status);
 }
 
 export function useTodoScheduleTasks() {

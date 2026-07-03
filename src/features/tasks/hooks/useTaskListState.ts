@@ -168,8 +168,8 @@ export function useTaskListState() {
     const inProgress = tasks.filter(
       (task) => task.status === "inProgress",
     ).length;
-    const pending = tasks.filter((task) => task.status === "pending").length;
-    return { total: tasks.length, inProgress, pending };
+    const open = tasks.filter((task) => task.status === "open").length;
+    return { total: tasks.length, inProgress, open };
   }, [tasks]);
 
   const activeFilterCount = useMemo(

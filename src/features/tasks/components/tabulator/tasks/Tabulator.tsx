@@ -43,14 +43,16 @@ export default function TaskTabulator({
     const inProgress = tasks.filter(
       (task) => task.status === "inProgress",
     ).length;
-    const pending = tasks.filter((task) => task.status === "pending").length;
-    const done = tasks.filter((task) => task.status === "done").length;
+    const open = tasks.filter((task) => task.status === "open").length;
+    const completed = tasks.filter(
+      (task) => task.status === "completed",
+    ).length;
 
     return {
       total: tasks.length,
       inProgress,
-      pending,
-      done,
+      open,
+      completed,
       dueToday: todayTasks.length,
       dueThisWeek: weekTasks.length,
     };
@@ -83,20 +85,20 @@ export default function TaskTabulator({
         onClick: () => handleCardClick("inProgress"),
       },
       {
-        id: "pending",
-        label: cards_labels.pending,
-        value: stats.pending,
-        tone: "pending" as const,
+        id: "open",
+        label: cards_labels.open,
+        value: stats.open,
+        tone: "open" as const,
         icon: <FiClock size={18} aria-hidden />,
-        onClick: () => handleCardClick("pending"),
+        onClick: () => handleCardClick("open"),
       },
       {
-        id: "done",
+        id: "completed",
         label: cards_labels.completed,
-        value: stats.done,
-        tone: "done" as const,
+        value: stats.completed,
+        tone: "completed" as const,
         icon: <FiCheckCircle size={18} aria-hidden />,
-        onClick: () => handleCardClick("done"),
+        onClick: () => handleCardClick("completed"),
       },
       {
         id: "dueToday",

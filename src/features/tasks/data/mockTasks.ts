@@ -6,7 +6,7 @@ const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
     id: "TSK-001",
     title: "SynoraLab Brand Identity & Tech Campus Logo",
-    status: "done",
+    status: "completed",
     priority: "high",
     groups: ["Branding", "Design"],
     createdAt: "2026-06-01T09:00:00Z",
@@ -48,7 +48,7 @@ const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
     id: "TSK-004",
     title: "A9-KLA/1 Industrial Washing Machine AutoLISP",
-    status: "pending",
+    status: "onHold",
     priority: "medium",
     groups: ["CAD", "Automation"],
     createdAt: "2026-06-07T14:20:00Z",
@@ -61,7 +61,7 @@ const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
     id: "TSK-005",
     title: "Kotlin Matrix Animation Implementation",
-    status: "done",
+    status: "completed",
     priority: "low",
     groups: ["Academic", "Backend"],
     createdAt: "2026-06-08T13:30:00Z",
@@ -87,7 +87,7 @@ const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
     id: "TSK-007",
     title: "Q2 Budget Reconciliation Spreadsheet",
-    status: "pending",
+    status: "open",
     priority: "high",
     groups: ["Finance", "Operations"],
     createdAt: "2026-06-03T08:30:00Z",
@@ -113,7 +113,7 @@ const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
     id: "TSK-009",
     title: "Warehouse Inventory Scanner Firmware",
-    status: "pending",
+    status: "open",
     priority: "medium",
     groups: ["Hardware", "IoT"],
     createdAt: "2026-06-05T15:45:00Z",
@@ -126,7 +126,7 @@ const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
     id: "TSK-010",
     title: "Marketing Landing Page A/B Test Setup",
-    status: "done",
+    status: "completed",
     priority: "low",
     groups: ["Marketing", "Frontend"],
     createdAt: "2026-05-28T09:00:00Z",
@@ -152,7 +152,7 @@ const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
     id: "TSK-012",
     title: "Support Ticket Auto-Tagging Model",
-    status: "pending",
+    status: "open",
     priority: "medium",
     groups: ["AI", "Support"],
     createdAt: "2026-06-09T11:00:00Z",
@@ -165,7 +165,7 @@ const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
     id: "TSK-013",
     title: "Office Network VLAN Segmentation",
-    status: "done",
+    status: "completed",
     priority: "medium",
     groups: ["NetOps", "Security"],
     createdAt: "2026-05-20T10:00:00Z",
@@ -191,7 +191,7 @@ const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
     id: "TSK-015",
     title: "API Rate Limiting Policy Update",
-    status: "pending",
+    status: "open",
     priority: "high",
     groups: ["Backend", "Security"],
     createdAt: "2026-06-10T14:00:00Z",
@@ -204,7 +204,7 @@ const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
     id: "TSK-016",
     title: "Design System Icon Pack Refresh",
-    status: "done",
+    status: "completed",
     priority: "medium",
     groups: ["Design", "Frontend"],
     createdAt: "2026-05-25T08:00:00Z",
@@ -217,7 +217,7 @@ const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
     id: "TSK-017",
     title: "Vendor Contract Renewal Review",
-    status: "pending",
+    status: "open",
     priority: "low",
     groups: ["Legal", "Finance"],
     createdAt: "2026-06-11T10:00:00Z",
@@ -243,7 +243,7 @@ const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
     id: "TSK-019",
     title: "Accessibility Audit for Public Pages",
-    status: "pending",
+    status: "cancelled",
     priority: "high",
     groups: ["Frontend", "QA"],
     createdAt: "2026-06-12T09:00:00Z",
@@ -256,7 +256,7 @@ const BASE_TASKS: Omit<Task, "observables" | "startDate">[] = [
   {
     id: "TSK-020",
     title: "Cloud Backup Retention Policy Rollout",
-    status: "done",
+    status: "completed",
     priority: "high",
     groups: ["Infrastructure", "Security"],
     createdAt: "2026-05-18T08:00:00Z",

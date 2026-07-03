@@ -4,7 +4,6 @@ import type { TaskFilters } from "../domain/filters";
 import type { TaskSort } from "../domain/sort";
 import type { PageSize } from "../domain/others";
 import type { TaskPriority } from "../domain/priority";
-import type { TaskStatus } from "../domain/status";
 
 const STORAGE_KEY = "alltrack-task-collections";
 
@@ -14,7 +13,7 @@ const DEFAULT_COLLECTIONS: TaskCollection[] = [
     name: "High priority · active",
     filters: {
       search: "",
-      statuses: [{ id: "inProgress" } as TaskStatus],
+      statuses: ["inProgress"],
       priorities: [{ id: "high" } as TaskPriority],
       groups: [],
       initiators: [],
@@ -32,10 +31,10 @@ const DEFAULT_COLLECTIONS: TaskCollection[] = [
   },
   {
     id: "pending-review",
-    name: "Pending review",
+    name: "Open tasks",
     filters: {
       search: "",
-      statuses: [{ id: "pending" } as TaskStatus],
+      statuses: ["open"],
       priorities: [],
       groups: [],
       initiators: [],

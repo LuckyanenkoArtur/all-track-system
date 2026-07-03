@@ -12,15 +12,18 @@ import {
   FiDollarSign,
   FiEdit3,
   FiFileText,
+  FiFlag,
   FiMessageSquare,
 } from "react-icons/fi";
 import type {
   CompletionReportStep,
   TaskHistoryEntryType,
+  TaskStatusId,
 } from "../../features/tasks/domain/others.ts";
 import { useTranslation } from "../../i18n/index.ts";
 import { formatBudget } from "../../features/tasks/utils/taskListUtils.ts";
 import { formatTimeSpent } from "../../features/tasks/utils/timeTrackingUtils.ts";
+import { getTaskStatusLabel } from "../../features/tasks/utils/taskStatusUtils.ts";
 import styles from "./HistoryJournal.module.scss";
 
 export type HistoryJournalLabels = {
@@ -33,6 +36,7 @@ export type HistoryJournalLabels = {
   historyBudgetSpendingDetail: string;
   historyTimeAddedDetail: string;
   historyTaskUpdatedSummary: string;
+  historyStatusChangedSummary: string;
   historyCreatedBy: string;
   historyShowDescription: string;
   historyHideDescription: string;
@@ -47,6 +51,8 @@ type HistoryEntryContextValue = {
   steps?: CompletionReportStep[];
   minutesAdded?: number;
   amount?: number;
+  statusFrom?: TaskStatusId;
+  statusTo?: TaskStatusId;
   labels: HistoryJournalLabels;
 };
 
@@ -88,6 +94,7 @@ function useHistoryJournalLabels(): HistoryJournalLabels {
       historyBudgetSpendingDetail: details.historyBudgetSpendingDetail,
       historyTimeAddedDetail: details.historyTimeAddedDetail,
       historyTaskUpdatedSummary: details.historyTaskUpdatedSummary,
+      historyStatusChangedSummary: details.historyStatusChangedSummary,
       historyCreatedBy: details.historyCreatedBy,
       historyShowDescription: details.historyShowDescription,
       historyHideDescription: details.historyHideDescription,
@@ -125,6 +132,8 @@ type HistoryJournalEntryProps = {
   steps?: CompletionReportStep[];
   minutesAdded?: number;
   amount?: number;
+  statusFrom?: TaskStatusId;
+  statusTo?: TaskStatusId;
   children?: ReactNode;
 };
 
@@ -142,6 +151,8 @@ function getEntryIcon(type: TaskHistoryEntryType) {
       return FiClock;
     case "task_updated":
       return FiEdit3;
+    case "status_changed":
+      return FiFlag;
   }
 }
 
@@ -177,6 +188,8 @@ function getSummaryTemplate(
       return labels.historyTimeAddedSummary;
     case "task_updated":
       return labels.historyTaskUpdatedSummary;
+    case "status_changed":
+      return labels.historyStatusChangedSummary;
   }
 }
 
@@ -256,6 +269,8 @@ HistoryJournal.Entry = function HistoryJournalEntry({
   steps,
   minutesAdded,
   amount,
+  statusFrom,
+  statusTo,
 }: HistoryJournalEntryProps) {
   const labels = useHistoryLabels();
   const contextValue = useMemo(
@@ -267,6 +282,8 @@ HistoryJournal.Entry = function HistoryJournalEntry({
       steps,
       minutesAdded,
       amount,
+      statusFrom,
+      statusTo,
       labels,
     }),
     [
@@ -277,6 +294,8 @@ HistoryJournal.Entry = function HistoryJournalEntry({
       steps,
       minutesAdded,
       amount,
+      statusFrom,
+      statusTo,
       labels,
     ],
   );
@@ -314,20 +333,40 @@ HistoryJournal.Entry = function HistoryJournalEntry({
 };
 
 HistoryJournal.Header = () => {
-  const { createdBy, type, createdAt, labels } = useHistoryEntry();
+  const { createdBy, type, createdAt, statusFrom, statusTo, labels } =
+    useHistoryEntry();
+  const { t } = useTranslation();
   const summary = getSummaryTemplate(type, labels);
-  const parts = summary.split("{{author}}");
+  const statusLabels = {
+    open: t.tasks.open,
+    onHold: t.tasks.onHold,
+    inProgress: t.tasks.inProgress,
+    completed: t.tasks.completed,
+    cancelled: t.tasks.cancelled,
+  };
 
   const summaryContent =
-    parts.length === 1 ? (
-      summary
-    ) : (
-      <>
-        {parts[0]}
-        <strong>{createdBy}</strong>
-        {parts[1]}
-      </>
-    );
+    type === "status_changed" && statusFrom && statusTo ? (
+      renderPlaceholderSummary(
+        summary,
+        {
+          author: createdBy,
+          statusFrom: getTaskStatusLabel(statusFrom, statusLabels),
+          statusTo: getTaskStatusLabel(statusTo, statusLabels),
+        },
+        styles.highlightValue,
+      )
+    ) : (() => {
+      const parts = summary.split("{{author}}");
+      if (parts.length === 1) return summary;
+      return (
+        <>
+          {parts[0]}
+          <strong>{createdBy}</strong>
+          {parts[1]}
+        </>
+      );
+    })();
 
   return (
     <header className={styles.header}>

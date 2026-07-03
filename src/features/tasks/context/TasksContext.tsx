@@ -29,6 +29,7 @@ import {
   formatTimeSpent,
 } from "../utils/timeTrackingUtils";
 import { parseTimeMinutes } from "../utils/taskListUtils";
+import { normalizeTaskStatus } from "../utils/taskStatusUtils";
 import type { TaskHistoryEntry } from "../domain/history-entry";
 
 const STORAGE_KEY = "alltrack-tasks";
@@ -49,7 +50,11 @@ interface TasksContextValue {
   addTask: (input: CreateTaskInput) => Task;
   updateTask: (id: string, input: UpdateTaskInput) => void;
   updateTaskSteps: (id: string, steps: TaskStep[]) => void;
-  updateTaskStatus: (id: string, status: TaskStatus) => void;
+  updateTaskStatus: (
+    id: string,
+    status: TaskStatus,
+    changeAuthor?: { author: string; authorInitials: string },
+  ) => void;
   startTracking: (taskId: string) => void;
   stopTracking: () => void;
   toggleTracking: (taskId: string) => void;
@@ -73,6 +78,7 @@ export { TasksContext };
 function normalizeTask(task: Task): Task {
   return {
     ...task,
+    status: normalizeTaskStatus(task.status),
     observables: task.observables ?? [],
     startDate: task.startDate ?? task.createdAt,
     steps: task.steps ?? [],
@@ -270,8 +276,8 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
         next = next.map((task) => {
           if (task.id !== taskId) return task;
-          if (task.status === "pending") {
-            return { ...task, status: { id: "inProgress" } as TaskStatus };
+          if (task.status === "open") {
+            return { ...task, status: "inProgress" };
           }
           return task;
         });
@@ -314,7 +320,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
         next = next.map((task) =>
           task.id === taskId
-            ? { ...task, status: { id: "done" } as TaskStatus }
+            ? { ...task, status: "completed" }
             : task,
         );
         persistTasks(next);
@@ -346,7 +352,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
         next = next.map((task) =>
           task.id === input.taskId
-            ? { ...task, status: { id: "done" } as TaskStatus }
+            ? { ...task, status: "completed" }
             : task,
         );
         persistTasks(next);
@@ -404,7 +410,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       createdTask = {
         id: createTaskId(prev),
         title: input.title.trim(),
-        status: "pending",
+        status: "open",
         priority: input.priority,
         groups: input.groups.filter(Boolean),
         observables: input.observables.filter(Boolean),
@@ -514,15 +520,48 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const updateTaskStatus = useCallback((id: string, status: TaskStatus) => {
-    setTasks((prev) => {
-      const next = prev.map((task) =>
-        task.id === id ? { ...task, status } : task,
-      );
-      persistTasks(next);
-      return next;
-    });
-  }, []);
+  const updateTaskStatus = useCallback(
+    (
+      id: string,
+      status: TaskStatus,
+      changeAuthor?: { author: string; authorInitials: string },
+    ) => {
+      const now = new Date().toISOString();
+
+      setTasks((prev) => {
+        const task = prev.find((item) => item.id === id);
+        if (!task || task.status === status) return prev;
+
+        if (changeAuthor) {
+          setHistory((historyPrev) => {
+            const entry: TaskHistoryEntry = {
+              id: createHistoryId(historyPrev),
+              taskId: id,
+              type: "status_changed",
+              author: changeAuthor.author,
+              authorInitials: changeAuthor.authorInitials,
+              description: "",
+              steps: [],
+              createdAt: now,
+              statusFrom: task.status,
+              statusTo: status,
+            };
+
+            const nextHistory = [...historyPrev, entry];
+            persistHistory(nextHistory);
+            return nextHistory;
+          });
+        }
+
+        const next = prev.map((item) =>
+          item.id === id ? { ...item, status } : item,
+        );
+        persistTasks(next);
+        return next;
+      });
+    },
+    [],
+  );
 
   const isTracking = useCallback(
     (taskId: string) => tracking?.taskId === taskId,

@@ -16,7 +16,11 @@ import {
 import type { Task, TaskStatus } from "../domain/others";
 import { formatDueDate } from "../utils/dateUtils";
 import { formatDate, formatBudget } from "../utils/taskListUtils";
-import { PriorityBadge, StatusBadge } from "./TaskBadges";
+import {
+  getTaskStatusOptions,
+  isTerminalTaskStatus,
+} from "../utils/taskStatusUtils";
+import { PriorityBadge, StatusBadge } from "./badges/TaskBadges";
 import styles from "./TaskDetailsContent.module.scss";
 
 export type TaskDetailsLabels = {
@@ -34,9 +38,11 @@ export type TaskDetailsLabels = {
   addComment: string;
   comments: string;
   changeStatus: string;
-  done: string;
+  open: string;
+  onHold: string;
   inProgress: string;
-  pending: string;
+  completed: string;
+  cancelled: string;
   high: string;
   medium: string;
   low: string;
@@ -76,11 +82,13 @@ export function TaskDetailsContent({
   liveTimeSpent,
   variant = "panel",
 }: TaskDetailsContentProps) {
-  const statusOptions: { value: TaskStatus; label: string }[] = [
-    { value: "pending", label: labels.pending },
-    { value: "inProgress", label: labels.inProgress },
-    { value: "done", label: labels.done },
-  ];
+  const statusOptions = getTaskStatusOptions({
+    open: labels.open,
+    onHold: labels.onHold,
+    inProgress: labels.inProgress,
+    completed: labels.completed,
+    cancelled: labels.cancelled,
+  });
 
   return (
     <div className={`${styles.content} ${styles[variant]}`}>
@@ -101,7 +109,7 @@ export function TaskDetailsContent({
         </div>
       </div>
 
-      {onToggleTracking && task.status !== "done" && (
+      {onToggleTracking && !isTerminalTaskStatus(task.status) && (
         <div
           className={`${styles.trackingBar} ${isTracking ? styles.trackingActive : ""}`}
         >

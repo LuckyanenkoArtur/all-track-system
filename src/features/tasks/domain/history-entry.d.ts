@@ -1,10 +1,13 @@
+import type { TaskStatusId } from "./status";
+
 export type TaskHistoryEntryType =
   | "task_completed"
   | "comment_added"
   | "note_added"
   | "budget_expense_added"
   | "manual_time_added"
-  | "task_updated";
+  | "task_updated"
+  | "status_changed";
 
 export interface TaskHistoryEntry {
   id: string;
@@ -17,4 +20,6 @@ export interface TaskHistoryEntry {
   createdAt: string;
   minutesAdded?: number;
   amount?: number;
+  statusFrom?: TaskStatusId;
+  statusTo?: TaskStatusId;
 }

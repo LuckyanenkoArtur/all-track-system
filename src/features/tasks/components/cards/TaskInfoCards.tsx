@@ -5,7 +5,7 @@ export type TaskInfoStat = {
   id: string;
   label: string;
   value: number;
-  tone?: "default" | "inProgress" | "pending" | "done" | "today" | "week";
+  tone?: "default" | "inProgress" | "open" | "completed" | "today" | "week";
   icon?: ReactNode;
   onClick?: () => void;
 };
