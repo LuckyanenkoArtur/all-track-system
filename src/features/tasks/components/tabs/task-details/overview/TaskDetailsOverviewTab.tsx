@@ -30,10 +30,11 @@ import {
   getTaskStatusOptions,
   isTerminalTaskStatus,
 } from "../../../../utils/taskStatusUtils.ts";
-import { PriorityBadge, StatusBadge } from "../../../badges/TaskBadges.tsx";
 import { TaskBudgetChart } from "../../../TaskBudgetChart.tsx";
 import styles from "./TaskDetailsOverviewTab.module.scss";
 import { useTranslation } from "../../../../../../i18n/index.ts";
+import PriorityBadge from "../../../badges/PriorityBadge.tsx";
+import StatusBadge from "../../../badges/StatusBadge.tsx";
 
 type TaskDetailsOverviewTabProps = {
   task: Task;

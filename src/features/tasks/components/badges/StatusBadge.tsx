@@ -1,10 +1,7 @@
 import {
   FiAlertCircle,
-  FiArrowDown,
-  FiArrowUp,
   FiCheckCircle,
   FiCircle,
-  FiMinus,
   FiPauseCircle,
   FiXCircle,
 } from "react-icons/fi";
@@ -15,7 +12,7 @@ import {
 } from "../../utils/taskStatusUtils.ts";
 import Badge from "../../../../components/ui/badge/Badge.tsx";
 
-export function StatusBadge({ status }: { status: string }) {
+export default function StatusBadge({ status }: { status: string }) {
   const { t } = useTranslation();
   const normalizedStatus = normalizeTaskStatus(status);
   const label = getTaskStatusLabel(normalizedStatus, {
@@ -70,40 +67,6 @@ export function StatusBadge({ status }: { status: string }) {
             <FiCircle size={14} aria-hidden />
           </Badge.Icon>
           <Badge.Label>{label}</Badge.Label>
-        </Badge>
-      );
-    default:
-      return null;
-  }
-}
-
-export function PriorityBadge({ priority }: { priority: string }) {
-  switch (priority) {
-    case "high":
-      return (
-        <Badge variant="error">
-          <Badge.Icon>
-            <FiArrowUp size={16} aria-hidden />
-          </Badge.Icon>
-          <Badge.Label>High</Badge.Label>
-        </Badge>
-      );
-    case "medium":
-      return (
-        <Badge variant="warning">
-          <Badge.Icon>
-            <FiMinus size={16} aria-hidden />
-          </Badge.Icon>
-          <Badge.Label>Medium</Badge.Label>
-        </Badge>
-      );
-    case "low":
-      return (
-        <Badge variant="neutral">
-          <Badge.Icon>
-            <FiArrowDown size={16} aria-hidden />
-          </Badge.Icon>
-          <Badge.Label>Low</Badge.Label>
         </Badge>
       );
     default:

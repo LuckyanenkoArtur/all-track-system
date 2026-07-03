@@ -2,7 +2,7 @@ import { useMemo, type ReactNode } from "react";
 import { FiCalendar, FiClock, FiUser, FiUsers } from "react-icons/fi";
 import type { DataColumnProps } from "../../../../components/ui/data-table/DataTable";
 import columnStyles from "../../../../components/ui/data-table/column/DataColumn.module.scss";
-import { PriorityBadge, StatusBadge } from "../badges/TaskBadges";
+import { PriorityBadge, StatusBadge } from "../badges/PriorityBadge";
 import { TaskRowActions } from "../../components/TaskRowActions";
 import type { Task } from "../../domain/others";
 import { formatBudget, formatDate } from "../../utils/taskListUtils";
