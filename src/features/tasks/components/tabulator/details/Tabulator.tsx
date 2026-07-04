@@ -19,9 +19,9 @@ import { TaskDetailsActionBar } from "../../action-bar/TaskDetailsActionBar.tsx"
 import { TaskDetailsMetricsTab } from "../../tabs/task-details/metrics/TaskDetailsMetricsTab.tsx";
 import { useTaskListState } from "../../../hooks/useTaskListState.ts";
 import { CreateTaskDialog } from "../../dialogs/CreateTaskDialog.tsx";
-import { CompleteTaskDialog } from "../../CompleteTaskDialog.tsx";
+import { CompleteTaskDialog } from "../../dialogs/CompleteTaskDialog.tsx";
 import { ManualTimeEntryDialog } from "../../ManualTimeEntryDialog.tsx";
-import { AddBudgetExpenseDialog } from "../../AddBudgetExpenseDialog.tsx";
+import { AddBudgetExpenseDialog } from "../../dialogs/AddBudgetExpenseDialog.tsx";
 import { FiFileText, FiBarChart2, FiClipboard, FiClock, FiDollarSign } from "react-icons/fi";
 import { TaskDetailsNotesTab } from "../../tabs/task-details/notes/TaskDetailsNotesTab.tsx";
 import { TaskDetailsTimeTab } from "../../tabs/task-details/time/TaskDetailsTimeTab.tsx";

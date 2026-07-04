@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { FiFileText } from "react-icons/fi";
-import Dialog, { ConfirmDialog } from "../../user-profile/components/dialogs/Dialog";
+import Dialog, { ConfirmDialog } from "../../../user-profile/components/dialogs/Dialog";
 import styles from "./AddNoteDialog.module.scss";
 
 export type AddNoteDialogLabels = {

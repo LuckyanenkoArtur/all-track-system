@@ -2,9 +2,9 @@ import { useEffect, useState, type FormEvent } from "react";
 import { FiCheckCircle } from "react-icons/fi";
 import Dialog, {
   ConfirmDialog,
-} from "../../user-profile/components/dialogs/Dialog";
-import type { CompletionReportStep } from "../domain/others";
-import { TaskStepsEditor } from "./TaskStepsEditor";
+} from "../../../user-profile/components/dialogs/Dialog";
+import type { CompletionReportStep } from "../../domain/others";
+import { TaskStepsEditor } from "../TaskStepsEditor";
 import styles from "./CompleteTaskDialog.module.scss";
 
 export type CompleteTaskDialogLabels = {
