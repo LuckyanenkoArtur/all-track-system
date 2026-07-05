@@ -128,6 +128,8 @@
       "attachmentUnavailable": "This attachment is not available for download.",
       "comments": "Discussions",
       "changeStatus": "Status",
+      "panelTitle": "Task details",
+      "panelSubtitle": "View progress, discuss, and manage this task.",
       "expandFullPage": "Open full page",
       "close": "Close",
       "backToTasks": "Back to work queue",

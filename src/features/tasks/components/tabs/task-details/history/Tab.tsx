@@ -1,6 +1,6 @@
 import { FiClock } from "react-icons/fi";
 import type { TaskHistoryEntry } from "../../../../domain/others.ts";
-import { TaskDetailsTabPlaceholder } from "../../../TaskDetailsTabPlaceholder.tsx";
+import { TaskDetailsTabPlaceholder } from "../../../placeholders/TaskDetailsTabPlaceholder.tsx";
 import HistoryJournal, {
   useHistoryTabPlaceholder,
 } from "../../../../../../components/history-journal/HistoryJournal.tsx";

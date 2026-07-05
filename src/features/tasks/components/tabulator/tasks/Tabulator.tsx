@@ -11,7 +11,7 @@ import {
 import { useTranslation } from "../../../../../i18n";
 import { TodoGrid } from "../TodoGrid.tsx";
 import { TaskInfoCards } from "../../cards/TaskInfoCards.tsx";
-import { TaskDetailsTabPlaceholder } from "../../TaskDetailsTabPlaceholder.tsx";
+import { TaskDetailsTabPlaceholder } from "../../placeholders/TaskDetailsTabPlaceholder.tsx";
 import { useNavigate } from "react-router-dom";
 import { useTasks } from "../../../hooks/useTasks.ts";
 import { useCallback, useMemo } from "react";

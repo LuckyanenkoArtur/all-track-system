@@ -23,7 +23,7 @@ import {
   readFileAsDataUrl,
   type PendingAttachment,
 } from "../../../../utils/commentUtils.ts";
-import { TaskDetailsTabPlaceholder } from "../../../TaskDetailsTabPlaceholder.tsx";
+import { TaskDetailsTabPlaceholder } from "../../../placeholders/TaskDetailsTabPlaceholder.tsx";
 import styles from "./TaskDetailsCommentsTab.module.scss";
 import { useTranslation } from "../../../../../../i18n/index.ts";
 

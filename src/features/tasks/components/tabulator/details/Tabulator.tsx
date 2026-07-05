@@ -26,7 +26,7 @@ import { FiFileText, FiBarChart2, FiClipboard, FiClock, FiDollarSign } from "rea
 import { TaskDetailsNotesTab } from "../../tabs/task-details/notes/TaskDetailsNotesTab.tsx";
 import { TaskDetailsTimeTab } from "../../tabs/task-details/time/TaskDetailsTimeTab.tsx";
 import { TaskDetailsTransactionsTab } from "../../tabs/task-details/transactions/TaskDetailsTransactionsTab.tsx";
-import { TaskDetailsTabPlaceholder } from "../../TaskDetailsTabPlaceholder.tsx";
+import { TaskDetailsTabPlaceholder } from "../../placeholders/TaskDetailsTabPlaceholder.tsx";
 import { isUserTaskResponsible } from "../../../utils/taskDetailsUtils.ts";
 
 interface TaskDetailsTabulatorProps {

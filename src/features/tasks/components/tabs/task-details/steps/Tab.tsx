@@ -1,7 +1,7 @@
 import { FiCheckSquare } from "react-icons/fi";
 import type { CheckListStep } from "../../../../../../components/ui/step-check-list/step";
 import { useTranslation } from "../../../../../../i18n/index.ts";
-import { TaskDetailsTabPlaceholder } from "../../../TaskDetailsTabPlaceholder.tsx";
+import { TaskDetailsTabPlaceholder } from "../../../placeholders/TaskDetailsTabPlaceholder.tsx";
 
 import ProgressBar from "../../../../../../components/ui/progress-bar/ProgressBar.tsx";
 import StepCheckList from "../../../../../../components/ui/step-check-list/StepCheckList.tsx";

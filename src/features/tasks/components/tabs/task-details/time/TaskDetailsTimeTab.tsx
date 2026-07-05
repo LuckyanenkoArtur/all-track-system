@@ -2,7 +2,7 @@ import { FiClock, FiPlus } from "react-icons/fi";
 import type { TaskHistoryEntry } from "../../../../domain/others.ts";
 import { formatCommentDate } from "../../../../utils/commentUtils.ts";
 import { formatTimeSpent } from "../../../../utils/timeTrackingUtils.ts";
-import { TaskDetailsTabPlaceholder } from "../../../TaskDetailsTabPlaceholder.tsx";
+import { TaskDetailsTabPlaceholder } from "../../../placeholders/TaskDetailsTabPlaceholder.tsx";
 import styles from "./TaskDetailsTimeTab.module.scss";
 import { useTranslation } from "../../../../../../i18n/index.ts";
 

@@ -2,7 +2,7 @@ import { FiDollarSign, FiPlus } from "react-icons/fi";
 import type { BudgetTransaction } from "../../../../domain/others.ts";
 import { formatCommentDate } from "../../../../utils/commentUtils.ts";
 import { formatCurrency } from "../../../../utils/taskDetailsUtils.ts";
-import { TaskDetailsTabPlaceholder } from "../../../TaskDetailsTabPlaceholder.tsx";
+import { TaskDetailsTabPlaceholder } from "../../../placeholders/TaskDetailsTabPlaceholder.tsx";
 import styles from "./TaskDetailsTransactionsTab.module.scss";
 import { useTranslation } from "../../../../../../i18n/index.ts";
 
