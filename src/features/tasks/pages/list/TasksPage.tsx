@@ -12,7 +12,7 @@ import { ViewSwitcher } from "../../../../components/ui/view-switcher/ViewSwitch
 
 import { TaskDetailsPanel } from "../../components/panels/TaskDetailsPanel";
 import { PanelDismissContext } from "../../../../components/ui/panel/Panel";
-import { ManualTimeEntryDialog } from "../../components/ManualTimeEntryDialog";
+import { ManualTimeEntryDialog } from "../../components/dialogs/ManualTimeEntryDialog";
 import { useTasks } from "../../hooks/useTasks";
 import { useTaskTrackingDisplay } from "../../hooks/useTaskTrackingDisplay";
 import { useTaskListState } from "../../hooks/useTaskListState";

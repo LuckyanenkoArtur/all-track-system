@@ -6,7 +6,7 @@ import { AddBudgetExpenseDialog } from "../../components/dialogs/AddBudgetExpens
 import { CompleteTaskDialog } from "../../components/dialogs/CompleteTaskDialog.tsx";
 import { TaskCreationDrawer } from "../../components/drawers/task-creation-drawer/TaskCreationDrawer";
 import { ActiveTrackingCard } from "../../components/cards/ActiveTrackingCard";
-import { ManualTimeEntryDialog } from "../../components/ManualTimeEntryDialog";
+import { ManualTimeEntryDialog } from "../../components/dialogs/ManualTimeEntryDialog.tsx";
 import { TaskDetailsPanel } from "../../components/panels/TaskDetailsPanel.tsx";
 import { PanelDismissContext } from "../../../../components/ui/panel/Panel.tsx";
 import { useTasks } from "../../hooks/useTasks";

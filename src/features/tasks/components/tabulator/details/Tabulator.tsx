@@ -20,7 +20,7 @@ import { TaskDetailsMetricsTab } from "../../tabs/task-details/metrics/TaskDetai
 import { useTaskListState } from "../../../hooks/useTaskListState.ts";
 import { CreateTaskDialog } from "../../dialogs/CreateTaskDialog.tsx";
 import { CompleteTaskDialog } from "../../dialogs/CompleteTaskDialog.tsx";
-import { ManualTimeEntryDialog } from "../../ManualTimeEntryDialog.tsx";
+import { ManualTimeEntryDialog } from "../../dialogs/ManualTimeEntryDialog.tsx";
 import { AddBudgetExpenseDialog } from "../../dialogs/AddBudgetExpenseDialog.tsx";
 import { FiFileText, FiBarChart2, FiClipboard, FiClock, FiDollarSign } from "react-icons/fi";
 import { TaskDetailsNotesTab } from "../../tabs/task-details/notes/TaskDetailsNotesTab.tsx";

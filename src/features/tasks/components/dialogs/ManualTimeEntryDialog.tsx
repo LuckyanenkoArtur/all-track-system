@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { FiClock } from "react-icons/fi";
-import Dialog, { ConfirmDialog } from "../../user-profile/components/dialogs/Dialog";
+import Dialog, { ConfirmDialog } from "../../../user-profile/components/dialogs/Dialog";
 import styles from "./ManualTimeEntryDialog.module.scss";
 
 export type ManualTimeEntryDialogLabels = {
