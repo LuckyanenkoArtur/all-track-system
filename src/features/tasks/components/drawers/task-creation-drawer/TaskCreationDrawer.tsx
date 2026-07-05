@@ -52,13 +52,13 @@ export function TaskCreationDrawer({
 
     return (
         <>
-            <Button
-                text={labels.createTask}
-                icon={FiPlus}
-                tooltip={labels.createTaskHint}
-                tooltipPosition="bottom"
-                onClick={() => setOpen(true)}
-            />
+            <Button onClick={() => setOpen(true)}>
+                <Button.Icon>
+                    <FiPlus size={16} />
+                </Button.Icon>
+                <Button.Text>{labels.createTask}</Button.Text>
+                <Button.Tooltip position="bottom">{labels.createTaskHint}</Button.Tooltip>
+            </Button>
 
             <CreateTaskDialog
                 open={open}

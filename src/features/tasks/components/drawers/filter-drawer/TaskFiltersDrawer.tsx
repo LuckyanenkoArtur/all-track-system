@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { FiX } from "react-icons/fi";
+import { useTranslation } from "../../../../../i18n";
 import Dialog from "../../../../user-profile/components/dialogs/Dialog";
 import type { TaskFilters, TaskPriority, TaskStatus } from "../../../domain/others";
+import type { TaskPriorityId } from "../../../domain/priority";
 import {
   areDrawerFiltersEqual,
   hasDrawerFilters,
@@ -27,65 +29,17 @@ type TaskFiltersDrawerProps = {
   onApply: () => void;
   onReset: () => void;
   onSaveCollection: (name: string) => void;
-  labels: {
-    title: string;
-    close: string;
-    apply: string;
-    reset: string;
-    saveCollection: string;
-    collectionName: string;
-    save: string;
-    cancel: string;
-    searchOptions: string;
-    noOptionsFound: string;
-    selectPlaceholder: string;
-    sectionPeople: string;
-    sectionTaskState: string;
-    sectionDueDate: string;
-    sectionBudget: string;
-    sectionTime: string;
-    status: string;
-    priority: string;
-    groups: string;
-    dueDateFrom: string;
-    dueDateTo: string;
-    initiator: string;
-    responsible: string;
-    observables: string;
-    budgetMin: string;
-    budgetMax: string;
-    timeMin: string;
-    timeMax: string;
-    open: string;
-    onHold: string;
-    inProgress: string;
-    completed: string;
-    cancelled: string;
-    high: string;
-    medium: string;
-    low: string;
-  };
 };
 
-const STATUS_OPTIONS: {
-  value: TaskStatus;
-  labelKey: keyof TaskFiltersDrawerProps["labels"];
-}[] = [
-  { value: "open", labelKey: "open" },
-  { value: "onHold", labelKey: "onHold" },
-  { value: "inProgress", labelKey: "inProgress" },
-  { value: "completed", labelKey: "completed" },
-  { value: "cancelled", labelKey: "cancelled" },
+const STATUS_OPTIONS: TaskStatus[] = [
+  "open",
+  "onHold",
+  "inProgress",
+  "completed",
+  "cancelled",
 ];
 
-const PRIORITY_OPTIONS: {
-  value: TaskPriority;
-  labelKey: keyof TaskFiltersDrawerProps["labels"];
-}[] = [
-    { value: "high", labelKey: "high" },
-    { value: "medium", labelKey: "medium" },
-    { value: "low", labelKey: "low" },
-  ];
+const PRIORITY_OPTIONS: TaskPriorityId[] = ["high", "medium", "low"];
 
 export function TaskFiltersDrawer({
   open,
@@ -97,8 +51,8 @@ export function TaskFiltersDrawer({
   onApply,
   onReset,
   onSaveCollection,
-  labels,
 }: TaskFiltersDrawerProps) {
+  const { t } = useTranslation();
   const [collectionDialogOpen, setCollectionDialogOpen] = useState(false);
   const [collectionName, setCollectionName] = useState("");
 
@@ -124,20 +78,20 @@ export function TaskFiltersDrawer({
 
   const statusOptions = useMemo(
     () =>
-      STATUS_OPTIONS.map(({ value, labelKey }) => ({
+      STATUS_OPTIONS.map((value) => ({
         value,
-        label: labels[labelKey],
+        label: t.tasks[value],
       })),
-    [labels],
+    [t],
   );
 
   const priorityOptions = useMemo(
     () =>
-      PRIORITY_OPTIONS.map(({ value, labelKey }) => ({
+      PRIORITY_OPTIONS.map((value) => ({
         value,
-        label: labels[labelKey],
+        label: t.tasks[value],
       })),
-    [labels],
+    [t],
   );
 
   const groupOptions = useMemo(
@@ -193,13 +147,13 @@ export function TaskFiltersDrawer({
         >
           <header className={styles.header}>
             <h2 id="task-filters-title" className={styles.headerTitle}>
-              {labels.title}
+              {t.tasks.filters}
             </h2>
             <button
               type="button"
               className={styles.iconBtn}
               onClick={onClose}
-              aria-label={labels.close}
+              aria-label={t.tasks.closeFilters}
             >
               <FiX size={18} aria-hidden />
             </button>
@@ -207,81 +161,81 @@ export function TaskFiltersDrawer({
 
           <div className={styles.body}>
             <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>{labels.sectionPeople}</h3>
+              <h3 className={styles.sectionTitle}>{t.tasks.filterSections.people}</h3>
               <div className={styles.sectionGrid}>
                 <FilterSearchMultiSelect
-                  label={labels.groups}
+                  label={t.tasks.groups}
                   options={groupOptions}
                   selected={filters.groups}
                   onChange={(groups) => update({ groups })}
-                  placeholder={labels.selectPlaceholder}
-                  searchPlaceholder={labels.searchOptions}
-                  noResultsLabel={labels.noOptionsFound}
+                  placeholder={t.tasks.selectPlaceholder}
+                  searchPlaceholder={t.tasks.searchOptions}
+                  noResultsLabel={t.tasks.noOptionsFound}
                 />
                 <FilterSearchMultiSelect
-                  label={labels.initiator}
+                  label={t.tasks.initiator}
                   options={initiatorOptions}
                   selected={filters.initiators}
                   onChange={(initiators) => update({ initiators })}
-                  placeholder={labels.selectPlaceholder}
-                  searchPlaceholder={labels.searchOptions}
-                  noResultsLabel={labels.noOptionsFound}
+                  placeholder={t.tasks.selectPlaceholder}
+                  searchPlaceholder={t.tasks.searchOptions}
+                  noResultsLabel={t.tasks.noOptionsFound}
                 />
                 <FilterSearchMultiSelect
-                  label={labels.responsible}
+                  label={t.tasks.responsible}
                   options={responsibleOptions}
                   selected={filters.responsible}
                   onChange={(responsible) => update({ responsible })}
-                  placeholder={labels.selectPlaceholder}
-                  searchPlaceholder={labels.searchOptions}
-                  noResultsLabel={labels.noOptionsFound}
+                  placeholder={t.tasks.selectPlaceholder}
+                  searchPlaceholder={t.tasks.searchOptions}
+                  noResultsLabel={t.tasks.noOptionsFound}
                 />
                 <FilterSearchMultiSelect
-                  label={labels.observables}
+                  label={t.tasks.observables}
                   options={observableOptions}
                   selected={filters.observables}
                   onChange={(observables) => update({ observables })}
-                  placeholder={labels.selectPlaceholder}
-                  searchPlaceholder={labels.searchOptions}
-                  noResultsLabel={labels.noOptionsFound}
+                  placeholder={t.tasks.selectPlaceholder}
+                  searchPlaceholder={t.tasks.searchOptions}
+                  noResultsLabel={t.tasks.noOptionsFound}
                 />
               </div>
             </section>
 
             <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>{labels.sectionTaskState}</h3>
+              <h3 className={styles.sectionTitle}>{t.tasks.filterSections.taskState}</h3>
               <div className={styles.sectionGrid}>
                 <FilterSearchMultiSelect
-                  label={labels.status}
+                  label={t.tasks.status}
                   options={statusOptions}
                   selected={filters.statuses}
                   onChange={(statuses) =>
                     update({ statuses: statuses as TaskStatus[] })
                   }
-                  placeholder={labels.selectPlaceholder}
-                  searchPlaceholder={labels.searchOptions}
-                  noResultsLabel={labels.noOptionsFound}
+                  placeholder={t.tasks.selectPlaceholder}
+                  searchPlaceholder={t.tasks.searchOptions}
+                  noResultsLabel={t.tasks.noOptionsFound}
                 />
                 <FilterSearchMultiSelect
-                  label={labels.priority}
+                  label={t.tasks.priority}
                   options={priorityOptions}
                   selected={filters.priorities}
                   onChange={(priorities) =>
                     update({ priorities: priorities as TaskPriority[] })
                   }
-                  placeholder={labels.selectPlaceholder}
-                  searchPlaceholder={labels.searchOptions}
-                  noResultsLabel={labels.noOptionsFound}
+                  placeholder={t.tasks.selectPlaceholder}
+                  searchPlaceholder={t.tasks.searchOptions}
+                  noResultsLabel={t.tasks.noOptionsFound}
                 />
               </div>
             </section>
 
             <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>{labels.sectionDueDate}</h3>
+              <h3 className={styles.sectionTitle}>{t.tasks.filterSections.dueDate}</h3>
               <div className={styles.fieldRow}>
                 <label className={styles.field}>
                   <span className={styles.fieldLabel}>
-                    {labels.dueDateFrom}
+                    {t.tasks.dueDateFrom}
                   </span>
                   <input
                     type="date"
@@ -293,7 +247,7 @@ export function TaskFiltersDrawer({
                   />
                 </label>
                 <label className={styles.field}>
-                  <span className={styles.fieldLabel}>{labels.dueDateTo}</span>
+                  <span className={styles.fieldLabel}>{t.tasks.dueDateTo}</span>
                   <input
                     type="date"
                     className={styles.fieldInput}
@@ -307,10 +261,10 @@ export function TaskFiltersDrawer({
             </section>
 
             <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>{labels.sectionBudget}</h3>
+              <h3 className={styles.sectionTitle}>{t.tasks.filterSections.budget}</h3>
               <div className={styles.fieldRow}>
                 <label className={styles.field}>
-                  <span className={styles.fieldLabel}>{labels.budgetMin}</span>
+                  <span className={styles.fieldLabel}>{t.tasks.budgetMin}</span>
                   <input
                     type="number"
                     min={0}
@@ -323,7 +277,7 @@ export function TaskFiltersDrawer({
                   />
                 </label>
                 <label className={styles.field}>
-                  <span className={styles.fieldLabel}>{labels.budgetMax}</span>
+                  <span className={styles.fieldLabel}>{t.tasks.budgetMax}</span>
                   <input
                     type="number"
                     min={0}
@@ -339,10 +293,10 @@ export function TaskFiltersDrawer({
             </section>
 
             <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>{labels.sectionTime}</h3>
+              <h3 className={styles.sectionTitle}>{t.tasks.filterSections.time}</h3>
               <div className={styles.fieldRow}>
                 <label className={styles.field}>
-                  <span className={styles.fieldLabel}>{labels.timeMin}</span>
+                  <span className={styles.fieldLabel}>{t.tasks.timeMin}</span>
                   <input
                     type="number"
                     min={0}
@@ -355,7 +309,7 @@ export function TaskFiltersDrawer({
                   />
                 </label>
                 <label className={styles.field}>
-                  <span className={styles.fieldLabel}>{labels.timeMax}</span>
+                  <span className={styles.fieldLabel}>{t.tasks.timeMax}</span>
                   <input
                     type="number"
                     min={0}
@@ -379,21 +333,21 @@ export function TaskFiltersDrawer({
                 onClick={onApply}
                 disabled={!canApply}
               >
-                {labels.apply}
+                {t.tasks.applyFilters}
               </button>
               <button
                 type="button"
                 className={styles.ghostBtn}
                 onClick={() => setCollectionDialogOpen(true)}
               >
-                {labels.saveCollection}
+                {t.tasks.saveCollection}
               </button>
               <button
                 type="button"
                 className={styles.secondaryBtn}
                 onClick={onReset}
               >
-                {labels.reset}
+                {t.tasks.resetFilters}
               </button>
             </footer>
           )}
@@ -406,16 +360,16 @@ export function TaskFiltersDrawer({
           setCollectionDialogOpen(false);
           setCollectionName("");
         }}
-        title={labels.saveCollection}
+        title={t.tasks.saveCollection}
       >
         <div className={styles.collectionForm}>
           <label className={styles.collectionField}>
-            <span>{labels.collectionName}</span>
+            <span>{t.tasks.collectionName}</span>
             <input
               type="text"
               value={collectionName}
               onChange={(event) => setCollectionName(event.target.value)}
-              placeholder={labels.collectionName}
+              placeholder={t.tasks.collectionName}
               autoFocus
               onKeyDown={(event) => {
                 if (event.key === "Enter") handleSaveCollection();
@@ -431,7 +385,7 @@ export function TaskFiltersDrawer({
                 setCollectionName("");
               }}
             >
-              {labels.cancel}
+              {t.common.cancel}
             </button>
             <button
               type="button"
@@ -439,7 +393,7 @@ export function TaskFiltersDrawer({
               onClick={handleSaveCollection}
               disabled={!collectionName.trim()}
             >
-              {labels.save}
+              {t.common.save}
             </button>
           </div>
         </div>

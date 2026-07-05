@@ -1,4 +1,26 @@
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 9999px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+}
+
 .root {
+  position: relative;
+  overflow: visible;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -32,6 +54,10 @@
   padding: 0 14px 0 6px;
 }
 
+.withBadge {
+  padding-right: 22px;
+}
+
 .icon {
   display: inline-flex;
   align-items: center;
@@ -62,5 +88,76 @@
   .root {
     width: 100%;
     justify-content: center;
+  }
+}
+
+.tooltipWrapper {
+  display: inline-flex;
+  max-width: 100%;
+  width: fit-content;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 1100;
+  width: max-content;
+  max-width: min(280px, calc(100vw - 16px));
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--color-text);
+  color: var(--color-surface);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+
+  &::after {
+    content: "";
+    position: absolute;
+    border: 6px solid transparent;
+  }
+}
+
+.tooltipVisible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.top::after {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top-color: var(--color-text);
+}
+
+.bottom::after {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-bottom-color: var(--color-text);
+}
+
+.left::after {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left-color: var(--color-text);
+}
+
+.right::after {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right-color: var(--color-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tooltip {
+    transition: none;
   }
 }

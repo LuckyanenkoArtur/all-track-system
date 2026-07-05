@@ -1,4 +1,5 @@
 import { FiFilter } from "react-icons/fi";
+import { Button } from "../../../../../components/ui/button/Button";
 import { useTranslation } from "../../../../../i18n";
 import type { TaskFilters } from "../../../domain/filters";
 import { TaskFiltersDrawer } from "./TaskFiltersDrawer";
@@ -39,22 +40,20 @@ export function FilterDrawer({
   onSaveCollection,
 }: FilterDrawerProps) {
   const { t } = useTranslation();
-  const taskLabels = t.tasks;
 
   return (
     <>
-      <button
-        type="button"
-        className={`${styles.filterToggle} ${open ? styles.active : ""}`}
+      <Button
         onClick={() => (open ? onClose() : onOpen())}
-        aria-expanded={open}
+        className={open ? styles.active : ""}
+        ariaExpanded={open}
       >
-        <FiFilter size={16} aria-hidden />
-        {taskLabels.filters}
-        {activeFilterCount > 0 && (
-          <span className={styles.filterBadge}>{activeFilterCount}</span>
-        )}
-      </button>
+        <Button.Icon>
+          <FiFilter size={16} />
+        </Button.Icon>
+        <Button.Text>{t.tasks.filters}</Button.Text>
+        <Button.Badge>{activeFilterCount}</Button.Badge>
+      </Button>
 
       <TaskFiltersDrawer
         open={open}
@@ -66,44 +65,6 @@ export function FilterDrawer({
         onApply={onApply}
         onReset={onReset}
         onSaveCollection={onSaveCollection}
-        labels={{
-          title: taskLabels.filters,
-          close: taskLabels.closeFilters,
-          apply: taskLabels.applyFilters,
-          reset: taskLabels.resetFilters,
-          saveCollection: taskLabels.saveCollection,
-          collectionName: taskLabels.collectionName,
-          save: t.common.save,
-          cancel: t.common.cancel,
-          searchOptions: taskLabels.searchOptions,
-          noOptionsFound: taskLabels.noOptionsFound,
-          selectPlaceholder: taskLabels.selectPlaceholder,
-          sectionPeople: taskLabels.filterSections.people,
-          sectionTaskState: taskLabels.filterSections.taskState,
-          sectionDueDate: taskLabels.filterSections.dueDate,
-          sectionBudget: taskLabels.filterSections.budget,
-          sectionTime: taskLabels.filterSections.time,
-          status: taskLabels.status,
-          priority: taskLabels.priority,
-          groups: taskLabels.groups,
-          dueDateFrom: taskLabels.dueDateFrom,
-          dueDateTo: taskLabels.dueDateTo,
-          initiator: taskLabels.initiator,
-          responsible: taskLabels.responsible,
-          observables: taskLabels.observables,
-          budgetMin: taskLabels.budgetMin,
-          budgetMax: taskLabels.budgetMax,
-          timeMin: taskLabels.timeMin,
-          timeMax: taskLabels.timeMax,
-          open: taskLabels.open,
-          onHold: taskLabels.onHold,
-          inProgress: taskLabels.inProgress,
-          completed: taskLabels.completed,
-          cancelled: taskLabels.cancelled,
-          high: taskLabels.high,
-          medium: taskLabels.medium,
-          low: taskLabels.low,
-        }}
       />
     </>
   );
