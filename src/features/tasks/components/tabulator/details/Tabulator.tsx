@@ -18,11 +18,17 @@ import { TaskDetailsOverviewTab } from "../../tabs/task-details/overview/TaskDet
 import { TaskDetailsActionBar } from "../../action-bar/TaskDetailsActionBar.tsx";
 import { TaskDetailsMetricsTab } from "../../tabs/task-details/metrics/TaskDetailsMetricsTab.tsx";
 import { useTaskListState } from "../../../hooks/useTaskListState.ts";
-import { CreateTaskDialog } from "../../dialogs/CreateTaskDialog.tsx";
+import { CreateTaskDialog } from "../../panels/task-creation-panel/Panel.tsx";
 import { CompleteTaskDialog } from "../../dialogs/CompleteTaskDialog.tsx";
 import { ManualTimeEntryDialog } from "../../dialogs/ManualTimeEntryDialog.tsx";
 import { AddBudgetExpenseDialog } from "../../dialogs/AddBudgetExpenseDialog.tsx";
-import { FiFileText, FiBarChart2, FiClipboard, FiClock, FiDollarSign } from "react-icons/fi";
+import {
+  FiFileText,
+  FiBarChart2,
+  FiClipboard,
+  FiClock,
+  FiDollarSign,
+} from "react-icons/fi";
 import { TaskDetailsNotesTab } from "../../tabs/task-details/notes/TaskDetailsNotesTab.tsx";
 import { TaskDetailsTimeTab } from "../../tabs/task-details/time/TaskDetailsTimeTab.tsx";
 import { TaskDetailsTransactionsTab } from "../../tabs/task-details/transactions/TaskDetailsTransactionsTab.tsx";
@@ -123,8 +129,7 @@ export default function TaskDetailsTabulator({
       taskHistory
         .filter(
           (entry) =>
-            entry.type === "manual_time_added" ||
-            entry.type === "time_tracked",
+            entry.type === "manual_time_added" || entry.type === "time_tracked",
         )
         .sort(
           (a, b) =>
@@ -503,7 +508,6 @@ export default function TaskDetailsTabulator({
           unsavedNo: detailLabels.budgetExpenseUnsavedNo,
         }}
       />
-
     </>
   );
 }

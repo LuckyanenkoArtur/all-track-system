@@ -1,7 +1,7 @@
-import { useTranslation } from "../../../../i18n/index.ts";
-import type { Task } from "../../domain/others.ts";
-import TaskDetailsTabulator from "../tabulator/details/Tabulator.tsx";
-import { Panel } from "../../../../components/ui/panel/Panel.tsx";
+import { useTranslation } from "../../../../../i18n/index.ts";
+import type { Task } from "../../../domain/others.ts";
+import TaskDetailsTabulator from "../../tabulator/details/Tabulator.tsx";
+import { Panel } from "../../../../../components/ui/panel/Panel.tsx";
 
 type TaskDetailsPanelProps = {
   task: Task | null;

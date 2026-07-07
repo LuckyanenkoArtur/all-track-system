@@ -2,8 +2,8 @@ import { FiFilter } from "react-icons/fi";
 import { Button } from "../../../../../components/ui/button/Button";
 import { useTranslation } from "../../../../../i18n";
 import type { TaskFilters } from "../../../domain/filters";
-import { TaskFiltersDrawer } from "./TaskFiltersDrawer";
-import styles from "./FilterDrawer.module.scss";
+import styles from "./Button.module.scss";
+import { TaskFilterPanel } from "../../panels/task-filter-panel/Panel";
 
 type FilterOptions = {
   groups: string[];
@@ -12,7 +12,7 @@ type FilterOptions = {
   observables: string[];
 };
 
-type FilterDrawerProps = {
+type FilterButtonProps = {
   open: boolean;
   activeFilterCount: number;
   filters: TaskFilters;
@@ -26,7 +26,7 @@ type FilterDrawerProps = {
   onSaveCollection: (name: string) => void;
 };
 
-export function FilterDrawer({
+export function FilterButton({
   open,
   activeFilterCount,
   filters,
@@ -38,7 +38,7 @@ export function FilterDrawer({
   onApply,
   onReset,
   onSaveCollection,
-}: FilterDrawerProps) {
+}: FilterButtonProps) {
   const { t } = useTranslation();
 
   return (
@@ -55,7 +55,7 @@ export function FilterDrawer({
         <Button.Badge>{activeFilterCount}</Button.Badge>
       </Button>
 
-      <TaskFiltersDrawer
+      <TaskFilterPanel
         open={open}
         filters={draftFilters}
         appliedFilters={filters}

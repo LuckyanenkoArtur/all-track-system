@@ -4,10 +4,10 @@ import { useTranslation } from "../../../../i18n";
 import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
 import { AddBudgetExpenseDialog } from "../../components/dialogs/AddBudgetExpenseDialog.tsx";
 import { CompleteTaskDialog } from "../../components/dialogs/CompleteTaskDialog.tsx";
-import { TaskCreationDrawer } from "../../components/drawers/task-creation-drawer/TaskCreationDrawer";
+import { TaskCreationButton } from "../../components/buttons/create/Button.tsx";
 import { ActiveTrackingCard } from "../../components/cards/ActiveTrackingCard";
 import { ManualTimeEntryDialog } from "../../components/dialogs/ManualTimeEntryDialog.tsx";
-import { TaskDetailsPanel } from "../../components/panels/TaskDetailsPanel.tsx";
+import { TaskDetailsPanel } from "../../components/panels/task-details-panel/Panel.tsx";
 import { PanelDismissContext } from "../../../../components/ui/panel/Panel.tsx";
 import { useTasks } from "../../hooks/useTasks";
 import { useTaskListState } from "../../hooks/useTaskListState";
@@ -67,7 +67,7 @@ export function TasksOverviewPage() {
       <div className={styles.page}>
         <header className={styles.pageHeader}>
           <BreadTitle title={t.sidebar.tasksOverview} />
-          <TaskCreationDrawer
+          <TaskCreationButton
             onSubmit={addTask}
             initiatorName={initiatorName}
             filterOptions={filterOptions}
@@ -101,7 +101,8 @@ export function TasksOverviewPage() {
             title: detailLabels.completeDialogTitle,
             subtitle: detailLabels.completeDialogSubtitle,
             description: detailLabels.completionDescription,
-            descriptionPlaceholder: detailLabels.completionDescriptionPlaceholder,
+            descriptionPlaceholder:
+              detailLabels.completionDescriptionPlaceholder,
             required: labels.required,
             steps: detailLabels.completionSteps,
             addStep: labels.addStep,

@@ -6,11 +6,11 @@ import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
 import { AddBudgetExpenseDialog } from "../../components/dialogs/AddBudgetExpenseDialog";
 import { CompleteTaskDialog } from "../../components/dialogs/CompleteTaskDialog";
-import { FilterDrawer } from "../../components/drawers/filter-drawer/FilterDrawer";
-import { TaskCreationDrawer } from "../../components/drawers/task-creation-drawer/TaskCreationDrawer";
+import { FilterButton } from "../../components/buttons/filter/Button";
+import { TaskCreationButton } from "../../components/buttons/create/Button";
 import { ViewSwitcher } from "../../../../components/ui/view-switcher/ViewSwitcher";
 
-import { TaskDetailsPanel } from "../../components/panels/TaskDetailsPanel";
+import { TaskDetailsPanel } from "../../components/panels/task-details-panel/Panel";
 import { PanelDismissContext } from "../../../../components/ui/panel/Panel";
 import { ManualTimeEntryDialog } from "../../components/dialogs/ManualTimeEntryDialog";
 import { useTasks } from "../../hooks/useTasks";
@@ -26,7 +26,7 @@ import {
 import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksPage.module.scss";
 import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
-import { SearchBar } from "../../../../components/ui/search-bar/SearchBar"
+import { SearchBar } from "../../../../components/ui/search-bar/SearchBar";
 
 export function TaskListPage() {
   const { t } = useTranslation();
@@ -155,7 +155,7 @@ export function TaskListPage() {
               />
             </div>
 
-            <FilterDrawer
+            <FilterButton
               open={filtersOpen}
               activeFilterCount={activeFilterCount}
               filters={filters}
@@ -177,7 +177,7 @@ export function TaskListPage() {
 
             <ViewSwitcher value="table" items={taskViewSwitcherItems} />
 
-            <TaskCreationDrawer
+            <TaskCreationButton
               onSubmit={addTask}
               initiatorName={initiatorName}
               filterOptions={filterOptions}
@@ -253,7 +253,8 @@ export function TaskListPage() {
             title: detailLabels.completeDialogTitle,
             subtitle: detailLabels.completeDialogSubtitle,
             description: detailLabels.completionDescription,
-            descriptionPlaceholder: detailLabels.completionDescriptionPlaceholder,
+            descriptionPlaceholder:
+              detailLabels.completionDescriptionPlaceholder,
             required: dashboardLabels.required,
             steps: detailLabels.completionSteps,
             addStep: dashboardLabels.addStep,

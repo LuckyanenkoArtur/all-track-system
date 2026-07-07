@@ -8,19 +8,14 @@ import {
   type FormEvent,
 } from "react";
 import { createPortal } from "react-dom";
-import {
-  FiCalendar,
-  FiPaperclip,
-  FiUser,
-  FiX,
-} from "react-icons/fi";
+import { FiCalendar, FiPaperclip, FiUser, FiX } from "react-icons/fi";
 import type {
   CreateTaskInput,
   Task,
   TaskPriority,
   TaskStep,
-} from "../../domain/others";
-import { toDateTimeLocalValue } from "../../utils/dateUtils";
+} from "../../../domain/others";
+import { toDateTimeLocalValue } from "../../../utils/dateUtils";
 import {
   createPendingAttachment,
   formatFileSize,
@@ -28,14 +23,14 @@ import {
   MAX_COMMENT_FILE_SIZE,
   readFileAsDataUrl,
   type PendingAttachment,
-} from "../../utils/commentUtils";
+} from "../../../utils/commentUtils";
 import {
   FilterSearchMultiSelect,
   type FilterSelectOption,
-} from "../FilterSearchMultiSelect";
-import { TaskStepsEditor } from "../TaskStepsEditor";
-import { ConfirmDialog } from "../../../user-profile/components/dialogs/Dialog";
-import styles from "./CreateTaskDialog.module.scss";
+} from "../../FilterSearchMultiSelect";
+import { TaskStepsEditor } from "../../TaskStepsEditor";
+import { ConfirmDialog } from "../../../../user-profile/components/dialogs/Dialog";
+import styles from "./Panel.module.scss";
 
 type FormState = {
   title: string;
@@ -98,7 +93,7 @@ type CreateTaskDialogLabels = {
   low: string;
 };
 
-type CreateTaskDialogProps = {
+type TaskCreationPanelProps = {
   open: boolean;
   onClose: () => void;
   onSubmit: (input: CreateTaskInput) => void;
@@ -172,7 +167,7 @@ function isFormDirty(form: FormState, baseline: FormState): boolean {
   );
 }
 
-export function CreateTaskDialog({
+export function TaskCreationPanel({
   open,
   onClose,
   onSubmit,
@@ -181,7 +176,7 @@ export function CreateTaskDialog({
   groupOptions,
   userOptions,
   labels,
-}: CreateTaskDialogProps) {
+}: TaskCreationPanelProps) {
   const isEditMode = task != null;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState<FormState>(createEmptyForm);
@@ -395,7 +390,9 @@ export function CreateTaskDialog({
                 </label>
 
                 <label className={styles.field}>
-                  <span className={styles.fieldLabel}>{labels.description}</span>
+                  <span className={styles.fieldLabel}>
+                    {labels.description}
+                  </span>
                   <textarea
                     value={form.description}
                     onChange={(event) =>
@@ -451,7 +448,9 @@ export function CreateTaskDialog({
                     label={labels.observables}
                     options={userOptions}
                     selected={form.observables}
-                    onChange={(observables) => setForm({ ...form, observables })}
+                    onChange={(observables) =>
+                      setForm({ ...form, observables })
+                    }
                     placeholder={labels.selectPlaceholder}
                     searchPlaceholder={labels.searchOptions}
                     noResultsLabel={labels.noOptionsFound}
@@ -563,7 +562,9 @@ export function CreateTaskDialog({
               </h3>
               <div className={styles.sectionGrid}>
                 <div className={styles.field}>
-                  <span className={styles.fieldLabel}>{labels.attachments}</span>
+                  <span className={styles.fieldLabel}>
+                    {labels.attachments}
+                  </span>
                   <div className={styles.attachmentsArea}>
                     {form.attachments.length > 0 && (
                       <ul className={styles.attachmentList}>
