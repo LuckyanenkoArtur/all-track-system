@@ -26,7 +26,7 @@ export default function LoginPage() {
     setLoading(false);
 
     if (success) {
-      navigate("/", { replace: true });
+      navigate("/app/overview", { replace: true });
       return;
     }
 

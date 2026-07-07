@@ -6,7 +6,7 @@ import {
   getBudgetInfo,
   getDeadlineInfo,
 } from "../../../../utils/taskDetailsUtils.ts";
-import { TaskBudgetChart } from "../../../TaskBudgetChart.tsx";
+import { TaskBudgetChart } from "../../../charts/TaskBudgetChart.tsx";
 import styles from "./TaskDetailsMetricsTab.module.scss";
 import { useTranslation } from "../../../../../../i18n/index.ts";
 

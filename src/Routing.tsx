@@ -1,5 +1,6 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
+import { isAuthenticated } from "./auth/auth";
 import GuestRoute from "./features/login/auth/GuestRoute";
 import ProtectedRoute from "./features/login/auth/ProtectedRoute";
 import MainLayout from "./layouts/main";
@@ -12,7 +13,7 @@ import {
   TaskDetailsPage,
 } from "./features/tasks";
 import CalendarPage from "./features/calendar";
-
+import RemindersPage from "./features/reminders";
 import TimingPage from "./features/timing";
 import {
   FinanceLayout,
@@ -23,7 +24,17 @@ import LoginPage from "./features/login";
 import NotFoundPage from "./pages/not-found";
 import UserProfilePage from "./features/user-profile";
 
+function RootRedirect() {
+  return (
+    <Navigate to={isAuthenticated() ? "/app/overview" : "/login"} replace />
+  );
+}
+
 export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RootRedirect />,
+  },
   {
     element: <GuestRoute />,
     children: [
@@ -59,6 +70,10 @@ export const router = createBrowserRouter([
           {
             path: "/app/calendar",
             element: <CalendarPage />,
+          },
+          {
+            path: "/app/reminders",
+            element: <RemindersPage />,
           },
           {
             path: "/app/finance",

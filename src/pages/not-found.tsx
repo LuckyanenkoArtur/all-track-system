@@ -22,7 +22,7 @@ export default function NotFoundPage() {
       <section className="not-found__content">
         <div className="not-found__topbar">
           <Link
-            to={authed ? "/" : "/login"}
+            to={authed ? "/app/overview" : "/login"}
             className="not-found__brand"
             aria-label={t.notFound.brandAriaLabel}
           >
@@ -62,7 +62,7 @@ export default function NotFoundPage() {
 
           <div className="not-found__actions">
             <Link
-              to={authed ? "/" : "/login"}
+              to={authed ? "/app/overview" : "/login"}
               className="not-found__btn not-found__btn--primary"
             >
               {authed ? t.notFound.backToDashboard : t.notFound.backToLogin}

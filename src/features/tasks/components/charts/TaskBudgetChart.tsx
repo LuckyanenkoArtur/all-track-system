@@ -1,4 +1,4 @@
-import { formatCurrency } from "../utils/taskDetailsUtils";
+import { formatCurrency } from "../../utils/taskDetailsUtils";
 import styles from "./TaskBudgetChart.module.scss";
 
 type TaskBudgetChartProps = {

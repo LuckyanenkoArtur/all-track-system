@@ -3,7 +3,7 @@ import { isAuthenticated } from "../../../auth/auth";
 
 export default function GuestRoute() {
   if (isAuthenticated()) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/app/overview" replace />;
   }
 
   return <Outlet />;
