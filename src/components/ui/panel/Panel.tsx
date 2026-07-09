@@ -25,9 +25,9 @@ type PanelContextValue = {
 
 const PanelContext = createContext<PanelContextValue | null>(null);
 
-export const PanelDismissContext = createContext<(() => void) | undefined>(
-    undefined,
-);
+export const PanelDismissContext = createContext<
+    (() => void | false) | undefined
+>(undefined);
 
 function usePanelContext() {
     const ctx = useContext(PanelContext);
@@ -45,11 +45,17 @@ interface PanelComponent extends FC<PanelProps> {
 type PanelProps = PropsWithChildren & {
     open: boolean;
     expander?: string;
+    unSaveConfirmation?: boolean;
 };
 
 type PanelHeaderProps = PropsWithChildren;
 
-export const Panel: PanelComponent = ({ children, open: openProp, expander: expander }) => {
+export const Panel: PanelComponent = ({
+    children,
+    open: openProp,
+    expander: expander,
+    unSaveConfirmation = false,
+}) => {
     const [open, setOpen] = useState(openProp);
 
     const onDismiss = useContext(PanelDismissContext);
@@ -60,10 +66,18 @@ export const Panel: PanelComponent = ({ children, open: openProp, expander: expa
         setOpen(openProp);
     }, [openProp]);
 
-    const handleClose = useCallback(() => {
+    const proceedClose = useCallback(() => {
+        if (onDismiss?.() === false) return;
         setOpen(false);
-        onDismiss?.();
     }, [onDismiss]);
+
+    const handleClose = useCallback(() => {
+        if (unSaveConfirmation) {
+            onDismiss?.();
+            return;
+        }
+        proceedClose();
+    }, [unSaveConfirmation, onDismiss, proceedClose]);
 
     useEffect(() => {
         if (!open) return;

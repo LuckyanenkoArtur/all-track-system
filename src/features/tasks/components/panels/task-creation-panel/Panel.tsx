@@ -1,4 +1,8 @@
 import {
+  Form,
+  type FormDismissHandlers,
+} from "../../../../../components/ui/form/Form";
+import {
   useCallback,
   useEffect,
   useMemo,
@@ -29,7 +33,6 @@ import {
   type FilterSelectOption,
 } from "../../FilterSearchMultiSelect";
 import { TaskStepsEditor } from "../../TaskStepsEditor";
-import { ConfirmDialog } from "../../../../user-profile/components/dialogs/Dialog";
 import styles from "./Panel.module.scss";
 
 type FormState = {
@@ -179,9 +182,9 @@ export function TaskCreationPanel({
 }: TaskCreationPanelProps) {
   const isEditMode = task != null;
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dismissHandlersRef = useRef<FormDismissHandlers | null>(null);
   const [form, setForm] = useState<FormState>(createEmptyForm);
   const [baseline, setBaseline] = useState<FormState>(createEmptyForm);
-  const [confirmOpen, setConfirmOpen] = useState(false);
   const [attachmentError, setAttachmentError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -189,7 +192,6 @@ export function TaskCreationPanel({
       const next = task ? taskToForm(task) : createEmptyForm();
       setForm(next);
       setBaseline(next);
-      setConfirmOpen(false);
       setAttachmentError(null);
     }
   }, [open, task]);
@@ -207,25 +209,21 @@ export function TaskCreationPanel({
 
   const dirty = isFormDirty(form, baseline);
 
-  const resetAndClose = useCallback(() => {
+  const handleClose = useCallback(() => {
     setForm(createEmptyForm());
-    setConfirmOpen(false);
     onClose();
   }, [onClose]);
-
-  const requestClose = useCallback(() => {
-    if (dirty) {
-      setConfirmOpen(true);
-      return;
-    }
-    resetAndClose();
-  }, [dirty, resetAndClose]);
 
   useEffect(() => {
     if (!open) return;
 
     const handleKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !confirmOpen) requestClose();
+      if (
+        event.key === "Escape" &&
+        !dismissHandlersRef.current?.confirmOpen
+      ) {
+        dismissHandlersRef.current?.requestClose();
+      }
     };
 
     document.addEventListener("keydown", handleKey);
@@ -235,7 +233,7 @@ export function TaskCreationPanel({
       document.removeEventListener("keydown", handleKey);
       document.body.style.overflow = "";
     };
-  }, [open, confirmOpen, requestClose]);
+  }, [open]);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -269,7 +267,7 @@ export function TaskCreationPanel({
       requiresResultReview: form.requiresResultReview,
     });
 
-    resetAndClose();
+    handleClose();
   };
 
   const handleAttachClick = () => {
@@ -333,7 +331,7 @@ export function TaskCreationPanel({
       <div
         className={styles.overlay}
         role="presentation"
-        onClick={requestClose}
+        onClick={() => dismissHandlersRef.current?.requestClose()}
       >
         <aside
           className={styles.panel}
@@ -352,315 +350,288 @@ export function TaskCreationPanel({
             <button
               type="button"
               className={styles.iconBtn}
-              onClick={requestClose}
+              onClick={() => dismissHandlersRef.current?.requestClose()}
               aria-label={labels.cancel}
             >
               <FiX size={18} aria-hidden />
             </button>
           </header>
 
-          <form
-            id="create-task-form"
-            className={styles.body}
-            onSubmit={handleSubmit}
+          <Form
+            dirty={dirty}
+            unsaveConfirmDialog
+            unsavedConfirmation={{
+              title: labels.unsavedTitle,
+              message: labels.unsavedMessage,
+              confirmLabel: labels.unsavedYes,
+              cancelLabel: labels.unsavedNo,
+            }}
+            onClose={handleClose}
+            resetKey={open}
+            onDismissHandlersChange={(handlers) => {
+              dismissHandlersRef.current = handlers;
+            }}
           >
-            <section
-              className={styles.section}
-              aria-labelledby="create-task-details"
-            >
-              <h3 id="create-task-details" className={styles.sectionTitle}>
-                {labels.sectionTaskDetails}
-              </h3>
-              <div className={styles.sectionGrid}>
-                <label className={styles.field}>
-                  <span className={styles.fieldLabel}>
-                    {labels.taskTitle}
-                    <em>{labels.required}</em>
-                  </span>
-                  <input
-                    type="text"
-                    value={form.title}
-                    onChange={(event) =>
-                      setForm({ ...form, title: event.target.value })
-                    }
-                    placeholder={labels.taskTitlePlaceholder}
-                    required
-                    autoFocus
-                  />
-                </label>
+            <Form.Wrapper>
+              <Form.Body id="create-task-form" onSubmit={handleSubmit}>
+                <Form.Section aria-labelledby="create-task-details">
+                  <Form.SectionTitle id="create-task-details">
+                    {labels.sectionTaskDetails}
+                  </Form.SectionTitle>
+                  <Form.SectionGrid>
+                    <Form.Field as="label" className={styles.field}>
+                      <Form.FieldLabel>
+                        {labels.taskTitle}
+                        <em>{labels.required}</em>
+                      </Form.FieldLabel>
+                      <input
+                        type="text"
+                        value={form.title}
+                        onChange={(event) =>
+                          setForm({ ...form, title: event.target.value })
+                        }
+                        placeholder={labels.taskTitlePlaceholder}
+                        required
+                        autoFocus
+                      />
+                    </Form.Field>
 
-                <label className={styles.field}>
-                  <span className={styles.fieldLabel}>
-                    {labels.description}
-                  </span>
-                  <textarea
-                    value={form.description}
-                    onChange={(event) =>
-                      setForm({ ...form, description: event.target.value })
-                    }
-                    placeholder={labels.descriptionPlaceholder}
-                    rows={4}
-                  />
-                </label>
+                    <Form.Field as="label" className={styles.field}>
+                      <Form.FieldLabel>{labels.description}</Form.FieldLabel>
+                      <textarea
+                        value={form.description}
+                        onChange={(event) =>
+                          setForm({ ...form, description: event.target.value })
+                        }
+                        placeholder={labels.descriptionPlaceholder}
+                        rows={4}
+                      />
+                    </Form.Field>
 
-                <div className={styles.field}>
-                  <span className={styles.fieldLabel}>{labels.steps}</span>
-                  <TaskStepsEditor
-                    steps={form.steps}
-                    onChange={(steps) => setForm({ ...form, steps })}
-                    labels={{
-                      addStep: labels.addStep,
-                      stepPlaceholder: labels.stepPlaceholder,
-                      removeStep: labels.removeStep,
-                    }}
-                  />
-                </div>
-              </div>
-            </section>
+                    <Form.Field className={styles.field}>
+                      <Form.FieldLabel>{labels.steps}</Form.FieldLabel>
+                      <TaskStepsEditor
+                        steps={form.steps}
+                        onChange={(steps) => setForm({ ...form, steps })}
+                        labels={{
+                          addStep: labels.addStep,
+                          stepPlaceholder: labels.stepPlaceholder,
+                          removeStep: labels.removeStep,
+                        }}
+                      />
+                    </Form.Field>
+                  </Form.SectionGrid>
+                </Form.Section>
 
-            <section
-              className={styles.section}
-              aria-labelledby="create-task-people"
-            >
-              <h3 id="create-task-people" className={styles.sectionTitle}>
-                {labels.sectionPeople}
-              </h3>
-              <div className={styles.sectionGrid}>
-                <div className={styles.initiatorRow}>
-                  <span className={styles.fieldLabel}>{labels.initiator}</span>
-                  <div className={styles.initiatorValue}>
-                    <FiUser size={15} aria-hidden />
-                    {isEditMode ? task!.initiator : initiatorName}
-                  </div>
-                </div>
+                <Form.Section aria-labelledby="create-task-people">
+                  <Form.SectionTitle id="create-task-people">
+                    {labels.sectionPeople}
+                  </Form.SectionTitle>
+                  <Form.SectionGrid>
+                    <div className={styles.initiatorRow}>
+                      <Form.FieldLabel>{labels.initiator}</Form.FieldLabel>
+                      <div className={styles.initiatorValue}>
+                        <FiUser size={15} aria-hidden />
+                        {isEditMode ? task!.initiator : initiatorName}
+                      </div>
+                    </div>
 
-                <div className={styles.selectGrid}>
-                  <FilterSearchMultiSelect
-                    label={labels.groups}
-                    options={groupOptions}
-                    selected={form.groups}
-                    onChange={(groups) => setForm({ ...form, groups })}
-                    placeholder={labels.selectPlaceholder}
-                    searchPlaceholder={labels.searchOptions}
-                    noResultsLabel={labels.noOptionsFound}
-                  />
-                  <FilterSearchMultiSelect
-                    label={labels.observables}
-                    options={userOptions}
-                    selected={form.observables}
-                    onChange={(observables) =>
-                      setForm({ ...form, observables })
-                    }
-                    placeholder={labels.selectPlaceholder}
-                    searchPlaceholder={labels.searchOptions}
-                    noResultsLabel={labels.noOptionsFound}
-                  />
-                </div>
-              </div>
-            </section>
+                    <div className={styles.selectGrid}>
+                      <FilterSearchMultiSelect
+                        label={labels.groups}
+                        options={groupOptions}
+                        selected={form.groups}
+                        onChange={(groups) => setForm({ ...form, groups })}
+                        placeholder={labels.selectPlaceholder}
+                        searchPlaceholder={labels.searchOptions}
+                        noResultsLabel={labels.noOptionsFound}
+                      />
+                      <FilterSearchMultiSelect
+                        label={labels.observables}
+                        options={userOptions}
+                        selected={form.observables}
+                        onChange={(observables) =>
+                          setForm({ ...form, observables })
+                        }
+                        placeholder={labels.selectPlaceholder}
+                        searchPlaceholder={labels.searchOptions}
+                        noResultsLabel={labels.noOptionsFound}
+                      />
+                    </div>
+                  </Form.SectionGrid>
+                </Form.Section>
 
-            <section
-              className={styles.section}
-              aria-labelledby="create-task-schedule"
-            >
-              <h3 id="create-task-schedule" className={styles.sectionTitle}>
-                {labels.sectionSchedule}
-              </h3>
-              <div className={styles.fieldRow}>
-                <label className={styles.field}>
-                  <span className={styles.fieldLabel}>{labels.startDate}</span>
-                  <div className={styles.dateInput}>
-                    <input
-                      type="datetime-local"
-                      value={form.startDate}
-                      onChange={(event) =>
-                        setForm({ ...form, startDate: event.target.value })
-                      }
-                    />
-                    <FiCalendar size={16} aria-hidden />
-                  </div>
-                </label>
+                <Form.Section aria-labelledby="create-task-schedule">
+                  <Form.SectionTitle id="create-task-schedule">
+                    {labels.sectionSchedule}
+                  </Form.SectionTitle>
+                  <Form.FieldRow>
+                    <Form.Field as="label" className={styles.field}>
+                      <Form.FieldLabel>{labels.startDate}</Form.FieldLabel>
+                      <div className={styles.dateInput}>
+                        <input
+                          type="datetime-local"
+                          value={form.startDate}
+                          onChange={(event) =>
+                            setForm({ ...form, startDate: event.target.value })
+                          }
+                        />
+                        <FiCalendar size={16} aria-hidden />
+                      </div>
+                    </Form.Field>
 
-                <label className={styles.field}>
-                  <span className={styles.fieldLabel}>
-                    {labels.dueDate}
-                    <em>{labels.required}</em>
-                  </span>
-                  <div className={styles.dateInput}>
-                    <input
-                      type="datetime-local"
-                      value={form.dueDate}
-                      onChange={(event) =>
-                        setForm({ ...form, dueDate: event.target.value })
-                      }
-                      required
-                    />
-                    <FiCalendar size={16} aria-hidden />
-                  </div>
-                </label>
-              </div>
-            </section>
+                    <Form.Field as="label" className={styles.field}>
+                      <Form.FieldLabel>
+                        {labels.dueDate}
+                        <em>{labels.required}</em>
+                      </Form.FieldLabel>
+                      <div className={styles.dateInput}>
+                        <input
+                          type="datetime-local"
+                          value={form.dueDate}
+                          onChange={(event) =>
+                            setForm({ ...form, dueDate: event.target.value })
+                          }
+                          required
+                        />
+                        <FiCalendar size={16} aria-hidden />
+                      </div>
+                    </Form.Field>
+                  </Form.FieldRow>
+                </Form.Section>
 
-            <section
-              className={styles.section}
-              aria-labelledby="create-task-priority-budget"
-            >
-              <h3
-                id="create-task-priority-budget"
-                className={styles.sectionTitle}
-              >
-                {labels.sectionPriorityBudget}
-              </h3>
-              <div className={styles.fieldRow}>
-                <label className={styles.field}>
-                  <span className={styles.fieldLabel}>{labels.priority}</span>
-                  <select
-                    value={form.priority}
-                    onChange={(event) =>
-                      setForm({
-                        ...form,
-                        priority: event.target.value as TaskPriority,
-                      })
-                    }
-                  >
-                    <option value="" disabled>
-                      {labels.priorityPlaceholder}
-                    </option>
-                    {priorityOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className={styles.field}>
-                  <span className={styles.fieldLabel}>{labels.budget}</span>
-                  <div className={styles.budgetInput}>
-                    <span className={styles.currencyPrefix}>$</span>
-                    <input
-                      type="number"
-                      min={0}
-                      step="0.01"
-                      value={form.budget}
-                      onChange={(event) =>
-                        setForm({ ...form, budget: event.target.value })
-                      }
-                      placeholder={labels.budgetPlaceholder}
-                    />
-                  </div>
-                </label>
-              </div>
-            </section>
-
-            <section
-              className={styles.section}
-              aria-labelledby="create-task-attachments"
-            >
-              <h3 id="create-task-attachments" className={styles.sectionTitle}>
-                {labels.sectionAttachments}
-              </h3>
-              <div className={styles.sectionGrid}>
-                <div className={styles.field}>
-                  <span className={styles.fieldLabel}>
-                    {labels.attachments}
-                  </span>
-                  <div className={styles.attachmentsArea}>
-                    {form.attachments.length > 0 && (
-                      <ul className={styles.attachmentList}>
-                        {form.attachments.map((attachment) => (
-                          <li
-                            key={attachment.id}
-                            className={styles.attachmentItem}
-                          >
-                            <FiPaperclip size={14} aria-hidden />
-                            <span className={styles.attachmentName}>
-                              {attachment.name}
-                            </span>
-                            <span className={styles.attachmentSize}>
-                              {formatFileSize(attachment.size)}
-                            </span>
-                            <button
-                              type="button"
-                              className={styles.attachmentRemove}
-                              onClick={() => removeAttachment(attachment.id)}
-                              aria-label={labels.removeAttachment}
-                            >
-                              <FiX size={14} aria-hidden />
-                            </button>
-                          </li>
+                <Form.Section aria-labelledby="create-task-priority-budget">
+                  <Form.SectionTitle id="create-task-priority-budget">
+                    {labels.sectionPriorityBudget}
+                  </Form.SectionTitle>
+                  <Form.FieldRow>
+                    <Form.Field as="label" className={styles.field}>
+                      <Form.FieldLabel>{labels.priority}</Form.FieldLabel>
+                      <select
+                        value={form.priority}
+                        onChange={(event) =>
+                          setForm({
+                            ...form,
+                            priority: event.target.value as TaskPriority,
+                          })
+                        }
+                      >
+                        <option value="" disabled>
+                          {labels.priorityPlaceholder}
+                        </option>
+                        {priorityOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
                         ))}
-                      </ul>
-                    )}
-                    <button
-                      type="button"
-                      className={styles.attachBtn}
-                      onClick={handleAttachClick}
-                    >
-                      <FiPaperclip size={14} aria-hidden />
-                      {labels.attachFile}
-                    </button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      multiple
-                      className={styles.hiddenFileInput}
-                      onChange={handleFileChange}
-                    />
-                    {attachmentError && (
-                      <p className={styles.attachError} role="alert">
-                        {attachmentError}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                      </select>
+                    </Form.Field>
 
-                <label className={styles.checkboxField}>
-                  <input
-                    type="checkbox"
-                    checked={form.requiresResultReview}
-                    onChange={(event) =>
-                      setForm({
-                        ...form,
-                        requiresResultReview: event.target.checked,
-                      })
-                    }
-                  />
-                  <span>{labels.requiresResultReview}</span>
-                </label>
-              </div>
-            </section>
-          </form>
+                    <Form.Field as="label" className={styles.field}>
+                      <Form.FieldLabel>{labels.budget}</Form.FieldLabel>
+                      <div className={styles.budgetInput}>
+                        <span className={styles.currencyPrefix}>$</span>
+                        <input
+                          type="number"
+                          min={0}
+                          step="0.01"
+                          value={form.budget}
+                          onChange={(event) =>
+                            setForm({ ...form, budget: event.target.value })
+                          }
+                          placeholder={labels.budgetPlaceholder}
+                        />
+                      </div>
+                    </Form.Field>
+                  </Form.FieldRow>
+                </Form.Section>
 
-          <footer className={styles.footer}>
-            <button
-              type="submit"
-              form="create-task-form"
-              className={styles.primaryBtn}
-              disabled={!canSubmit}
-            >
-              {isEditMode ? (labels.save ?? labels.create) : labels.create}
-            </button>
-            <button
-              type="button"
-              className={styles.secondaryBtn}
-              onClick={requestClose}
-            >
-              {labels.cancel}
-            </button>
-          </footer>
+                <Form.Section aria-labelledby="create-task-attachments">
+                  <Form.SectionTitle id="create-task-attachments">
+                    {labels.sectionAttachments}
+                  </Form.SectionTitle>
+                  <Form.SectionGrid>
+                    <Form.Field className={styles.field}>
+                      <Form.FieldLabel>{labels.attachments}</Form.FieldLabel>
+                      <div className={styles.attachmentsArea}>
+                        {form.attachments.length > 0 && (
+                          <ul className={styles.attachmentList}>
+                            {form.attachments.map((attachment) => (
+                              <li
+                                key={attachment.id}
+                                className={styles.attachmentItem}
+                              >
+                                <FiPaperclip size={14} aria-hidden />
+                                <span className={styles.attachmentName}>
+                                  {attachment.name}
+                                </span>
+                                <span className={styles.attachmentSize}>
+                                  {formatFileSize(attachment.size)}
+                                </span>
+                                <button
+                                  type="button"
+                                  className={styles.attachmentRemove}
+                                  onClick={() =>
+                                    removeAttachment(attachment.id)
+                                  }
+                                  aria-label={labels.removeAttachment}
+                                >
+                                  <FiX size={14} aria-hidden />
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        <button
+                          type="button"
+                          className={styles.attachBtn}
+                          onClick={handleAttachClick}
+                        >
+                          <FiPaperclip size={14} aria-hidden />
+                          {labels.attachFile}
+                        </button>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          multiple
+                          className={styles.hiddenFileInput}
+                          onChange={handleFileChange}
+                        />
+                        {attachmentError && (
+                          <p className={styles.attachError} role="alert">
+                            {attachmentError}
+                          </p>
+                        )}
+                      </div>
+                    </Form.Field>
+
+                    <label className={styles.checkboxField}>
+                      <input
+                        type="checkbox"
+                        checked={form.requiresResultReview}
+                        onChange={(event) =>
+                          setForm({
+                            ...form,
+                            requiresResultReview: event.target.checked,
+                          })
+                        }
+                      />
+                      <span>{labels.requiresResultReview}</span>
+                    </label>
+                  </Form.SectionGrid>
+                </Form.Section>
+              </Form.Body>
+
+              <Form.Footer>
+                <Form.PrimaryBtn type="submit" disabled={!canSubmit}>
+                  {isEditMode ? (labels.save ?? labels.create) : labels.create}
+                </Form.PrimaryBtn>
+                <Form.SecondaryBtn>{labels.cancel}</Form.SecondaryBtn>
+              </Form.Footer>
+            </Form.Wrapper>
+          </Form>
         </aside>
       </div>
-
-      <ConfirmDialog
-        open={confirmOpen}
-        onClose={() => setConfirmOpen(false)}
-        onConfirm={resetAndClose}
-        title={labels.unsavedTitle}
-        message={labels.unsavedMessage}
-        confirmLabel={labels.unsavedYes}
-        cancelLabel={labels.unsavedNo}
-      />
     </>,
     document.body,
   );

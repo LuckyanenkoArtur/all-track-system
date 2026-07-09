@@ -21,7 +21,6 @@ import { useTaskListState } from "../../../hooks/useTaskListState.ts";
 import { TaskCreationPanel } from "../../panels/task-creation-panel/Panel.tsx";
 import { CompleteTaskDialog } from "../../dialogs/CompleteTaskDialog.tsx";
 import { ManualTimeEntryDialog } from "../../dialogs/ManualTimeEntryDialog.tsx";
-import { AddBudgetExpenseDialog } from "../../dialogs/AddBudgetExpenseDialog.tsx";
 import {
   FiFileText,
   FiBarChart2,
@@ -34,6 +33,7 @@ import { TaskDetailsTimeTab } from "../../tabs/task-details/time/TaskDetailsTime
 import { TaskDetailsTransactionsTab } from "../../tabs/task-details/transactions/TaskDetailsTransactionsTab.tsx";
 import { TaskDetailsTabPlaceholder } from "../../placeholders/TaskDetailsTabPlaceholder.tsx";
 import { isUserTaskResponsible } from "../../../utils/taskDetailsUtils.ts";
+import { AddBudgetExpensePanel } from "../../panels/add-budget-expenses-panel/AddBudgetExpenseDialog.tsx";
 
 interface TaskDetailsTabulatorProps {
   task: Task;
@@ -479,7 +479,7 @@ export default function TaskDetailsTabulator({
         }}
       />
 
-      <AddBudgetExpenseDialog
+      <AddBudgetExpensePanel
         open={budgetExpenseOpen}
         onClose={() => setBudgetExpenseOpen(false)}
         onSubmit={(input) =>
@@ -491,22 +491,6 @@ export default function TaskDetailsTabulator({
             authorInitials,
           })
         }
-        labels={{
-          title: detailLabels.budgetExpenseDialogTitle,
-          subtitle: detailLabels.budgetExpenseDialogSubtitle,
-          amount: detailLabels.budgetExpenseAmount,
-          amountPlaceholder: dashboardLabels.maxBudgetPlaceholder,
-          description: detailLabels.budgetExpenseDescription,
-          descriptionPlaceholder:
-            detailLabels.budgetExpenseDescriptionPlaceholder,
-          required: dashboardLabels.required,
-          apply: detailLabels.budgetExpenseApply,
-          cancel: t.common.cancel,
-          unsavedTitle: detailLabels.budgetExpenseUnsavedTitle,
-          unsavedMessage: detailLabels.budgetExpenseUnsavedMessage,
-          unsavedYes: detailLabels.budgetExpenseUnsavedYes,
-          unsavedNo: detailLabels.budgetExpenseUnsavedNo,
-        }}
       />
     </>
   );

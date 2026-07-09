@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
 import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
-import { AddBudgetExpenseDialog } from "../../components/dialogs/AddBudgetExpenseDialog.tsx";
 import { CompleteTaskDialog } from "../../components/dialogs/CompleteTaskDialog.tsx";
 import { TaskCreationButton } from "../../components/buttons/create/Button.tsx";
 import { ActiveTrackingCard } from "../../components/cards/ActiveTrackingCard";
@@ -14,6 +13,7 @@ import { useTaskListState } from "../../hooks/useTaskListState";
 import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksOverviewPage.module.scss";
 import TaskTabulator from "../../components/tabulator/tasks/Tabulator.tsx";
+import { AddBudgetExpensePanel } from "../../components/panels/add-budget-expenses-panel/AddBudgetExpenseDialog.tsx";
 
 export function TasksOverviewPage() {
   const { t } = useTranslation();
@@ -150,7 +150,7 @@ export function TasksOverviewPage() {
         />
 
         {/* Repeated dialogs for Task Details Panel */}
-        <AddBudgetExpenseDialog
+        <AddBudgetExpensePanel
           open={budgetExpenseTaskId !== null}
           onClose={() => setBudgetExpenseTaskId(null)}
           onSubmit={(input) => {
@@ -162,22 +162,6 @@ export function TasksOverviewPage() {
               author: authorName,
               authorInitials,
             });
-          }}
-          labels={{
-            title: detailLabels.budgetExpenseDialogTitle,
-            subtitle: detailLabels.budgetExpenseDialogSubtitle,
-            amount: detailLabels.budgetExpenseAmount,
-            amountPlaceholder: labels.maxBudgetPlaceholder,
-            description: detailLabels.budgetExpenseDescription,
-            descriptionPlaceholder:
-              detailLabels.budgetExpenseDescriptionPlaceholder,
-            required: labels.required,
-            apply: detailLabels.budgetExpenseApply,
-            cancel: t.common.cancel,
-            unsavedTitle: detailLabels.budgetExpenseUnsavedTitle,
-            unsavedMessage: detailLabels.budgetExpenseUnsavedMessage,
-            unsavedYes: detailLabels.budgetExpenseUnsavedYes,
-            unsavedNo: detailLabels.budgetExpenseUnsavedNo,
           }}
         />
       </div>

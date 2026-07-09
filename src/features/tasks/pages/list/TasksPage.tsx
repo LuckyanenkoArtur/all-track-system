@@ -4,7 +4,7 @@ import { FiCalendar, FiList } from "react-icons/fi";
 import { BiAbacus, BiTable } from "react-icons/bi";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
-import { AddBudgetExpenseDialog } from "../../components/dialogs/AddBudgetExpenseDialog";
+
 import { CompleteTaskDialog } from "../../components/dialogs/CompleteTaskDialog";
 import { FilterButton } from "../../components/buttons/filter/Button";
 import { TaskCreationButton } from "../../components/buttons/create/Button";
@@ -27,6 +27,7 @@ import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksPage.module.scss";
 import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
 import { SearchBar } from "../../../../components/ui/search-bar/SearchBar";
+import { AddBudgetExpensePanel } from "../../components/panels/add-budget-expenses-panel/AddBudgetExpenseDialog";
 
 export function TaskListPage() {
   const { t } = useTranslation();
@@ -78,10 +79,6 @@ export function TaskListPage() {
     activeFilterCount,
   } = useTaskListState();
 
-  const taskLabels = t.tasks;
-  const detailLabels = taskLabels.details;
-  const dashboardLabels = taskLabels.dashboard;
-
   const initiatorName =
     `${bio.firstName} ${bio.lastName}`.trim() || bio.username;
   const authorName = initiatorName;
@@ -127,7 +124,7 @@ export function TaskListPage() {
 
   const taskViewSwitcherItems = useMemo(
     () => [
-      { id: "table", label: taskLabels.tableView, icon: BiTable },
+      { id: "table", label: t.tasks.tableView, icon: BiTable },
       { id: "kanban", label: "Kanban", icon: BiAbacus, disabled: true },
       {
         id: "calendar",
@@ -137,7 +134,7 @@ export function TaskListPage() {
       },
       { id: "list", label: "List", icon: FiList, disabled: true },
     ],
-    [taskLabels.tableView],
+    [t.tasks.tableView],
   );
 
   return (
@@ -150,8 +147,8 @@ export function TaskListPage() {
               <SearchBar
                 value={filters.search}
                 onChange={(search) => setFilters({ ...filters, search })}
-                placeholder={taskLabels.searchPlaceholder}
-                ariaLabel={taskLabels.searchPlaceholder}
+                placeholder={t.tasks.searchPlaceholder}
+                ariaLabel={t.tasks.searchPlaceholder}
               />
             </div>
 
@@ -214,32 +211,32 @@ export function TaskListPage() {
           onStartTracking={startTracking}
           onStopTracking={stopTracking}
           labels={{
-            allTasks: taskLabels.allTasks,
-            noResults: taskLabels.noResults,
-            taskDetails: taskLabels.taskDetails,
-            status: taskLabels.status,
-            priority: taskLabels.priority,
-            groups: taskLabels.groups,
-            createdAt: taskLabels.createdAt,
-            dueDate: taskLabels.dueDate,
-            initiator: taskLabels.initiator,
-            responsible: taskLabels.responsible,
-            observables: taskLabels.observables,
-            budget: taskLabels.budget,
-            totalTime: taskLabels.totalTime,
-            actions: taskLabels.actions,
-            startTracking: taskLabels.startTracking,
-            stopTracking: taskLabels.stopTracking,
-            finishTracking: taskLabels.finishTracking,
-            completeTask: taskLabels.completeTask,
-            addManualTime: taskLabels.addManualTime,
-            logBudgetExpense: taskLabels.logBudgetExpense,
-            showing: taskLabels.showing,
-            rowsPerPage: taskLabels.rowsPerPage,
-            page: taskLabels.page,
-            of: taskLabels.of,
-            previous: taskLabels.previous,
-            next: taskLabels.next,
+            allTasks: t.tasks.allTasks,
+            noResults: t.tasks.noResults,
+            taskDetails: t.tasks.taskDetails,
+            status: t.tasks.status,
+            priority: t.tasks.priority,
+            groups: t.tasks.groups,
+            createdAt: t.tasks.createdAt,
+            dueDate: t.tasks.dueDate,
+            initiator: t.tasks.initiator,
+            responsible: t.tasks.responsible,
+            observables: t.tasks.observables,
+            budget: t.tasks.budget,
+            totalTime: t.tasks.totalTime,
+            actions: t.tasks.actions,
+            startTracking: t.tasks.startTracking,
+            stopTracking: t.tasks.stopTracking,
+            finishTracking: t.tasks.finishTracking,
+            completeTask: t.tasks.completeTask,
+            addManualTime: t.tasks.addManualTime,
+            logBudgetExpense: t.tasks.logBudgetExpense,
+            showing: t.tasks.showing,
+            rowsPerPage: t.tasks.rowsPerPage,
+            page: t.tasks.page,
+            of: t.tasks.of,
+            previous: t.tasks.previous,
+            next: t.tasks.next,
           }}
         />
 
@@ -250,22 +247,22 @@ export function TaskListPage() {
           onClose={() => setCompleteTaskId(null)}
           onSubmit={handleCompleteTask}
           labels={{
-            title: detailLabels.completeDialogTitle,
-            subtitle: detailLabels.completeDialogSubtitle,
-            description: detailLabels.completionDescription,
+            title: t.tasks.details.completeDialogTitle,
+            subtitle: t.tasks.details.completeDialogSubtitle,
+            description: t.tasks.details.completionDescription,
             descriptionPlaceholder:
-              detailLabels.completionDescriptionPlaceholder,
-            required: dashboardLabels.required,
-            steps: detailLabels.completionSteps,
-            addStep: dashboardLabels.addStep,
-            stepPlaceholder: dashboardLabels.stepPlaceholder,
-            removeStep: dashboardLabels.removeStep,
-            apply: detailLabels.completeApply,
+              t.tasks.details.completionDescriptionPlaceholder,
+            required: t.tasks.dashboard.required,
+            steps: t.tasks.details.completionSteps,
+            addStep: t.tasks.dashboard.addStep,
+            stepPlaceholder: t.tasks.dashboard.stepPlaceholder,
+            removeStep: t.tasks.dashboard.removeStep,
+            apply: t.tasks.details.completeApply,
             cancel: t.common.cancel,
-            unsavedTitle: detailLabels.completeUnsavedTitle,
-            unsavedMessage: detailLabels.completeUnsavedMessage,
-            unsavedYes: detailLabels.completeUnsavedYes,
-            unsavedNo: detailLabels.completeUnsavedNo,
+            unsavedTitle: t.tasks.details.completeUnsavedTitle,
+            unsavedMessage: t.tasks.details.completeUnsavedMessage,
+            unsavedYes: t.tasks.details.completeUnsavedYes,
+            unsavedNo: t.tasks.details.completeUnsavedNo,
           }}
         />
 
@@ -284,23 +281,23 @@ export function TaskListPage() {
             });
           }}
           labels={{
-            title: detailLabels.manualTimeDialogTitle,
-            subtitle: detailLabels.manualTimeDialogSubtitle,
-            hours: detailLabels.manualTimeHours,
-            minutes: detailLabels.manualTimeMinutes,
-            note: detailLabels.manualTimeNote,
-            notePlaceholder: detailLabels.manualTimeNotePlaceholder,
-            required: dashboardLabels.required,
-            apply: detailLabels.manualTimeApply,
+            title: t.tasks.details.manualTimeDialogTitle,
+            subtitle: t.tasks.details.manualTimeDialogSubtitle,
+            hours: t.tasks.details.manualTimeHours,
+            minutes: t.tasks.details.manualTimeMinutes,
+            note: t.tasks.details.manualTimeNote,
+            notePlaceholder: t.tasks.details.manualTimeNotePlaceholder,
+            required: t.tasks.dashboard.required,
+            apply: t.tasks.details.manualTimeApply,
             cancel: t.common.cancel,
-            unsavedTitle: detailLabels.manualTimeUnsavedTitle,
-            unsavedMessage: detailLabels.manualTimeUnsavedMessage,
-            unsavedYes: detailLabels.manualTimeUnsavedYes,
-            unsavedNo: detailLabels.manualTimeUnsavedNo,
+            unsavedTitle: t.tasks.details.manualTimeUnsavedTitle,
+            unsavedMessage: t.tasks.details.manualTimeUnsavedMessage,
+            unsavedYes: t.tasks.details.manualTimeUnsavedYes,
+            unsavedNo: t.tasks.details.manualTimeUnsavedNo,
           }}
         />
 
-        <AddBudgetExpenseDialog
+        <AddBudgetExpensePanel
           open={budgetExpenseTaskId !== null}
           onClose={() => setBudgetExpenseTaskId(null)}
           onSubmit={(input) => {
@@ -312,22 +309,6 @@ export function TaskListPage() {
               author: authorName,
               authorInitials,
             });
-          }}
-          labels={{
-            title: detailLabels.budgetExpenseDialogTitle,
-            subtitle: detailLabels.budgetExpenseDialogSubtitle,
-            amount: detailLabels.budgetExpenseAmount,
-            amountPlaceholder: dashboardLabels.maxBudgetPlaceholder,
-            description: detailLabels.budgetExpenseDescription,
-            descriptionPlaceholder:
-              detailLabels.budgetExpenseDescriptionPlaceholder,
-            required: dashboardLabels.required,
-            apply: detailLabels.budgetExpenseApply,
-            cancel: t.common.cancel,
-            unsavedTitle: detailLabels.budgetExpenseUnsavedTitle,
-            unsavedMessage: detailLabels.budgetExpenseUnsavedMessage,
-            unsavedYes: detailLabels.budgetExpenseUnsavedYes,
-            unsavedNo: detailLabels.budgetExpenseUnsavedNo,
           }}
         />
       </div>

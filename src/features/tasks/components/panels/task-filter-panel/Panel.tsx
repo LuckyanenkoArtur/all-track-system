@@ -1,4 +1,8 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import {
+  Form,
+  type FormDismissHandlers,
+} from "../../../../../components/ui/form/Form";
 import {
   Panel,
   PanelDismissContext,
@@ -61,10 +65,19 @@ export function TaskFilterPanel({
   const { t } = useTranslation();
   const [collectionDialogOpen, setCollectionDialogOpen] = useState(false);
   const [collectionName, setCollectionName] = useState("");
+  const dismissHandlersRef = useRef<FormDismissHandlers | null>(null);
+
+  const dirty = !areDrawerFiltersEqual(filters, appliedFilters);
 
   const handleDismiss = useCallback(() => {
-    if (!collectionDialogOpen) onClose();
-  }, [collectionDialogOpen, onClose]);
+    if (
+      collectionDialogOpen ||
+      dismissHandlersRef.current?.confirmOpen
+    ) {
+      return false;
+    }
+    dismissHandlersRef.current?.requestClose();
+  }, [collectionDialogOpen]);
 
   const update = (partial: Partial<TaskFilters>) => {
     onChange({ ...filters, ...partial });
@@ -129,221 +142,229 @@ export function TaskFilterPanel({
 
   return (
     <PanelDismissContext.Provider value={handleDismiss}>
-      <Panel open={open}>
+      <Panel open={open} unSaveConfirmation={dirty}>
         <Panel.Header>
           <Panel.Title>{t.tasks.filters}</Panel.Title>
         </Panel.Header>
         <Panel.Content>
-          <div className={styles.wrapper}>
-            <div className={styles.content}>
-              <section className={styles.section}>
-                <h3 className={styles.sectionTitle}>
-                  {t.tasks.filterSections.people}
-                </h3>
-                <div className={styles.sectionGrid}>
-                  <FilterSearchMultiSelect
-                    label={t.tasks.groups}
-                    options={groupOptions}
-                    selected={filters.groups}
-                    onChange={(groups) => update({ groups })}
-                    placeholder={t.tasks.selectPlaceholder}
-                    searchPlaceholder={t.tasks.searchOptions}
-                    noResultsLabel={t.tasks.noOptionsFound}
-                  />
-                  <FilterSearchMultiSelect
-                    label={t.tasks.initiator}
-                    options={initiatorOptions}
-                    selected={filters.initiators}
-                    onChange={(initiators) => update({ initiators })}
-                    placeholder={t.tasks.selectPlaceholder}
-                    searchPlaceholder={t.tasks.searchOptions}
-                    noResultsLabel={t.tasks.noOptionsFound}
-                  />
-                  <FilterSearchMultiSelect
-                    label={t.tasks.responsible}
-                    options={responsibleOptions}
-                    selected={filters.responsible}
-                    onChange={(responsible) => update({ responsible })}
-                    placeholder={t.tasks.selectPlaceholder}
-                    searchPlaceholder={t.tasks.searchOptions}
-                    noResultsLabel={t.tasks.noOptionsFound}
-                  />
-                  <FilterSearchMultiSelect
-                    label={t.tasks.observables}
-                    options={observableOptions}
-                    selected={filters.observables}
-                    onChange={(observables) => update({ observables })}
-                    placeholder={t.tasks.selectPlaceholder}
-                    searchPlaceholder={t.tasks.searchOptions}
-                    noResultsLabel={t.tasks.noOptionsFound}
-                  />
-                </div>
-              </section>
+          <Form
+            dirty={dirty}
+            unsaveConfirmDialog
+            unsavedConfirmation={{
+              title: t.tasks.dashboard.unsavedTitle,
+              message: t.tasks.dashboard.unsavedMessage,
+              confirmLabel: t.tasks.dashboard.unsavedYes,
+              cancelLabel: t.tasks.dashboard.unsavedNo,
+            }}
+            onClose={onClose}
+            resetKey={open}
+            onDismissHandlersChange={(handlers) => {
+              dismissHandlersRef.current = handlers;
+            }}
+          >
+            <Form.Wrapper>
+              <Form.Body as="div">
+                <Form.Section>
+                  <Form.SectionTitle>
+                    {t.tasks.filterSections.people}
+                  </Form.SectionTitle>
+                  <Form.SectionGrid>
+                    <FilterSearchMultiSelect
+                      label={t.tasks.groups}
+                      options={groupOptions}
+                      selected={filters.groups}
+                      onChange={(groups) => update({ groups })}
+                      placeholder={t.tasks.selectPlaceholder}
+                      searchPlaceholder={t.tasks.searchOptions}
+                      noResultsLabel={t.tasks.noOptionsFound}
+                    />
+                    <FilterSearchMultiSelect
+                      label={t.tasks.initiator}
+                      options={initiatorOptions}
+                      selected={filters.initiators}
+                      onChange={(initiators) => update({ initiators })}
+                      placeholder={t.tasks.selectPlaceholder}
+                      searchPlaceholder={t.tasks.searchOptions}
+                      noResultsLabel={t.tasks.noOptionsFound}
+                    />
+                    <FilterSearchMultiSelect
+                      label={t.tasks.responsible}
+                      options={responsibleOptions}
+                      selected={filters.responsible}
+                      onChange={(responsible) => update({ responsible })}
+                      placeholder={t.tasks.selectPlaceholder}
+                      searchPlaceholder={t.tasks.searchOptions}
+                      noResultsLabel={t.tasks.noOptionsFound}
+                    />
+                    <FilterSearchMultiSelect
+                      label={t.tasks.observables}
+                      options={observableOptions}
+                      selected={filters.observables}
+                      onChange={(observables) => update({ observables })}
+                      placeholder={t.tasks.selectPlaceholder}
+                      searchPlaceholder={t.tasks.searchOptions}
+                      noResultsLabel={t.tasks.noOptionsFound}
+                    />
+                  </Form.SectionGrid>
+                </Form.Section>
 
-              <section className={styles.section}>
-                <h3 className={styles.sectionTitle}>
-                  {t.tasks.filterSections.taskState}
-                </h3>
-                <div className={styles.sectionGrid}>
-                  <FilterSearchMultiSelect
-                    label={t.tasks.status}
-                    options={statusOptions}
-                    selected={filters.statuses}
-                    onChange={(statuses) =>
-                      update({ statuses: statuses as TaskStatus[] })
-                    }
-                    placeholder={t.tasks.selectPlaceholder}
-                    searchPlaceholder={t.tasks.searchOptions}
-                    noResultsLabel={t.tasks.noOptionsFound}
-                  />
-                  <FilterSearchMultiSelect
-                    label={t.tasks.priority}
-                    options={priorityOptions}
-                    selected={filters.priorities}
-                    onChange={(priorities) =>
-                      update({ priorities: priorities as TaskPriority[] })
-                    }
-                    placeholder={t.tasks.selectPlaceholder}
-                    searchPlaceholder={t.tasks.searchOptions}
-                    noResultsLabel={t.tasks.noOptionsFound}
-                  />
-                </div>
-              </section>
+                <Form.Section>
+                  <Form.SectionTitle>
+                    {t.tasks.filterSections.taskState}
+                  </Form.SectionTitle>
+                  <Form.SectionGrid>
+                    <FilterSearchMultiSelect
+                      label={t.tasks.status}
+                      options={statusOptions}
+                      selected={filters.statuses}
+                      onChange={(statuses) =>
+                        update({ statuses: statuses as TaskStatus[] })
+                      }
+                      placeholder={t.tasks.selectPlaceholder}
+                      searchPlaceholder={t.tasks.searchOptions}
+                      noResultsLabel={t.tasks.noOptionsFound}
+                    />
+                    <FilterSearchMultiSelect
+                      label={t.tasks.priority}
+                      options={priorityOptions}
+                      selected={filters.priorities}
+                      onChange={(priorities) =>
+                        update({ priorities: priorities as TaskPriority[] })
+                      }
+                      placeholder={t.tasks.selectPlaceholder}
+                      searchPlaceholder={t.tasks.searchOptions}
+                      noResultsLabel={t.tasks.noOptionsFound}
+                    />
+                  </Form.SectionGrid>
+                </Form.Section>
 
-              <section className={styles.section}>
-                <h3 className={styles.sectionTitle}>
-                  {t.tasks.filterSections.dueDate}
-                </h3>
-                <div className={styles.fieldRow}>
-                  <label className={styles.field}>
-                    <span className={styles.fieldLabel}>
-                      {t.tasks.dueDateFrom}
-                    </span>
-                    <input
-                      type="date"
-                      className={styles.fieldInput}
-                      value={filters.dueDateFrom}
-                      onChange={(event) =>
-                        update({ dueDateFrom: event.target.value })
-                      }
-                    />
-                  </label>
-                  <label className={styles.field}>
-                    <span className={styles.fieldLabel}>
-                      {t.tasks.dueDateTo}
-                    </span>
-                    <input
-                      type="date"
-                      className={styles.fieldInput}
-                      value={filters.dueDateTo}
-                      onChange={(event) =>
-                        update({ dueDateTo: event.target.value })
-                      }
-                    />
-                  </label>
-                </div>
-              </section>
+                <Form.Section>
+                  <Form.SectionTitle>
+                    {t.tasks.filterSections.dueDate}
+                  </Form.SectionTitle>
+                  <Form.FieldRow>
+                    <Form.Field as="label">
+                      <Form.FieldLabel variant="filter">
+                        {t.tasks.dueDateFrom}
+                      </Form.FieldLabel>
+                      <Form.FieldInput
+                        type="date"
+                        value={filters.dueDateFrom}
+                        onChange={(event) =>
+                          update({ dueDateFrom: event.target.value })
+                        }
+                      />
+                    </Form.Field>
+                    <Form.Field as="label">
+                      <Form.FieldLabel variant="filter">
+                        {t.tasks.dueDateTo}
+                      </Form.FieldLabel>
+                      <Form.FieldInput
+                        type="date"
+                        value={filters.dueDateTo}
+                        onChange={(event) =>
+                          update({ dueDateTo: event.target.value })
+                        }
+                      />
+                    </Form.Field>
+                  </Form.FieldRow>
+                </Form.Section>
 
-              <section className={styles.section}>
-                <h3 className={styles.sectionTitle}>
-                  {t.tasks.filterSections.budget}
-                </h3>
-                <div className={styles.fieldRow}>
-                  <label className={styles.field}>
-                    <span className={styles.fieldLabel}>
-                      {t.tasks.budgetMin}
-                    </span>
-                    <input
-                      type="number"
-                      min={0}
-                      className={styles.fieldInput}
-                      value={filters.budgetMin}
-                      onChange={(event) =>
-                        update({ budgetMin: event.target.value })
-                      }
-                      placeholder="0"
-                    />
-                  </label>
-                  <label className={styles.field}>
-                    <span className={styles.fieldLabel}>
-                      {t.tasks.budgetMax}
-                    </span>
-                    <input
-                      type="number"
-                      min={0}
-                      className={styles.fieldInput}
-                      value={filters.budgetMax}
-                      onChange={(event) =>
-                        update({ budgetMax: event.target.value })
-                      }
-                      placeholder="10000"
-                    />
-                  </label>
-                </div>
-              </section>
+                <Form.Section>
+                  <Form.SectionTitle>
+                    {t.tasks.filterSections.budget}
+                  </Form.SectionTitle>
+                  <Form.FieldRow>
+                    <Form.Field as="label">
+                      <Form.FieldLabel variant="filter">
+                        {t.tasks.budgetMin}
+                      </Form.FieldLabel>
+                      <Form.FieldInput
+                        type="number"
+                        min={0}
+                        value={filters.budgetMin}
+                        onChange={(event) =>
+                          update({ budgetMin: event.target.value })
+                        }
+                        placeholder="0"
+                      />
+                    </Form.Field>
+                    <Form.Field as="label">
+                      <Form.FieldLabel variant="filter">
+                        {t.tasks.budgetMax}
+                      </Form.FieldLabel>
+                      <Form.FieldInput
+                        type="number"
+                        min={0}
+                        value={filters.budgetMax}
+                        onChange={(event) =>
+                          update({ budgetMax: event.target.value })
+                        }
+                        placeholder="10000"
+                      />
+                    </Form.Field>
+                  </Form.FieldRow>
+                </Form.Section>
 
-              <section className={styles.section}>
-                <h3 className={styles.sectionTitle}>
-                  {t.tasks.filterSections.time}
-                </h3>
-                <div className={styles.fieldRow}>
-                  <label className={styles.field}>
-                    <span className={styles.fieldLabel}>{t.tasks.timeMin}</span>
-                    <input
-                      type="number"
-                      min={0}
-                      className={styles.fieldInput}
-                      value={filters.timeMin}
-                      onChange={(event) =>
-                        update({ timeMin: event.target.value })
-                      }
-                      placeholder="0"
-                    />
-                  </label>
-                  <label className={styles.field}>
-                    <span className={styles.fieldLabel}>{t.tasks.timeMax}</span>
-                    <input
-                      type="number"
-                      min={0}
-                      className={styles.fieldInput}
-                      value={filters.timeMax}
-                      onChange={(event) =>
-                        update({ timeMax: event.target.value })
-                      }
-                      placeholder="480"
-                    />
-                  </label>
-                </div>
-              </section>
-            </div>
+                <Form.Section>
+                  <Form.SectionTitle>
+                    {t.tasks.filterSections.time}
+                  </Form.SectionTitle>
+                  <Form.FieldRow>
+                    <Form.Field as="label">
+                      <Form.FieldLabel variant="filter">
+                        {t.tasks.timeMin}
+                      </Form.FieldLabel>
+                      <Form.FieldInput
+                        type="number"
+                        min={0}
+                        value={filters.timeMin}
+                        onChange={(event) =>
+                          update({ timeMin: event.target.value })
+                        }
+                        placeholder="0"
+                      />
+                    </Form.Field>
+                    <Form.Field as="label">
+                      <Form.FieldLabel variant="filter">
+                        {t.tasks.timeMax}
+                      </Form.FieldLabel>
+                      <Form.FieldInput
+                        type="number"
+                        min={0}
+                        value={filters.timeMax}
+                        onChange={(event) =>
+                          update({ timeMax: event.target.value })
+                        }
+                        placeholder="480"
+                      />
+                    </Form.Field>
+                  </Form.FieldRow>
+                </Form.Section>
+              </Form.Body>
 
-            {showActions && (
-              <footer className={styles.footer}>
-                <button
-                  type="button"
-                  className={styles.primaryBtn}
-                  onClick={onApply}
-                  disabled={!canApply}
-                >
-                  {t.tasks.applyFilters}
-                </button>
-                <button
-                  type="button"
-                  className={styles.ghostBtn}
-                  onClick={() => setCollectionDialogOpen(true)}
-                >
-                  {t.tasks.saveCollection}
-                </button>
-                <button
-                  type="button"
-                  className={styles.secondaryBtn}
-                  onClick={onReset}
-                >
-                  {t.tasks.resetFilters}
-                </button>
-              </footer>
-            )}
-          </div>
+              {showActions && (
+                <Form.Footer>
+                  <Form.PrimaryBtn
+                    type="button"
+                    onClick={onApply}
+                    disabled={!canApply}
+                  >
+                    {t.tasks.applyFilters}
+                  </Form.PrimaryBtn>
+                  <Form.GhostBtn
+                    type="button"
+                    onClick={() => setCollectionDialogOpen(true)}
+                  >
+                    {t.tasks.saveCollection}
+                  </Form.GhostBtn>
+                  <Form.SecondaryBtn type="button" onClick={onReset}>
+                    {t.tasks.resetFilters}
+                  </Form.SecondaryBtn>
+                </Form.Footer>
+              )}
+            </Form.Wrapper>
+          </Form>
 
           <Dialog
             open={collectionDialogOpen}
@@ -370,7 +391,7 @@ export function TaskFilterPanel({
               <div className={styles.collectionActions}>
                 <button
                   type="button"
-                  className={styles.secondaryBtn}
+                  className={styles.collectionSecondaryBtn}
                   onClick={() => {
                     setCollectionDialogOpen(false);
                     setCollectionName("");
@@ -380,7 +401,7 @@ export function TaskFilterPanel({
                 </button>
                 <button
                   type="button"
-                  className={styles.primaryBtn}
+                  className={styles.collectionPrimaryBtn}
                   onClick={handleSaveCollection}
                   disabled={!collectionName.trim()}
                 >
