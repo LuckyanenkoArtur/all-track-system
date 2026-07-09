@@ -2,20 +2,20 @@ import { useCallback, useMemo, useState } from "react";
 import {
   Panel,
   PanelDismissContext,
-} from "../../../../components/ui/panel/Panel";
-import { useTranslation } from "../../../../i18n";
-import Dialog from "../../../user-profile/components/dialogs/Dialog";
+} from "../../../../../components/ui/panel/Panel";
+import { useTranslation } from "../../../../../i18n";
+import Dialog from "../../../../user-profile/components/dialogs/Dialog";
 import type {
   TaskFilters,
   TaskPriority,
   TaskStatus,
-} from "../../domain/others";
-import type { TaskPriorityId } from "../../domain/priority";
+} from "../../../domain/others";
+import type { TaskPriorityId } from "../../../domain/priority";
 import {
   areDrawerFiltersEqual,
   hasDrawerFilters,
-} from "../../utils/taskListUtils";
-import { FilterSearchMultiSelect } from "../FilterSearchMultiSelect";
+} from "../../../utils/taskListUtils";
+import { FilterSearchMultiSelect } from "../../FilterSearchMultiSelect";
 import styles from "./Panel.module.scss";
 
 type FilterOptions = {

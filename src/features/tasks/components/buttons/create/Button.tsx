@@ -3,7 +3,7 @@ import { FiPlus } from "react-icons/fi";
 import { Button } from "../../../../../components/ui/button/Button";
 import { useTranslation } from "../../../../../i18n";
 import type { CreateTaskInput } from "../../../domain/others";
-import { CreateTaskDialog } from "../../panels/task-creation-panel/Panel";
+import { TaskCreationPanel } from "../../panels/task-creation-panel/Panel";
 
 type FilterOptions = {
   groups: string[];
@@ -62,7 +62,7 @@ export function TaskCreationButton({
         </Button.Tooltip>
       </Button>
 
-      <CreateTaskDialog
+      <TaskCreationPanel
         open={open}
         onClose={() => setOpen(false)}
         onSubmit={onSubmit}

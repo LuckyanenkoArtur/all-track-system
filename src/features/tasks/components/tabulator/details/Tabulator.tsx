@@ -18,7 +18,7 @@ import { TaskDetailsOverviewTab } from "../../tabs/task-details/overview/TaskDet
 import { TaskDetailsActionBar } from "../../action-bar/TaskDetailsActionBar.tsx";
 import { TaskDetailsMetricsTab } from "../../tabs/task-details/metrics/TaskDetailsMetricsTab.tsx";
 import { useTaskListState } from "../../../hooks/useTaskListState.ts";
-import { CreateTaskDialog } from "../../panels/task-creation-panel/Panel.tsx";
+import { TaskCreationPanel } from "../../panels/task-creation-panel/Panel.tsx";
 import { CompleteTaskDialog } from "../../dialogs/CompleteTaskDialog.tsx";
 import { ManualTimeEntryDialog } from "../../dialogs/ManualTimeEntryDialog.tsx";
 import { AddBudgetExpenseDialog } from "../../dialogs/AddBudgetExpenseDialog.tsx";
@@ -370,7 +370,7 @@ export default function TaskDetailsTabulator({
         </Tabulator.Panels>
       </Tabulator>
 
-      <CreateTaskDialog
+      <TaskCreationPanel
         open={editOpen}
         onClose={() => setEditOpen(false)}
         task={task}

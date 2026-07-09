@@ -7,3 +7,4 @@
 7. We need to refactir src\features\tasks\components\panels\task-filter-panel\Panel.tsx
 8. All Dialogs we move into Panel component
 9. We need to refactor src\features\tasks\pages\list\TasksPage.tsx
+10. Chart forlder refactoring
