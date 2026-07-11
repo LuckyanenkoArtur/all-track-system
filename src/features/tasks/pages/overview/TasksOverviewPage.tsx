@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
 import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
-import { CompleteTaskDialog } from "../../components/dialogs/CompleteTaskDialog.tsx";
+
 import { TaskCreationButton } from "../../components/buttons/create/Button.tsx";
 import { ActiveTrackingCard } from "../../components/cards/ActiveTrackingCard";
 import { ManualTimeEntryDialog } from "../../components/dialogs/ManualTimeEntryDialog.tsx";
@@ -14,6 +14,7 @@ import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksOverviewPage.module.scss";
 import TaskTabulator from "../../components/tabulator/tasks/Tabulator.tsx";
 import { AddBudgetExpensePanel } from "../../components/panels/add-budget-expenses-panel/AddBudgetExpenseDialog.tsx";
+import { CompleteTaskDialog } from "../../components/panels/task-complete-panel/CompleteTaskDialog.tsx";
 
 export function TasksOverviewPage() {
   const { t } = useTranslation();
@@ -110,10 +111,6 @@ export function TasksOverviewPage() {
             removeStep: labels.removeStep,
             apply: detailLabels.completeApply,
             cancel: t.common.cancel,
-            unsavedTitle: detailLabels.completeUnsavedTitle,
-            unsavedMessage: detailLabels.completeUnsavedMessage,
-            unsavedYes: detailLabels.completeUnsavedYes,
-            unsavedNo: detailLabels.completeUnsavedNo,
           }}
         />
 

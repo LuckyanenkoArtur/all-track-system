@@ -1,7 +1,8 @@
 import {
   Form,
-  type FormDismissHandlers,
+  useFormDismiss,
 } from "../../../../../components/ui/form/Form";
+import formStyles from "../../../../../components/ui/form/Form.module.scss";
 import {
   useCallback,
   useEffect,
@@ -10,6 +11,7 @@ import {
   useState,
   type ChangeEvent,
   type FormEvent,
+  type PropsWithChildren,
 } from "react";
 import { createPortal } from "react-dom";
 import { FiCalendar, FiPaperclip, FiUser, FiX } from "react-icons/fi";
@@ -82,10 +84,6 @@ type CreateTaskDialogLabels = {
   searchOptions: string;
   noOptionsFound: string;
   selectPlaceholder: string;
-  unsavedTitle: string;
-  unsavedMessage: string;
-  unsavedYes: string;
-  unsavedNo: string;
   sectionTaskDetails: string;
   sectionPeople: string;
   sectionSchedule: string;
@@ -170,6 +168,75 @@ function isFormDirty(form: FormState, baseline: FormState): boolean {
   );
 }
 
+function TaskCreationPanelShell({
+  open,
+  title,
+  subtitle,
+  cancelLabel,
+  children,
+}: PropsWithChildren<{
+  open: boolean;
+  title: string;
+  subtitle: string;
+  cancelLabel: string;
+}>) {
+  const { requestClose, confirmOpen } = useFormDismiss();
+
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !confirmOpen) {
+        requestClose();
+      }
+    };
+
+    const previousBodyOverflow = document.body.style.overflow;
+
+    document.addEventListener("keydown", handleKey);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = previousBodyOverflow;
+    };
+  }, [open, confirmOpen, requestClose]);
+
+  return (
+    <div
+      className={styles.overlay}
+      role="presentation"
+      onClick={requestClose}
+    >
+      <aside
+        className={styles.panel}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="create-task-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <header className={styles.header}>
+          <div className={styles.headerText}>
+            <h2 id="create-task-title" className={styles.headerTitle}>
+              {title}
+            </h2>
+            <p className={styles.headerSubtitle}>{subtitle}</p>
+          </div>
+          <button
+            type="button"
+            className={styles.iconBtn}
+            onClick={requestClose}
+            aria-label={cancelLabel}
+          >
+            <FiX size={18} aria-hidden />
+          </button>
+        </header>
+        {children}
+      </aside>
+    </div>
+  );
+}
+
 export function TaskCreationPanel({
   open,
   onClose,
@@ -182,7 +249,6 @@ export function TaskCreationPanel({
 }: TaskCreationPanelProps) {
   const isEditMode = task != null;
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const dismissHandlersRef = useRef<FormDismissHandlers | null>(null);
   const [form, setForm] = useState<FormState>(createEmptyForm);
   const [baseline, setBaseline] = useState<FormState>(createEmptyForm);
   const [attachmentError, setAttachmentError] = useState<string | null>(null);
@@ -207,33 +273,15 @@ export function TaskCreationPanel({
     [labels.high, labels.medium, labels.low],
   );
 
-  const dirty = isFormDirty(form, baseline);
+  const getIsDirty = useCallback(
+    () => isFormDirty(form, baseline),
+    [form, baseline],
+  );
 
   const handleClose = useCallback(() => {
     setForm(createEmptyForm());
     onClose();
   }, [onClose]);
-
-  useEffect(() => {
-    if (!open) return;
-
-    const handleKey = (event: KeyboardEvent) => {
-      if (
-        event.key === "Escape" &&
-        !dismissHandlersRef.current?.confirmOpen
-      ) {
-        dismissHandlersRef.current?.requestClose();
-      }
-    };
-
-    document.addEventListener("keydown", handleKey);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleKey);
-      document.body.style.overflow = "";
-    };
-  }, [open]);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -326,64 +374,37 @@ export function TaskCreationPanel({
 
   if (!open) return null;
 
-  return createPortal(
-    <>
-      <div
-        className={styles.overlay}
-        role="presentation"
-        onClick={() => dismissHandlersRef.current?.requestClose()}
-      >
-        <aside
-          className={styles.panel}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="create-task-title"
-          onClick={(event) => event.stopPropagation()}
+  return (
+    <Form
+      isDirty={getIsDirty}
+      unsavedConfirmation="taskCreation"
+      onClose={handleClose}
+      resetKey={open}
+    >
+      {createPortal(
+        <TaskCreationPanelShell
+          open={open}
+          title={labels.title}
+          subtitle={labels.subtitle}
+          cancelLabel={labels.cancel}
         >
-          <header className={styles.header}>
-            <div className={styles.headerText}>
-              <h2 id="create-task-title" className={styles.headerTitle}>
-                {labels.title}
-              </h2>
-              <p className={styles.headerSubtitle}>{labels.subtitle}</p>
-            </div>
-            <button
-              type="button"
-              className={styles.iconBtn}
-              onClick={() => dismissHandlersRef.current?.requestClose()}
-              aria-label={labels.cancel}
-            >
-              <FiX size={18} aria-hidden />
-            </button>
-          </header>
-
-          <Form
-            dirty={dirty}
-            unsaveConfirmDialog
-            unsavedConfirmation={{
-              title: labels.unsavedTitle,
-              message: labels.unsavedMessage,
-              confirmLabel: labels.unsavedYes,
-              cancelLabel: labels.unsavedNo,
-            }}
-            onClose={handleClose}
-            resetKey={open}
-            onDismissHandlersChange={(handlers) => {
-              dismissHandlersRef.current = handlers;
-            }}
-          >
-            <Form.Wrapper>
-              <Form.Body id="create-task-form" onSubmit={handleSubmit}>
-                <Form.Section aria-labelledby="create-task-details">
-                  <Form.SectionTitle id="create-task-details">
+          <div className={formStyles.wrapper}>
+            <Form.Body id="create-task-form">
+                <section
+                  className={formStyles.section}
+                  aria-labelledby="create-task-details"
+                >
+                  <h3 id="create-task-details" className={formStyles.sectionTitle}>
                     {labels.sectionTaskDetails}
-                  </Form.SectionTitle>
-                  <Form.SectionGrid>
-                    <Form.Field as="label" className={styles.field}>
-                      <Form.FieldLabel>
+                  </h3>
+                  <div className={formStyles.sectionGrid}>
+                    <label
+                      className={`${formStyles.field} ${styles.field}`.trim()}
+                    >
+                      <span className={formStyles.fieldLabel}>
                         {labels.taskTitle}
                         <em>{labels.required}</em>
-                      </Form.FieldLabel>
+                      </span>
                       <input
                         type="text"
                         value={form.title}
@@ -394,10 +415,12 @@ export function TaskCreationPanel({
                         required
                         autoFocus
                       />
-                    </Form.Field>
+                    </label>
 
-                    <Form.Field as="label" className={styles.field}>
-                      <Form.FieldLabel>{labels.description}</Form.FieldLabel>
+                    <label
+                      className={`${formStyles.field} ${styles.field}`.trim()}
+                    >
+                      <span className={formStyles.fieldLabel}>{labels.description}</span>
                       <textarea
                         value={form.description}
                         onChange={(event) =>
@@ -406,10 +429,12 @@ export function TaskCreationPanel({
                         placeholder={labels.descriptionPlaceholder}
                         rows={4}
                       />
-                    </Form.Field>
+                    </label>
 
-                    <Form.Field className={styles.field}>
-                      <Form.FieldLabel>{labels.steps}</Form.FieldLabel>
+                    <div
+                      className={`${formStyles.field} ${styles.field}`.trim()}
+                    >
+                      <span className={formStyles.fieldLabel}>{labels.steps}</span>
                       <TaskStepsEditor
                         steps={form.steps}
                         onChange={(steps) => setForm({ ...form, steps })}
@@ -419,17 +444,22 @@ export function TaskCreationPanel({
                           removeStep: labels.removeStep,
                         }}
                       />
-                    </Form.Field>
-                  </Form.SectionGrid>
-                </Form.Section>
+                    </div>
+                  </div>
+                </section>
 
-                <Form.Section aria-labelledby="create-task-people">
-                  <Form.SectionTitle id="create-task-people">
+                <section
+                  className={formStyles.section}
+                  aria-labelledby="create-task-people"
+                >
+                  <h3 id="create-task-people" className={formStyles.sectionTitle}>
                     {labels.sectionPeople}
-                  </Form.SectionTitle>
-                  <Form.SectionGrid>
+                  </h3>
+                  <div className={formStyles.sectionGrid}>
                     <div className={styles.initiatorRow}>
-                      <Form.FieldLabel>{labels.initiator}</Form.FieldLabel>
+                      <span className={formStyles.fieldLabel}>
+                        {labels.initiator}
+                      </span>
                       <div className={styles.initiatorValue}>
                         <FiUser size={15} aria-hidden />
                         {isEditMode ? task!.initiator : initiatorName}
@@ -458,16 +488,23 @@ export function TaskCreationPanel({
                         noResultsLabel={labels.noOptionsFound}
                       />
                     </div>
-                  </Form.SectionGrid>
-                </Form.Section>
+                  </div>
+                </section>
 
-                <Form.Section aria-labelledby="create-task-schedule">
-                  <Form.SectionTitle id="create-task-schedule">
+                <section
+                  className={formStyles.section}
+                  aria-labelledby="create-task-schedule"
+                >
+                  <h3 id="create-task-schedule" className={formStyles.sectionTitle}>
                     {labels.sectionSchedule}
-                  </Form.SectionTitle>
-                  <Form.FieldRow>
-                    <Form.Field as="label" className={styles.field}>
-                      <Form.FieldLabel>{labels.startDate}</Form.FieldLabel>
+                  </h3>
+                  <div className={formStyles.fieldRow}>
+                    <label
+                      className={`${formStyles.field} ${styles.field}`.trim()}
+                    >
+                      <span className={formStyles.fieldLabel}>
+                        {labels.startDate}
+                      </span>
                       <div className={styles.dateInput}>
                         <input
                           type="datetime-local"
@@ -478,13 +515,15 @@ export function TaskCreationPanel({
                         />
                         <FiCalendar size={16} aria-hidden />
                       </div>
-                    </Form.Field>
+                    </label>
 
-                    <Form.Field as="label" className={styles.field}>
-                      <Form.FieldLabel>
+                    <label
+                      className={`${formStyles.field} ${styles.field}`.trim()}
+                    >
+                      <span className={formStyles.fieldLabel}>
                         {labels.dueDate}
                         <em>{labels.required}</em>
-                      </Form.FieldLabel>
+                      </span>
                       <div className={styles.dateInput}>
                         <input
                           type="datetime-local"
@@ -496,17 +535,27 @@ export function TaskCreationPanel({
                         />
                         <FiCalendar size={16} aria-hidden />
                       </div>
-                    </Form.Field>
-                  </Form.FieldRow>
-                </Form.Section>
+                    </label>
+                  </div>
+                </section>
 
-                <Form.Section aria-labelledby="create-task-priority-budget">
-                  <Form.SectionTitle id="create-task-priority-budget">
+                <section
+                  className={formStyles.section}
+                  aria-labelledby="create-task-priority-budget"
+                >
+                  <h3
+                    id="create-task-priority-budget"
+                    className={formStyles.sectionTitle}
+                  >
                     {labels.sectionPriorityBudget}
-                  </Form.SectionTitle>
-                  <Form.FieldRow>
-                    <Form.Field as="label" className={styles.field}>
-                      <Form.FieldLabel>{labels.priority}</Form.FieldLabel>
+                  </h3>
+                  <div className={formStyles.fieldRow}>
+                    <label
+                      className={`${formStyles.field} ${styles.field}`.trim()}
+                    >
+                      <span className={formStyles.fieldLabel}>
+                        {labels.priority}
+                      </span>
                       <select
                         value={form.priority}
                         onChange={(event) =>
@@ -525,10 +574,14 @@ export function TaskCreationPanel({
                           </option>
                         ))}
                       </select>
-                    </Form.Field>
+                    </label>
 
-                    <Form.Field as="label" className={styles.field}>
-                      <Form.FieldLabel>{labels.budget}</Form.FieldLabel>
+                    <label
+                      className={`${formStyles.field} ${styles.field}`.trim()}
+                    >
+                      <span className={formStyles.fieldLabel}>
+                        {labels.budget}
+                      </span>
                       <div className={styles.budgetInput}>
                         <span className={styles.currencyPrefix}>$</span>
                         <input
@@ -542,17 +595,27 @@ export function TaskCreationPanel({
                           placeholder={labels.budgetPlaceholder}
                         />
                       </div>
-                    </Form.Field>
-                  </Form.FieldRow>
-                </Form.Section>
+                    </label>
+                  </div>
+                </section>
 
-                <Form.Section aria-labelledby="create-task-attachments">
-                  <Form.SectionTitle id="create-task-attachments">
+                <section
+                  className={formStyles.section}
+                  aria-labelledby="create-task-attachments"
+                >
+                  <h3
+                    id="create-task-attachments"
+                    className={formStyles.sectionTitle}
+                  >
                     {labels.sectionAttachments}
-                  </Form.SectionTitle>
-                  <Form.SectionGrid>
-                    <Form.Field className={styles.field}>
-                      <Form.FieldLabel>{labels.attachments}</Form.FieldLabel>
+                  </h3>
+                  <div className={formStyles.sectionGrid}>
+                    <div
+                      className={`${formStyles.field} ${styles.field}`.trim()}
+                    >
+                      <span className={formStyles.fieldLabel}>
+                        {labels.attachments}
+                      </span>
                       <div className={styles.attachmentsArea}>
                         {form.attachments.length > 0 && (
                           <ul className={styles.attachmentList}>
@@ -603,7 +666,7 @@ export function TaskCreationPanel({
                           </p>
                         )}
                       </div>
-                    </Form.Field>
+                    </div>
 
                     <label className={styles.checkboxField}>
                       <input
@@ -618,21 +681,29 @@ export function TaskCreationPanel({
                       />
                       <span>{labels.requiresResultReview}</span>
                     </label>
-                  </Form.SectionGrid>
-                </Form.Section>
+                  </div>
+                </section>
               </Form.Body>
 
               <Form.Footer>
-                <Form.PrimaryBtn type="submit" disabled={!canSubmit}>
+                <Form.Button
+                  type="submit"
+                  disabled={!canSubmit}
+                  onSubmit={handleSubmit}
+                >
                   {isEditMode ? (labels.save ?? labels.create) : labels.create}
-                </Form.PrimaryBtn>
-                <Form.SecondaryBtn>{labels.cancel}</Form.SecondaryBtn>
+                </Form.Button>
+                <Form.Button
+                  type="button"
+                  cancel
+                >
+                  {labels.cancel}
+                </Form.Button>
               </Form.Footer>
-            </Form.Wrapper>
-          </Form>
-        </aside>
-      </div>
-    </>,
-    document.body,
+            </div>
+        </TaskCreationPanelShell>,
+        document.body,
+      )}
+    </Form>
   );
 }

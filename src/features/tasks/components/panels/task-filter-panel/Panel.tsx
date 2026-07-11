@@ -1,12 +1,7 @@
-import { useCallback, useMemo, useRef, useState } from "react";
-import {
-  Form,
-  type FormDismissHandlers,
-} from "../../../../../components/ui/form/Form";
-import {
-  Panel,
-  PanelDismissContext,
-} from "../../../../../components/ui/panel/Panel";
+import { useCallback, useMemo, useState } from "react";
+import { Form } from "../../../../../components/ui/form/Form";
+import formStyles from "../../../../../components/ui/form/Form.module.scss";
+import { Panel } from "../../../../../components/ui/panel/Panel";
 import { useTranslation } from "../../../../../i18n";
 import Dialog from "../../../../user-profile/components/dialogs/Dialog";
 import type {
@@ -65,19 +60,10 @@ export function TaskFilterPanel({
   const { t } = useTranslation();
   const [collectionDialogOpen, setCollectionDialogOpen] = useState(false);
   const [collectionName, setCollectionName] = useState("");
-  const dismissHandlersRef = useRef<FormDismissHandlers | null>(null);
 
   const dirty = !areDrawerFiltersEqual(filters, appliedFilters);
 
-  const handleDismiss = useCallback(() => {
-    if (
-      collectionDialogOpen ||
-      dismissHandlersRef.current?.confirmOpen
-    ) {
-      return false;
-    }
-    dismissHandlersRef.current?.requestClose();
-  }, [collectionDialogOpen]);
+  const getIsDirty = useCallback(() => dirty, [dirty]);
 
   const update = (partial: Partial<TaskFilters>) => {
     onChange({ ...filters, ...partial });
@@ -141,34 +127,27 @@ export function TaskFilterPanel({
   };
 
   return (
-    <PanelDismissContext.Provider value={handleDismiss}>
-      <Panel open={open} unSaveConfirmation={dirty}>
+    <Form
+      isDirty={getIsDirty}
+      unsavedConfirmation="dashboard"
+      onClose={onClose}
+      resetKey={open}
+    >
+      <Form.PanelDismiss
+        beforeDismiss={() => (collectionDialogOpen ? false : undefined)}
+      >
+        <Panel open={open} unSaveConfirmation={dirty}>
         <Panel.Header>
           <Panel.Title>{t.tasks.filters}</Panel.Title>
         </Panel.Header>
         <Panel.Content>
-          <Form
-            dirty={dirty}
-            unsaveConfirmDialog
-            unsavedConfirmation={{
-              title: t.tasks.dashboard.unsavedTitle,
-              message: t.tasks.dashboard.unsavedMessage,
-              confirmLabel: t.tasks.dashboard.unsavedYes,
-              cancelLabel: t.tasks.dashboard.unsavedNo,
-            }}
-            onClose={onClose}
-            resetKey={open}
-            onDismissHandlersChange={(handlers) => {
-              dismissHandlersRef.current = handlers;
-            }}
-          >
-            <Form.Wrapper>
-              <Form.Body as="div">
-                <Form.Section>
-                  <Form.SectionTitle>
+          <div className={formStyles.wrapper}>
+            <Form.Body as="div">
+                <section className={formStyles.section}>
+                  <h3 className={formStyles.sectionTitle}>
                     {t.tasks.filterSections.people}
-                  </Form.SectionTitle>
-                  <Form.SectionGrid>
+                  </h3>
+                  <div className={formStyles.sectionGrid}>
                     <FilterSearchMultiSelect
                       label={t.tasks.groups}
                       options={groupOptions}
@@ -205,14 +184,14 @@ export function TaskFilterPanel({
                       searchPlaceholder={t.tasks.searchOptions}
                       noResultsLabel={t.tasks.noOptionsFound}
                     />
-                  </Form.SectionGrid>
-                </Form.Section>
+                  </div>
+                </section>
 
-                <Form.Section>
-                  <Form.SectionTitle>
+                <section className={formStyles.section}>
+                  <h3 className={formStyles.sectionTitle}>
                     {t.tasks.filterSections.taskState}
-                  </Form.SectionTitle>
-                  <Form.SectionGrid>
+                  </h3>
+                  <div className={formStyles.sectionGrid}>
                     <FilterSearchMultiSelect
                       label={t.tasks.status}
                       options={statusOptions}
@@ -235,51 +214,54 @@ export function TaskFilterPanel({
                       searchPlaceholder={t.tasks.searchOptions}
                       noResultsLabel={t.tasks.noOptionsFound}
                     />
-                  </Form.SectionGrid>
-                </Form.Section>
+                  </div>
+                </section>
 
-                <Form.Section>
-                  <Form.SectionTitle>
+                <section className={formStyles.section}>
+                  <h3 className={formStyles.sectionTitle}>
                     {t.tasks.filterSections.dueDate}
-                  </Form.SectionTitle>
-                  <Form.FieldRow>
-                    <Form.Field as="label">
-                      <Form.FieldLabel variant="filter">
+                  </h3>
+                  <div className={formStyles.fieldRow}>
+                    <label className={formStyles.field}>
+                      <span className={formStyles.fieldLabelFilter}>
                         {t.tasks.dueDateFrom}
-                      </Form.FieldLabel>
-                      <Form.FieldInput
+                      </span>
+                      <input
+                        className={formStyles.fieldInput}
                         type="date"
                         value={filters.dueDateFrom}
                         onChange={(event) =>
                           update({ dueDateFrom: event.target.value })
                         }
                       />
-                    </Form.Field>
-                    <Form.Field as="label">
-                      <Form.FieldLabel variant="filter">
+                    </label>
+                    <label className={formStyles.field}>
+                      <span className={formStyles.fieldLabelFilter}>
                         {t.tasks.dueDateTo}
-                      </Form.FieldLabel>
-                      <Form.FieldInput
+                      </span>
+                      <input
+                        className={formStyles.fieldInput}
                         type="date"
                         value={filters.dueDateTo}
                         onChange={(event) =>
                           update({ dueDateTo: event.target.value })
                         }
                       />
-                    </Form.Field>
-                  </Form.FieldRow>
-                </Form.Section>
+                    </label>
+                  </div>
+                </section>
 
-                <Form.Section>
-                  <Form.SectionTitle>
+                <section className={formStyles.section}>
+                  <h3 className={formStyles.sectionTitle}>
                     {t.tasks.filterSections.budget}
-                  </Form.SectionTitle>
-                  <Form.FieldRow>
-                    <Form.Field as="label">
-                      <Form.FieldLabel variant="filter">
+                  </h3>
+                  <div className={formStyles.fieldRow}>
+                    <label className={formStyles.field}>
+                      <span className={formStyles.fieldLabelFilter}>
                         {t.tasks.budgetMin}
-                      </Form.FieldLabel>
-                      <Form.FieldInput
+                      </span>
+                      <input
+                        className={formStyles.fieldInput}
                         type="number"
                         min={0}
                         value={filters.budgetMin}
@@ -288,12 +270,13 @@ export function TaskFilterPanel({
                         }
                         placeholder="0"
                       />
-                    </Form.Field>
-                    <Form.Field as="label">
-                      <Form.FieldLabel variant="filter">
+                    </label>
+                    <label className={formStyles.field}>
+                      <span className={formStyles.fieldLabelFilter}>
                         {t.tasks.budgetMax}
-                      </Form.FieldLabel>
-                      <Form.FieldInput
+                      </span>
+                      <input
+                        className={formStyles.fieldInput}
                         type="number"
                         min={0}
                         value={filters.budgetMax}
@@ -302,20 +285,21 @@ export function TaskFilterPanel({
                         }
                         placeholder="10000"
                       />
-                    </Form.Field>
-                  </Form.FieldRow>
-                </Form.Section>
+                    </label>
+                  </div>
+                </section>
 
-                <Form.Section>
-                  <Form.SectionTitle>
+                <section className={formStyles.section}>
+                  <h3 className={formStyles.sectionTitle}>
                     {t.tasks.filterSections.time}
-                  </Form.SectionTitle>
-                  <Form.FieldRow>
-                    <Form.Field as="label">
-                      <Form.FieldLabel variant="filter">
+                  </h3>
+                  <div className={formStyles.fieldRow}>
+                    <label className={formStyles.field}>
+                      <span className={formStyles.fieldLabelFilter}>
                         {t.tasks.timeMin}
-                      </Form.FieldLabel>
-                      <Form.FieldInput
+                      </span>
+                      <input
+                        className={formStyles.fieldInput}
                         type="number"
                         min={0}
                         value={filters.timeMin}
@@ -324,12 +308,13 @@ export function TaskFilterPanel({
                         }
                         placeholder="0"
                       />
-                    </Form.Field>
-                    <Form.Field as="label">
-                      <Form.FieldLabel variant="filter">
+                    </label>
+                    <label className={formStyles.field}>
+                      <span className={formStyles.fieldLabelFilter}>
                         {t.tasks.timeMax}
-                      </Form.FieldLabel>
-                      <Form.FieldInput
+                      </span>
+                      <input
+                        className={formStyles.fieldInput}
                         type="number"
                         min={0}
                         value={filters.timeMax}
@@ -338,33 +323,33 @@ export function TaskFilterPanel({
                         }
                         placeholder="480"
                       />
-                    </Form.Field>
-                  </Form.FieldRow>
-                </Form.Section>
+                    </label>
+                  </div>
+                </section>
               </Form.Body>
 
               {showActions && (
                 <Form.Footer>
-                  <Form.PrimaryBtn
+                  <Form.Button
                     type="button"
                     onClick={onApply}
                     disabled={!canApply}
                   >
                     {t.tasks.applyFilters}
-                  </Form.PrimaryBtn>
-                  <Form.GhostBtn
+                  </Form.Button>
+                  <Form.Button
                     type="button"
+                    variant="ghost"
                     onClick={() => setCollectionDialogOpen(true)}
                   >
                     {t.tasks.saveCollection}
-                  </Form.GhostBtn>
-                  <Form.SecondaryBtn type="button" onClick={onReset}>
+                  </Form.Button>
+                  <Form.Button type="button" onClick={onReset}>
                     {t.tasks.resetFilters}
-                  </Form.SecondaryBtn>
+                  </Form.Button>
                 </Form.Footer>
               )}
-            </Form.Wrapper>
-          </Form>
+            </div>
 
           <Dialog
             open={collectionDialogOpen}
@@ -412,6 +397,7 @@ export function TaskFilterPanel({
           </Dialog>
         </Panel.Content>
       </Panel>
-    </PanelDismissContext.Provider>
+      </Form.PanelDismiss>
+    </Form>
   );
 }

@@ -1,30 +1,22 @@
 import {
   useCallback,
   useEffect,
-  useRef,
   useState,
   type FormEvent,
 } from "react";
 
 import styles from "./AddBudgetExpenseDialog.module.scss";
 
-import {
-  Form,
-  type FormDismissHandlers,
-} from "../../../../../components/ui/form/Form";
+import { Form } from "../../../../../components/ui/form/Form";
+import formStyles from "../../../../../components/ui/form/Form.module.scss";
 
-import {
-  Panel,
-  PanelDismissContext,
-} from "../../../../../components/ui/panel/Panel";
+import { Panel } from "../../../../../components/ui/panel/Panel";
 
 import { useTranslation } from "../../../../../i18n";
 
 type AddBudgetExpensePanelProps = {
   open: boolean;
-
   onClose: () => void;
-
   onSubmit: (input: { amount: number; description: string }) => void;
 };
 
@@ -34,18 +26,13 @@ function isDirty(amount: string, description: string): boolean {
 
 export function AddBudgetExpensePanel({
   open,
-
   onClose,
-
   onSubmit,
 }: AddBudgetExpensePanelProps) {
   const [form, setForm] = useState<{ amount: string; description: string }>({
     amount: "",
-
     description: "",
   });
-
-  const dismissHandlersRef = useRef<FormDismissHandlers | null>(null);
 
   const { t } = useTranslation();
 
@@ -57,8 +44,6 @@ export function AddBudgetExpensePanel({
 
   const parsedAmount = Number(form.amount.replace(/[^\d.]/g, "")) || 0;
 
-  const dirty = isDirty(form.amount, form.description);
-
   const canSubmit = parsedAmount > 0 && form.description.trim().length > 0;
 
   const handleClose = useCallback(() => {
@@ -67,11 +52,10 @@ export function AddBudgetExpensePanel({
     onClose();
   }, [onClose]);
 
-  const handleDismiss = useCallback(() => {
-    if (dismissHandlersRef.current?.confirmOpen) return false;
-
-    dismissHandlersRef.current?.requestClose();
-  }, []);
+  const getIsDirty = useCallback(
+    () => isDirty(form.amount, form.description),
+    [form.amount, form.description],
+  );
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -87,39 +71,29 @@ export function AddBudgetExpensePanel({
   };
 
   return (
-    <PanelDismissContext.Provider value={handleDismiss}>
-      <Panel open={open} unSaveConfirmation={dirty}>
-        <Panel.Header>
-          <Panel.Title>{t.tasks.details.budgetExpenseDialogTitle}</Panel.Title>
-
-          <Panel.Desciption>
-            {t.tasks.details.budgetExpenseDialogSubtitle}
-          </Panel.Desciption>
-        </Panel.Header>
-
-        <Panel.Content>
-          <Form
-            dirty={dirty}
-            unsaveConfirmDialog
-            unsavedConfirmation
-            onClose={handleClose}
-            resetKey={open}
-            onDismissHandlersChange={(handlers) => {
-              dismissHandlersRef.current = handlers;
-            }}
-          >
-            <Form.Wrapper>
-              <Form.Body
-                id="budget-expense-form"
-                contentGap="compact"
-                onSubmit={handleSubmit}
-              >
-                <Form.Field as="label">
-                  <Form.FieldLabel>
+    <Form
+      isDirty={getIsDirty}
+      unsavedConfirmation
+      onClose={handleClose}
+      resetKey={open}
+    >
+      <Form.PanelDismiss>
+        <Panel open={open} unSaveConfirmation={getIsDirty()}>
+          <Panel.Header>
+            <Panel.Title>{t.tasks.details.budgetExpenseDialogTitle}</Panel.Title>
+            <Panel.Desciption>
+              {t.tasks.details.budgetExpenseDialogSubtitle}
+            </Panel.Desciption>
+          </Panel.Header>
+          <Panel.Content>
+            <div className={formStyles.wrapper}>
+              <Form.Body id="budget-expense-form" contentGap="compact">
+                <label className={formStyles.field}>
+                  <span className={formStyles.fieldLabel}>
                     {t.tasks.details.budgetExpenseAmount}
 
                     <em>{t.tasks.dashboard.required}</em>
-                  </Form.FieldLabel>
+                  </span>
 
                   <div className={styles.budgetInput}>
                     <span className={styles.currencyPrefix} aria-hidden>
@@ -140,14 +114,14 @@ export function AddBudgetExpensePanel({
                       placeholder={t.tasks.dashboard.maxBudgetPlaceholder}
                     />
                   </div>
-                </Form.Field>
+                </label>
 
-                <Form.Field as="label">
-                  <Form.FieldLabel>
+                <label className={formStyles.field}>
+                  <span className={formStyles.fieldLabel}>
                     {t.tasks.details.budgetExpenseDescription}
 
                     <em>{t.tasks.dashboard.required}</em>
-                  </Form.FieldLabel>
+                  </span>
 
                   <textarea
                     className={styles.textarea}
@@ -164,20 +138,26 @@ export function AddBudgetExpensePanel({
                     }
                     rows={4}
                   />
-                </Form.Field>
+                </label>
               </Form.Body>
 
               <Form.Footer>
-                <Form.PrimaryBtn type="submit" disabled={!canSubmit}>
+                <Form.Button
+                  type="submit"
+                  disabled={!canSubmit}
+                  onSubmit={handleSubmit}
+                >
                   {t.tasks.details.budgetExpenseApply}
-                </Form.PrimaryBtn>
+                </Form.Button>
 
-                <Form.SecondaryBtn>{t.common.cancel}</Form.SecondaryBtn>
+                <Form.Button type="button" cancel>
+                  {t.common.cancel}
+                </Form.Button>
               </Form.Footer>
-            </Form.Wrapper>
-          </Form>
-        </Panel.Content>
-      </Panel>
-    </PanelDismissContext.Provider>
+            </div>
+          </Panel.Content>
+        </Panel>
+      </Form.PanelDismiss>
+    </Form>
   );
 }

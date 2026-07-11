@@ -19,7 +19,6 @@ import { TaskDetailsActionBar } from "../../action-bar/TaskDetailsActionBar.tsx"
 import { TaskDetailsMetricsTab } from "../../tabs/task-details/metrics/TaskDetailsMetricsTab.tsx";
 import { useTaskListState } from "../../../hooks/useTaskListState.ts";
 import { TaskCreationPanel } from "../../panels/task-creation-panel/Panel.tsx";
-import { CompleteTaskDialog } from "../../dialogs/CompleteTaskDialog.tsx";
 import { ManualTimeEntryDialog } from "../../dialogs/ManualTimeEntryDialog.tsx";
 import {
   FiFileText,
@@ -34,6 +33,7 @@ import { TaskDetailsTransactionsTab } from "../../tabs/task-details/transactions
 import { TaskDetailsTabPlaceholder } from "../../placeholders/TaskDetailsTabPlaceholder.tsx";
 import { isUserTaskResponsible } from "../../../utils/taskDetailsUtils.ts";
 import { AddBudgetExpensePanel } from "../../panels/add-budget-expenses-panel/AddBudgetExpenseDialog.tsx";
+import { CompleteTaskDialog } from "../../panels/task-complete-panel/CompleteTaskDialog.tsx";
 
 interface TaskDetailsTabulatorProps {
   task: Task;
@@ -411,10 +411,6 @@ export default function TaskDetailsTabulator({
           searchOptions: taskLabels.searchOptions,
           noOptionsFound: taskLabels.noOptionsFound,
           selectPlaceholder: taskLabels.selectPlaceholder,
-          unsavedTitle: dashboardLabels.unsavedTitle,
-          unsavedMessage: dashboardLabels.unsavedMessage,
-          unsavedYes: dashboardLabels.unsavedYes,
-          unsavedNo: dashboardLabels.unsavedNo,
           sectionTaskDetails: dashboardLabels.sections.taskDetails,
           sectionPeople: dashboardLabels.sections.people,
           sectionSchedule: dashboardLabels.sections.schedule,
@@ -442,10 +438,6 @@ export default function TaskDetailsTabulator({
           removeStep: dashboardLabels.removeStep,
           apply: detailLabels.completeApply,
           cancel: t.common.cancel,
-          unsavedTitle: detailLabels.completeUnsavedTitle,
-          unsavedMessage: detailLabels.completeUnsavedMessage,
-          unsavedYes: detailLabels.completeUnsavedYes,
-          unsavedNo: detailLabels.completeUnsavedNo,
         }}
       />
 

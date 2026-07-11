@@ -5,7 +5,6 @@ import { BiAbacus, BiTable } from "react-icons/bi";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
 
-import { CompleteTaskDialog } from "../../components/dialogs/CompleteTaskDialog";
 import { FilterButton } from "../../components/buttons/filter/Button";
 import { TaskCreationButton } from "../../components/buttons/create/Button";
 import { ViewSwitcher } from "../../../../components/ui/view-switcher/ViewSwitcher";
@@ -28,6 +27,7 @@ import styles from "./TasksPage.module.scss";
 import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
 import { SearchBar } from "../../../../components/ui/search-bar/SearchBar";
 import { AddBudgetExpensePanel } from "../../components/panels/add-budget-expenses-panel/AddBudgetExpenseDialog";
+import { CompleteTaskDialog } from "../../components/panels/task-complete-panel/CompleteTaskDialog";
 
 export function TaskListPage() {
   const { t } = useTranslation();
@@ -259,10 +259,6 @@ export function TaskListPage() {
             removeStep: t.tasks.dashboard.removeStep,
             apply: t.tasks.details.completeApply,
             cancel: t.common.cancel,
-            unsavedTitle: t.tasks.details.completeUnsavedTitle,
-            unsavedMessage: t.tasks.details.completeUnsavedMessage,
-            unsavedYes: t.tasks.details.completeUnsavedYes,
-            unsavedNo: t.tasks.details.completeUnsavedNo,
           }}
         />
 

@@ -3,15 +3,19 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ButtonHTMLAttributes,
   type FC,
   type FormEvent,
-  type HTMLAttributes,
+  type MouseEvent,
   type PropsWithChildren,
+  type ReactNode,
 } from "react";
 
 import { ConfirmDialog } from "../../../features/user-profile/components/dialogs/Dialog";
+import { PanelDismissContext } from "../panel/Panel";
+import buttonStyles from "../button/Button.module.scss";
 import styles from "./Form.module.scss";
 import { useTranslation } from "../../../i18n";
 
@@ -20,11 +24,21 @@ export type FormDismissHandlers = {
   confirmOpen: boolean;
 };
 
+export type FormUnsavedConfirmationVariant =
+  | "budgetExpense"
+  | "completeTask"
+  | "dashboard"
+  | "taskCreation";
+
 type FormContextValue = {
+  formId?: string;
+  registerFormId: (formId?: string) => void;
+  registerSubmitHandler: (
+    handler?: (event: FormEvent<HTMLFormElement>) => void,
+  ) => void;
+  handleFormSubmit: (event: FormEvent<HTMLFormElement>) => void;
   requestClose: () => void;
   confirmOpen: boolean;
-  registerFormId: (formId?: string) => void;
-  formId?: string;
 };
 
 const FormContext = createContext<FormContextValue | null>(null);
@@ -37,12 +51,15 @@ function useFormContext() {
   return context;
 }
 
+export function useFormDismiss(): FormDismissHandlers {
+  const { requestClose, confirmOpen } = useFormContext();
+  return { requestClose, confirmOpen };
+}
+
 type FormRootProps = PropsWithChildren<{
-  dirty?: boolean;
-  unsaveConfirmDialog?: boolean;
-  unsavedConfirmation?: boolean;
+  isDirty?: () => boolean;
+  unsavedConfirmation?: boolean | FormUnsavedConfirmationVariant;
   onClose: () => void;
-  onDismissHandlersChange?: (handlers: FormDismissHandlers) => void;
   resetKey?: unknown;
 }>;
 
@@ -51,111 +68,162 @@ type FormBodyProps = PropsWithChildren<{
   id?: string;
   className?: string;
   contentGap?: "default" | "compact";
+}>;
+
+type FormPanelDismissProps = PropsWithChildren<{
+  beforeDismiss?: () => void | false;
+}>;
+
+export type FormButtonProps = {
+  children: ReactNode;
+  type?: "submit" | "button";
+  variant?: "primary" | "secondary" | "ghost";
+  disabled?: boolean;
+  cancel?: boolean;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   onSubmit?: (event: FormEvent<HTMLFormElement>) => void;
-}>;
-
-type FormFieldLabelProps = PropsWithChildren<{
-  variant?: "default" | "filter";
-  className?: string;
-}>;
-
-type FormButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   form?: string;
-};
-
-type FormFieldProps = PropsWithChildren<{
-  as?: "div" | "label";
   className?: string;
-}>;
+} & Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "type" | "disabled" | "onClick" | "children" | "form"
+>;
 
 interface FormComponent extends FC<FormRootProps> {
-  Wrapper: FC<PropsWithChildren<{ className?: string }>>;
   Body: FC<FormBodyProps>;
-  Section: FC<
-    PropsWithChildren<HTMLAttributes<HTMLElement> & { className?: string }>
-  >;
-  SectionTitle: FC<PropsWithChildren<{ className?: string; id?: string }>>;
-  SectionGrid: FC<PropsWithChildren<{ className?: string }>>;
-  FieldRow: FC<PropsWithChildren<{ className?: string }>>;
-  Field: FC<FormFieldProps>;
-  FieldLabel: FC<FormFieldLabelProps>;
-  FieldInput: FC<
-    React.InputHTMLAttributes<HTMLInputElement> & { className?: string }
-  >;
   Footer: FC<PropsWithChildren<{ className?: string }>>;
-  PrimaryBtn: FC<FormButtonProps>;
-  SecondaryBtn: FC<FormButtonProps>;
-  GhostBtn: FC<FormButtonProps>;
+  Button: FC<FormButtonProps>;
+  PanelDismiss: FC<FormPanelDismissProps>;
 }
 
 export const Form: FormComponent = ({
   children,
-  dirty = false,
-  unsaveConfirmDialog = false,
+  isDirty,
   unsavedConfirmation,
   onClose,
-  onDismissHandlersChange,
   resetKey,
 }) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [formId, setFormId] = useState<string | undefined>();
+  const submitHandlerRef = useRef<
+    ((event: FormEvent<HTMLFormElement>) => void) | undefined
+  >(undefined);
   const { t } = useTranslation();
+
+  const dirty = isDirty?.() ?? false;
+  const hasUnsavedConfirmation = Boolean(unsavedConfirmation);
 
   const registerFormId = useCallback((nextFormId?: string) => {
     setFormId(nextFormId);
   }, []);
 
+  const registerSubmitHandler = useCallback(
+    (handler?: (event: FormEvent<HTMLFormElement>) => void) => {
+      submitHandlerRef.current = handler;
+    },
+    [],
+  );
+
+  const handleFormSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    submitHandlerRef.current?.(event);
+  }, []);
+
   useEffect(() => {
     setConfirmOpen(false);
+    setFormId(undefined);
+    submitHandlerRef.current = undefined;
   }, [resetKey]);
 
   const requestClose = useCallback(() => {
-    if (unsaveConfirmDialog && dirty) {
+    if (hasUnsavedConfirmation && dirty) {
       setConfirmOpen(true);
       return;
     }
     setConfirmOpen(false);
     onClose();
-  }, [unsaveConfirmDialog, dirty, onClose]);
+  }, [hasUnsavedConfirmation, dirty, onClose]);
 
   const handleConfirmDiscard = useCallback(() => {
     setConfirmOpen(false);
     onClose();
   }, [onClose]);
 
-  useEffect(() => {
-    onDismissHandlersChange?.({ requestClose, confirmOpen });
-  }, [onDismissHandlersChange, requestClose, confirmOpen]);
+  const unsavedVariant: FormUnsavedConfirmationVariant =
+    typeof unsavedConfirmation === "string"
+      ? unsavedConfirmation
+      : "budgetExpense";
 
-  const contextValue: FormContextValue = {
-    requestClose,
-    confirmOpen,
-    registerFormId,
-    formId,
-  };
+  const unsavedLabels = {
+    budgetExpense: {
+      title: t.tasks.details.budgetExpenseUnsavedTitle,
+      message: t.tasks.details.budgetExpenseUnsavedMessage,
+      confirmLabel: t.tasks.details.budgetExpenseUnsavedYes,
+      cancelLabel: t.tasks.details.budgetExpenseUnsavedNo,
+    },
+    completeTask: {
+      title: t.tasks.details.completeUnsavedTitle,
+      message: t.tasks.details.completeUnsavedMessage,
+      confirmLabel: t.tasks.details.completeUnsavedYes,
+      cancelLabel: t.tasks.details.completeUnsavedNo,
+    },
+    dashboard: {
+      title: t.tasks.dashboard.unsavedTitle,
+      message: t.tasks.dashboard.unsavedMessage,
+      confirmLabel: t.tasks.dashboard.unsavedYes,
+      cancelLabel: t.tasks.dashboard.unsavedNo,
+    },
+    taskCreation: {
+      title: t.tasks.dashboard.unsavedTitle,
+      message: t.tasks.dashboard.unsavedMessage,
+      confirmLabel: t.tasks.dashboard.unsavedYes,
+      cancelLabel: t.tasks.dashboard.unsavedNo,
+    },
+  }[unsavedVariant];
 
   return (
-    <FormContext.Provider value={contextValue}>
+    <FormContext.Provider
+      value={{
+        formId,
+        registerFormId,
+        registerSubmitHandler,
+        handleFormSubmit,
+        requestClose,
+        confirmOpen,
+      }}
+    >
       {children}
 
-      {unsaveConfirmDialog && unsavedConfirmation ? (
+      {hasUnsavedConfirmation ? (
         <ConfirmDialog
           open={confirmOpen}
           onClose={() => setConfirmOpen(false)}
           onConfirm={handleConfirmDiscard}
-          title={t.tasks.details.budgetExpenseUnsavedTitle}
-          message={t.tasks.details.budgetExpenseUnsavedMessage}
-          confirmLabel={t.tasks.details.budgetExpenseUnsavedYes}
-          cancelLabel={t.tasks.details.budgetExpenseUnsavedNo}
+          title={unsavedLabels.title}
+          message={unsavedLabels.message}
+          confirmLabel={unsavedLabels.confirmLabel}
+          cancelLabel={unsavedLabels.cancelLabel}
         />
       ) : null}
     </FormContext.Provider>
   );
 };
 
-Form.Wrapper = ({ children, className = "" }) => (
-  <div className={`${styles.wrapper} ${className}`.trim()}>{children}</div>
-);
+Form.PanelDismiss = ({ children, beforeDismiss }) => {
+  const { requestClose, confirmOpen } = useFormContext();
+
+  const handleDismiss = useCallback(() => {
+    if (confirmOpen) return false;
+    if (beforeDismiss?.() === false) return false;
+    requestClose();
+  }, [beforeDismiss, confirmOpen, requestClose]);
+
+  return (
+    <PanelDismissContext.Provider value={handleDismiss}>
+      {children}
+    </PanelDismissContext.Provider>
+  );
+};
 
 Form.Body = ({
   children,
@@ -163,9 +231,8 @@ Form.Body = ({
   id,
   className = "",
   contentGap = "default",
-  onSubmit,
 }) => {
-  const { registerFormId, formId } = useFormContext();
+  const { registerFormId, handleFormSubmit } = useFormContext();
   const gapClass =
     contentGap === "compact"
       ? styles.contentGapCompact
@@ -183,115 +250,86 @@ Form.Body = ({
   }
 
   return (
-    <form id={id ?? formId} className={bodyClassName} onSubmit={onSubmit}>
+    <form id={id} className={bodyClassName} onSubmit={handleFormSubmit}>
       {children}
     </form>
   );
 };
 
-Form.Section = ({ children, className = "", ...props }) => (
-  <section className={`${styles.section} ${className}`.trim()} {...props}>
-    {children}
-  </section>
-);
-
-Form.SectionTitle = ({ children, className = "", id }) => (
-  <h3 id={id} className={`${styles.sectionTitle} ${className}`.trim()}>
-    {children}
-  </h3>
-);
-
-Form.SectionGrid = ({ children, className = "" }) => (
-  <div className={`${styles.sectionGrid} ${className}`.trim()}>{children}</div>
-);
-
-Form.FieldRow = ({ children, className = "" }) => (
-  <div className={`${styles.fieldRow} ${className}`.trim()}>{children}</div>
-);
-
-Form.Field = ({ children, as = "div", className = "" }) => {
-  const Tag = as;
-
-  return (
-    <Tag className={`${styles.field} ${className}`.trim()}>{children}</Tag>
-  );
-};
-
-Form.FieldLabel = ({ children, variant = "default", className = "" }) => (
-  <span
-    className={`${
-      variant === "filter" ? styles.fieldLabelFilter : styles.fieldLabel
-    } ${className}`.trim()}
-  >
-    {children}
-  </span>
-);
-
-Form.FieldInput = ({ className = "", ...props }) => (
-  <input className={`${styles.fieldInput} ${className}`.trim()} {...props} />
-);
-
 Form.Footer = ({ children, className = "" }) => (
   <footer className={`${styles.footer} ${className}`.trim()}>{children}</footer>
 );
 
-Form.PrimaryBtn = ({
+const variantClassName = {
+  primary: "",
+  secondary: buttonStyles.secondary,
+  ghost: buttonStyles.ghost,
+} as const;
+
+Form.Button = ({
   children,
-  className = "",
   type = "button",
+  variant = "primary",
+  disabled = false,
+  cancel = false,
+  onClick,
+  onSubmit,
   form,
-  onClick,
+  className = "",
   ...props
 }) => {
-  const { formId } = useFormContext();
+  const { formId, registerSubmitHandler, requestClose } = useFormContext();
+
+  useEffect(() => {
+    if (!onSubmit) return;
+    registerSubmitHandler(onSubmit);
+    return () => registerSubmitHandler(undefined);
+  }, [onSubmit, registerSubmitHandler]);
+
+  const getFormElement = () => {
+    const targetFormId = form ?? formId;
+    if (!targetFormId) return null;
+
+    const element = document.getElementById(targetFormId);
+    return element instanceof HTMLFormElement ? element : null;
+  };
+
+  const runSubmit = (event: MouseEvent<HTMLButtonElement>) => {
+    if (!onSubmit) return;
+
+    const formElement = getFormElement();
+    if (formElement && !formElement.reportValidity()) return;
+
+    onSubmit(event as unknown as FormEvent<HTMLFormElement>);
+  };
+
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    if (cancel) {
+      event.preventDefault();
+      requestClose();
+      return;
+    }
+
+    if (type === "button" && onSubmit) {
+      event.preventDefault();
+      runSubmit(event);
+    }
+
+    onClick?.(event);
+  };
 
   return (
     <button
       type={type}
-      form={form ?? formId}
-      className={`${styles.primaryBtn} ${className}`.trim()}
-      onClick={onClick}
+      form={type === "submit" ? (form ?? formId) : form}
+      disabled={disabled}
+      onClick={handleClick}
+      className={`${buttonStyles.root} ${variantClassName[variant]} ${styles.footerButton} ${className}`.trim()}
       {...props}
     >
-      {children}
+      <span className={buttonStyles.copy}>
+        <strong>{children}</strong>
+      </span>
     </button>
   );
 };
-
-Form.SecondaryBtn = ({
-  children,
-  className = "",
-  type = "button",
-  onClick,
-  ...props
-}) => {
-  const { requestClose } = useFormContext();
-
-  return (
-    <button
-      type={type}
-      className={`${styles.secondaryBtn} ${className}`.trim()}
-      onClick={onClick ?? requestClose}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-};
-
-Form.GhostBtn = ({
-  children,
-  className = "",
-  type = "button",
-  onClick,
-  ...props
-}) => (
-  <button
-    type={type}
-    className={`${styles.ghostBtn} ${className}`.trim()}
-    onClick={onClick}
-    {...props}
-  >
-    {children}
-  </button>
-);
