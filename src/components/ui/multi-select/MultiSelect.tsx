@@ -1,23 +1,31 @@
-import { useEffect, useId, useRef, useState } from "react";
-import { FiChevronDown, FiSearch } from "react-icons/fi";
-import styles from "./FilterSearchMultiSelect.module.scss";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type MouseEvent,
+} from "react";
+import { FiChevronDown, FiSearch, FiX } from "react-icons/fi";
 
-export type FilterSelectOption = {
+import styles from "./MultiSelect.module.scss";
+
+export type MultiSelectOption = {
   value: string;
   label: string;
 };
 
-type FilterSearchMultiSelectProps = {
+type MultiSelectProps = {
   label: string;
-  options: FilterSelectOption[];
+  options: MultiSelectOption[];
   selected: string[];
   onChange: (selected: string[]) => void;
   placeholder?: string;
   searchPlaceholder?: string;
   noResultsLabel?: string;
+  clearLabel?: string;
 };
 
-export function FilterSearchMultiSelect({
+export function MultiSelect({
   label,
   options,
   selected,
@@ -25,7 +33,8 @@ export function FilterSearchMultiSelect({
   placeholder = "Select…",
   searchPlaceholder = "Search…",
   noResultsLabel = "No options found",
-}: FilterSearchMultiSelectProps) {
+  clearLabel = "Clear",
+}: MultiSelectProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -57,31 +66,64 @@ export function FilterSearchMultiSelect({
     );
   };
 
+  const handleClear = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    onChange([]);
+    setOpen(false);
+    setQuery("");
+  };
+
   const selectedLabels = options
     .filter((option) => selected.includes(option.value))
     .map((option) => option.label);
 
-  const triggerText = selected.length === 0 ? placeholder : selectedLabels.join(", ");
+  const triggerText =
+    selected.length === 0 ? placeholder : selectedLabels.join(", ");
+  const hasSelection = selected.length > 0;
 
   return (
     <div className={styles.root} ref={containerRef}>
       <span className={styles.label}>{label}</span>
-      <button
-        type="button"
-        className={styles.trigger}
-        onClick={() => setOpen((current) => !current)}
-        aria-expanded={open}
-        aria-haspopup="listbox"
-        aria-controls={listId}
+      <div
+        className={`${styles.control} ${open ? styles.controlOpen : ""}`.trim()}
       >
-        <span
-          className={`${styles.triggerText} ${selected.length > 0 ? styles.hasValue : ""}`}
+        <button
+          type="button"
+          className={styles.trigger}
+          onClick={() => setOpen((current) => !current)}
+          aria-expanded={open}
+          aria-haspopup="listbox"
+          aria-controls={listId}
         >
-          {triggerText}
-        </span>
-        {selected.length > 0 && <span className={styles.badge}>{selected.length}</span>}
-        <FiChevronDown size={16} aria-hidden />
-      </button>
+          <span
+            className={`${styles.triggerText} ${hasSelection ? styles.hasValue : ""}`}
+          >
+            {triggerText}
+          </span>
+          {hasSelection && (
+            <span className={styles.badge}>{selected.length}</span>
+          )}
+        </button>
+        {hasSelection && (
+          <button
+            type="button"
+            className={styles.clearBtn}
+            aria-label={clearLabel}
+            onClick={handleClear}
+          >
+            <FiX size={14} aria-hidden />
+          </button>
+        )}
+        <button
+          type="button"
+          className={styles.chevronBtn}
+          aria-label={open ? "Close options" : "Open options"}
+          aria-expanded={open}
+          onClick={() => setOpen((current) => !current)}
+        >
+          <FiChevronDown size={16} aria-hidden />
+        </button>
+      </div>
 
       {open && (
         <div className={styles.dropdown}>
@@ -96,12 +138,21 @@ export function FilterSearchMultiSelect({
               autoFocus
             />
           </div>
-          <ul className={styles.options} role="listbox" aria-multiselectable id={listId}>
+          <ul
+            className={styles.options}
+            role="listbox"
+            aria-multiselectable
+            id={listId}
+          >
             {filtered.length === 0 ? (
               <li className={styles.noResults}>{noResultsLabel}</li>
             ) : (
               filtered.map((option) => (
-                <li key={option.value} role="option" aria-selected={selected.includes(option.value)}>
+                <li
+                  key={option.value}
+                  role="option"
+                  aria-selected={selected.includes(option.value)}
+                >
                   <label className={styles.option}>
                     <input
                       type="checkbox"
@@ -118,4 +169,4 @@ export function FilterSearchMultiSelect({
       )}
     </div>
   );
-}
+};

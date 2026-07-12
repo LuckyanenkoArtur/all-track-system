@@ -7,15 +7,14 @@ import { useTranslation } from "../../../../../i18n";
 import Dialog from "../../../../user-profile/components/dialogs/Dialog";
 import type {
   TaskFilters,
-  TaskPriority,
   TaskStatus,
 } from "../../../domain/others";
 import type { TaskPriorityId } from "../../../domain/priority";
 import {
   areDrawerFiltersEqual,
-  hasDrawerFilters,
 } from "../../../utils/taskListUtils";
-import { FilterSearchMultiSelect } from "../../FilterSearchMultiSelect";
+import type { MultiSelectOption } from "../../../../../components/ui/multi-select/MultiSelect";
+import { MultiSelect } from "../../../../../components/ui/multi-select/MultiSelect";
 import styles from "./Panel.module.scss";
 
 type FilterOptions = {
@@ -46,6 +45,25 @@ const STATUS_OPTIONS: TaskStatus[] = [
 ];
 
 const PRIORITY_OPTIONS: TaskPriorityId[] = ["high", "medium", "low"];
+
+type PeopleFilterKey = "groups" | "initiators" | "responsible" | "observables";
+type TaskStateFilterKey = "statuses" | "priorities";
+type DateFilterKey = "dueDateFrom" | "dueDateTo";
+type BudgetFilterKey = "budgetMin" | "budgetMax";
+type TimeFilterKey = "timeMin" | "timeMax";
+
+type MultiSelectFieldConfig<Key extends string> = {
+  key: Key;
+  label: string;
+  options: MultiSelectOption[];
+};
+
+type RangeFieldConfig<Key extends string> = {
+  key: Key;
+  label: string;
+  type: "date" | "number";
+  placeholder?: string;
+};
 
 export function TaskFilterPanel({
   open,
@@ -114,10 +132,139 @@ export function TaskFilterPanel({
     [options.observables],
   );
 
-  const showActions =
-    hasDrawerFilters(filters) ||
-    !areDrawerFiltersEqual(filters, appliedFilters);
+  const multiSelectLabels = useMemo(
+    () => ({
+      placeholder: t.tasks.selectPlaceholder,
+      searchPlaceholder: t.tasks.searchOptions,
+      noResultsLabel: t.tasks.noOptionsFound,
+    }),
+    [t],
+  );
+
+  const peopleFilterFields = useMemo<MultiSelectFieldConfig<PeopleFilterKey>[]>(
+    () => [
+      { key: "groups", label: t.tasks.groups, options: groupOptions },
+      { key: "initiators", label: t.tasks.initiator, options: initiatorOptions },
+      {
+        key: "responsible",
+        label: t.tasks.responsible,
+        options: responsibleOptions,
+      },
+      {
+        key: "observables",
+        label: t.tasks.observables,
+        options: observableOptions,
+      },
+    ],
+    [
+      t,
+      groupOptions,
+      initiatorOptions,
+      responsibleOptions,
+      observableOptions,
+    ],
+  );
+
+  const taskStateFilterFields = useMemo<
+    MultiSelectFieldConfig<TaskStateFilterKey>[]
+  >(
+    () => [
+      { key: "statuses", label: t.tasks.status, options: statusOptions },
+      { key: "priorities", label: t.tasks.priority, options: priorityOptions },
+    ],
+    [t, statusOptions, priorityOptions],
+  );
+
+  const dueDateFields = useMemo<RangeFieldConfig<DateFilterKey>[]>(
+    () => [
+      { key: "dueDateFrom", label: t.tasks.dueDateFrom, type: "date" },
+      { key: "dueDateTo", label: t.tasks.dueDateTo, type: "date" },
+    ],
+    [t],
+  );
+
+  const budgetFields = useMemo<RangeFieldConfig<BudgetFilterKey>[]>(
+    () => [
+      {
+        key: "budgetMin",
+        label: t.tasks.budgetMin,
+        type: "number",
+        placeholder: "0",
+      },
+      {
+        key: "budgetMax",
+        label: t.tasks.budgetMax,
+        type: "number",
+        placeholder: "10000",
+      },
+    ],
+    [t],
+  );
+
+  const timeFields = useMemo<RangeFieldConfig<TimeFilterKey>[]>(
+    () => [
+      {
+        key: "timeMin",
+        label: t.tasks.timeMin,
+        type: "number",
+        placeholder: "0",
+      },
+      {
+        key: "timeMax",
+        label: t.tasks.timeMax,
+        type: "number",
+        placeholder: "480",
+      },
+    ],
+    [t],
+  );
+
+  const handleTaskStateChange = (
+    key: TaskStateFilterKey,
+    selected: string[],
+  ) => {
+    if (key === "statuses") {
+      update({ statuses: selected as TaskStatus[] });
+      return;
+    }
+
+    update({
+      priorities: selected.map((id) => ({
+        id: id as TaskPriorityId,
+        name:
+          priorityOptions.find((option) => option.value === id)?.label ?? id,
+      })),
+    });
+  };
+
+  const getTaskStateSelected = (key: TaskStateFilterKey): string[] => {
+    if (key === "statuses") return filters.statuses;
+    return filters.priorities.map((priority) => priority.id);
+  };
+
   const canApply = !areDrawerFiltersEqual(filters, appliedFilters);
+
+  const footerButtons = useMemo(
+    () => [
+      {
+        key: "apply",
+        label: t.tasks.applyFilters,
+        onClick: onApply,
+        disabled: !canApply,
+      },
+      {
+        key: "saveCollection",
+        label: t.tasks.saveCollection,
+        onClick: () => setCollectionDialogOpen(true),
+      },
+      {
+        key: "reset",
+        label: t.tasks.resetFilters,
+        onClick: onReset,
+      },
+    ],
+    [t, canApply, onApply, onReset],
+  );
 
   const handleSaveCollection = () => {
     const trimmed = collectionName.trim();
@@ -148,42 +295,16 @@ export function TaskFilterPanel({
                 <Section.Content>
                   <Section.Grid>
                     <Section.Column>
-                      <FilterSearchMultiSelect
-                        label={t.tasks.groups}
-                        options={groupOptions}
-                        selected={filters.groups}
-                        onChange={(groups) => update({ groups })}
-                        placeholder={t.tasks.selectPlaceholder}
-                        searchPlaceholder={t.tasks.searchOptions}
-                        noResultsLabel={t.tasks.noOptionsFound}
-                      />
-                      <FilterSearchMultiSelect
-                        label={t.tasks.initiator}
-                        options={initiatorOptions}
-                        selected={filters.initiators}
-                        onChange={(initiators) => update({ initiators })}
-                        placeholder={t.tasks.selectPlaceholder}
-                        searchPlaceholder={t.tasks.searchOptions}
-                        noResultsLabel={t.tasks.noOptionsFound}
-                      />
-                      <FilterSearchMultiSelect
-                        label={t.tasks.responsible}
-                        options={responsibleOptions}
-                        selected={filters.responsible}
-                        onChange={(responsible) => update({ responsible })}
-                        placeholder={t.tasks.selectPlaceholder}
-                        searchPlaceholder={t.tasks.searchOptions}
-                        noResultsLabel={t.tasks.noOptionsFound}
-                      />
-                      <FilterSearchMultiSelect
-                        label={t.tasks.observables}
-                        options={observableOptions}
-                        selected={filters.observables}
-                        onChange={(observables) => update({ observables })}
-                        placeholder={t.tasks.selectPlaceholder}
-                        searchPlaceholder={t.tasks.searchOptions}
-                        noResultsLabel={t.tasks.noOptionsFound}
-                      />
+                      {peopleFilterFields.map(({ key, label, options }) => (
+                        <MultiSelect
+                          key={key}
+                          label={label}
+                          options={options}
+                          selected={filters[key]}
+                          onChange={(selected) => update({ [key]: selected })}
+                          {...multiSelectLabels}
+                        />
+                      ))}
                     </Section.Column>
                   </Section.Grid>
                 </Section.Content>
@@ -196,28 +317,18 @@ export function TaskFilterPanel({
                 <Section.Content>
                   <Section.Grid>
                     <Section.Column>
-                      <FilterSearchMultiSelect
-                        label={t.tasks.status}
-                        options={statusOptions}
-                        selected={filters.statuses}
-                        onChange={(statuses) =>
-                          update({ statuses: statuses as TaskStatus[] })
-                        }
-                        placeholder={t.tasks.selectPlaceholder}
-                        searchPlaceholder={t.tasks.searchOptions}
-                        noResultsLabel={t.tasks.noOptionsFound}
-                      />
-                      <FilterSearchMultiSelect
-                        label={t.tasks.priority}
-                        options={priorityOptions}
-                        selected={filters.priorities}
-                        onChange={(priorities) =>
-                          update({ priorities: priorities as TaskPriority[] })
-                        }
-                        placeholder={t.tasks.selectPlaceholder}
-                        searchPlaceholder={t.tasks.searchOptions}
-                        noResultsLabel={t.tasks.noOptionsFound}
-                      />
+                      {taskStateFilterFields.map(({ key, label, options }) => (
+                        <MultiSelect
+                          key={key}
+                          label={label}
+                          options={options}
+                          selected={getTaskStateSelected(key)}
+                          onChange={(selected) =>
+                            handleTaskStateChange(key, selected)
+                          }
+                          {...multiSelectLabels}
+                        />
+                      ))}
                     </Section.Column>
                   </Section.Grid>
                 </Section.Content>
@@ -228,32 +339,21 @@ export function TaskFilterPanel({
                 <Section.Content>
                   <Section.Grid>
                     <Section.Row>
-                      <label className={formStyles.field}>
-                        <span className={formStyles.fieldLabelFilter}>
-                          {t.tasks.dueDateFrom}
-                        </span>
-                        <input
-                          className={formStyles.fieldInput}
-                          type="date"
-                          value={filters.dueDateFrom}
-                          onChange={(event) =>
-                            update({ dueDateFrom: event.target.value })
-                          }
-                        />
-                      </label>
-                      <label className={formStyles.field}>
-                        <span className={formStyles.fieldLabelFilter}>
-                          {t.tasks.dueDateTo}
-                        </span>
-                        <input
-                          className={formStyles.fieldInput}
-                          type="date"
-                          value={filters.dueDateTo}
-                          onChange={(event) =>
-                            update({ dueDateTo: event.target.value })
-                          }
-                        />
-                      </label>
+                      {dueDateFields.map(({ key, label, type }) => (
+                        <label key={key} className={formStyles.field}>
+                          <span className={formStyles.fieldLabelFilter}>
+                            {label}
+                          </span>
+                          <input
+                            className={formStyles.fieldInput}
+                            type={type}
+                            value={filters[key]}
+                            onChange={(event) =>
+                              update({ [key]: event.target.value })
+                            }
+                          />
+                        </label>
+                      ))}
                     </Section.Row>
                   </Section.Grid>
                 </Section.Content>
@@ -264,36 +364,23 @@ export function TaskFilterPanel({
                 <Section.Content>
                   <Section.Grid>
                     <Section.Row>
-                      <label className={formStyles.field}>
-                        <span className={formStyles.fieldLabelFilter}>
-                          {t.tasks.budgetMin}
-                        </span>
-                        <input
-                          className={formStyles.fieldInput}
-                          type="number"
-                          min={0}
-                          value={filters.budgetMin}
-                          onChange={(event) =>
-                            update({ budgetMin: event.target.value })
-                          }
-                          placeholder="0"
-                        />
-                      </label>
-                      <label className={formStyles.field}>
-                        <span className={formStyles.fieldLabelFilter}>
-                          {t.tasks.budgetMax}
-                        </span>
-                        <input
-                          className={formStyles.fieldInput}
-                          type="number"
-                          min={0}
-                          value={filters.budgetMax}
-                          onChange={(event) =>
-                            update({ budgetMax: event.target.value })
-                          }
-                          placeholder="10000"
-                        />
-                      </label>
+                      {budgetFields.map(({ key, label, type, placeholder }) => (
+                        <label key={key} className={formStyles.field}>
+                          <span className={formStyles.fieldLabelFilter}>
+                            {label}
+                          </span>
+                          <input
+                            className={formStyles.fieldInput}
+                            type={type}
+                            min={0}
+                            value={filters[key]}
+                            onChange={(event) =>
+                              update({ [key]: event.target.value })
+                            }
+                            placeholder={placeholder}
+                          />
+                        </label>
+                      ))}
                     </Section.Row>
                   </Section.Grid>
                 </Section.Content>
@@ -304,61 +391,40 @@ export function TaskFilterPanel({
                 <Section.Content>
                   <Section.Grid>
                     <Section.Row>
-                      <label className={formStyles.field}>
-                        <span className={formStyles.fieldLabelFilter}>
-                          {t.tasks.timeMin}
-                        </span>
-                        <input
-                          className={formStyles.fieldInput}
-                          type="number"
-                          min={0}
-                          value={filters.timeMin}
-                          onChange={(event) =>
-                            update({ timeMin: event.target.value })
-                          }
-                          placeholder="0"
-                        />
-                      </label>
-                      <label className={formStyles.field}>
-                        <span className={formStyles.fieldLabelFilter}>
-                          {t.tasks.timeMax}
-                        </span>
-                        <input
-                          className={formStyles.fieldInput}
-                          type="number"
-                          min={0}
-                          value={filters.timeMax}
-                          onChange={(event) =>
-                            update({ timeMax: event.target.value })
-                          }
-                          placeholder="480"
-                        />
-                      </label>
+                      {timeFields.map(({ key, label, type, placeholder }) => (
+                        <label key={key} className={formStyles.field}>
+                          <span className={formStyles.fieldLabelFilter}>
+                            {label}
+                          </span>
+                          <input
+                            className={formStyles.fieldInput}
+                            type={type}
+                            min={0}
+                            value={filters[key]}
+                            onChange={(event) =>
+                              update({ [key]: event.target.value })
+                            }
+                            placeholder={placeholder}
+                          />
+                        </label>
+                      ))}
                     </Section.Row>
                   </Section.Grid>
                 </Section.Content>
               </Section>
             </Form.Body>
             <Form.Footer>
-              <Form.Button
-                type="button"
-                onClick={onApply}
-                disabled={!canApply}
-              >
-                {t.tasks.applyFilters}
-              </Form.Button>
-              <Form.Button
-                type="button"
-                onClick={() => setCollectionDialogOpen(true)}
-              >
-                {t.tasks.saveCollection}
-              </Form.Button>
-              <Form.Button type="button" onClick={onReset}>
-                {t.tasks.resetFilters}
-              </Form.Button>
+              {footerButtons.map(({ key, label, onClick, disabled }) => (
+                <Form.Button
+                  key={key}
+                  type="button"
+                  onClick={onClick}
+                  disabled={disabled}
+                >
+                  {label}
+                </Form.Button>
+              ))}
             </Form.Footer>
-
-
             <Dialog
               open={collectionDialogOpen}
               onClose={() => {
