@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
-import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
+import { Title } from "../../../../components/ui/title/Title";
 
 import { TaskCreationButton } from "../../components/buttons/create/Button.tsx";
 import { ActiveTrackingCard } from "../../components/cards/ActiveTrackingCard";
@@ -67,7 +67,7 @@ export function TasksOverviewPage() {
     <PanelDismissContext.Provider value={() => setSelectedTaskId(null)}>
       <div className={styles.page}>
         <header className={styles.pageHeader}>
-          <BreadTitle title={t.sidebar.tasksOverview} />
+          <Title text={t.sidebar.tasksOverview} />
           <TaskCreationButton
             onSubmit={addTask}
             initiatorName={initiatorName}

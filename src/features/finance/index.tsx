@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-import { BreadTitle } from "../../components/bread-title/BreadTitle";
+import { Title } from "../../components/ui/title/Title";
 import styles from "./finance.module.scss";
 
 export function FinanceLayout() {
@@ -14,7 +14,7 @@ export function FinanceLayout() {
 export function FinanceSection({ title }: { title: string }) {
   return (
     <div className={styles.sectionPage}>
-      <BreadTitle title={title} />
+      <Title text={title} />
       <p className={styles.pageHint}>In development...</p>
     </div>
   );

@@ -24,7 +24,7 @@ import {
 } from "../../domain/others";
 import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksPage.module.scss";
-import { BreadTitle } from "../../../../components/bread-title/BreadTitle";
+import { Title } from "../../../../components/ui/title/Title";
 import { SearchBar } from "../../../../components/ui/search-bar/SearchBar";
 import { AddBudgetExpensePanel } from "../../components/panels/add-budget-expenses-panel/AddBudgetExpenseDialog";
 import { CompleteTaskDialog } from "../../components/panels/task-complete-panel/CompleteTaskDialog";
@@ -141,7 +141,7 @@ export function TaskListPage() {
     <PanelDismissContext.Provider value={() => setSelectedTaskId(null)}>
       <div className={styles.page}>
         <header className={styles.pageHeader}>
-          <BreadTitle title={t.sidebar.workQueue} />
+          <Title text={t.sidebar.workQueue} />
           <div className={styles.pageToolbar}>
             <div className={styles.toolbarSearch}>
               <SearchBar
