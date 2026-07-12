@@ -55,6 +55,11 @@
     transform: none;
     box-shadow: none;
   }
+
+  &.active {
+    border-color: var(--color-accent);
+    background: var(--color-surface-hover);
+  }
 }
 
 .secondary {

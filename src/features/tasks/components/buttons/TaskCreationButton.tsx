@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { FiPlus } from "react-icons/fi";
-import { Button } from "../../../../../components/ui/button/Button";
-import { useTranslation } from "../../../../../i18n";
-import type { CreateTaskInput } from "../../../domain/others";
-import { TaskCreationPanel } from "../../panels/task-creation-panel/Panel";
+import { Button } from "../../../../components/ui/button/Button";
+import { useTranslation } from "../../../../i18n";
+import type { CreateTaskInput } from "../../domain/others";
+import { TaskCreationPanel } from "../panels/task-creation-panel/Panel";
 
 type FilterOptions = {
   groups: string[];

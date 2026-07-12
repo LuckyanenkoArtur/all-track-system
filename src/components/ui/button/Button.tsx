@@ -22,6 +22,7 @@ export type TooltipPosition = "top" | "bottom" | "left" | "right";
 export type ButtonProps = PropsWithChildren<{
   onClick: () => void;
   className?: string;
+  active?: boolean;
   ariaExpanded?: boolean;
 }>;
 
@@ -394,6 +395,7 @@ ButtonBadge.displayName = "ButtonBadge";
 export const Button: ButtonComponent = ({
   onClick,
   className = "",
+  active = false,
   ariaExpanded,
   children,
 }) => {
@@ -416,7 +418,7 @@ export const Button: ButtonComponent = ({
   const button = (
     <button
       type="button"
-      className={`${styles.root} ${icon ? styles.withIcon : ""} ${showBadge ? styles.withBadge : ""} ${className}`.trim()}
+      className={`${styles.root} ${icon ? styles.withIcon : ""} ${showBadge ? styles.withBadge : ""} ${active ? styles.active : ""} ${className}`.trim()}
       onClick={onClick}
       aria-expanded={ariaExpanded}
     >

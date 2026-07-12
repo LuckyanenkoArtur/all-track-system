@@ -3,7 +3,7 @@ import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
 import { Title } from "../../../../components/ui/title/Title";
 
-import { TaskCreationButton } from "../../components/buttons/create/Button.tsx";
+import { TaskCreationButton } from "../../components/buttons/TaskCreationButton";
 import { ActiveTrackingCard } from "../../components/cards/ActiveTrackingCard";
 import { ManualTimeEntryDialog } from "../../components/dialogs/ManualTimeEntryDialog.tsx";
 import { TaskDetailsPanel } from "../../components/panels/task-details-panel/Panel.tsx";

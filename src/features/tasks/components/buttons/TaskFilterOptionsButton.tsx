@@ -1,9 +1,8 @@
 import { FiFilter } from "react-icons/fi";
-import { Button } from "../../../../../components/ui/button/Button";
-import { useTranslation } from "../../../../../i18n";
-import type { TaskFilters } from "../../../domain/filters";
-import styles from "./Button.module.scss";
-import { TaskFilterPanel } from "../../panels/task-filter-panel/Panel";
+import { Button } from "../../../../components/ui/button/Button";
+import { useTranslation } from "../../../../i18n";
+import type { TaskFilters } from "../../domain/filters";
+import { TaskFilterPanel } from "../panels/task-filter-panel/Panel";
 
 type FilterOptions = {
   groups: string[];
@@ -12,7 +11,7 @@ type FilterOptions = {
   observables: string[];
 };
 
-type FilterButtonProps = {
+type TaskFilterOptionsButtonProps = {
   open: boolean;
   activeFilterCount: number;
   filters: TaskFilters;
@@ -26,7 +25,7 @@ type FilterButtonProps = {
   onSaveCollection: (name: string) => void;
 };
 
-export function FilterButton({
+export function TaskFilterOptionsButton({
   open,
   activeFilterCount,
   filters,
@@ -38,14 +37,14 @@ export function FilterButton({
   onApply,
   onReset,
   onSaveCollection,
-}: FilterButtonProps) {
+}: TaskFilterOptionsButtonProps) {
   const { t } = useTranslation();
 
   return (
     <>
       <Button
         onClick={() => (open ? onClose() : onOpen())}
-        className={open ? styles.active : ""}
+        active={open}
         ariaExpanded={open}
       >
         <Button.Icon>

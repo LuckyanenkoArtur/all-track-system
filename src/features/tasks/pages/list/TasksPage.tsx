@@ -5,8 +5,8 @@ import { BiAbacus, BiTable } from "react-icons/bi";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
 
-import { FilterButton } from "../../components/buttons/filter/Button";
-import { TaskCreationButton } from "../../components/buttons/create/Button";
+import { TaskFilterOptionsButton } from "../../components/buttons/TaskFilterOptionsButton";
+import { TaskCreationButton } from "../../components/buttons/TaskCreationButton";
 import { ViewSwitcher } from "../../../../components/ui/view-switcher/ViewSwitcher";
 
 import { TaskDetailsPanel } from "../../components/panels/task-details-panel/Panel";
@@ -152,7 +152,7 @@ export function TaskListPage() {
               />
             </div>
 
-            <FilterButton
+            <TaskFilterOptionsButton
               open={filtersOpen}
               activeFilterCount={activeFilterCount}
               filters={filters}
