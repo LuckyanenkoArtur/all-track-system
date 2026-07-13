@@ -13,6 +13,7 @@ export interface TaskFilters {
   dueDateTo: string;
   budgetMin: string;
   budgetMax: string;
+  budgetCurrency: string;
   timeMin: string;
   timeMax: string;
 }
@@ -29,6 +30,7 @@ export const DEFAULT_FILTERS: TaskFilters = {
   dueDateTo: "",
   budgetMin: "",
   budgetMax: "",
+  budgetCurrency: "USD",
   timeMin: "",
   timeMax: "",
 };

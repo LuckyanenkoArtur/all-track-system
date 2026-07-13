@@ -19,7 +19,6 @@ import { TaskDetailsActionBar } from "../../action-bar/TaskDetailsActionBar.tsx"
 import { TaskDetailsMetricsTab } from "../../tabs/task-details/metrics/TaskDetailsMetricsTab.tsx";
 import { useTaskListState } from "../../../hooks/useTaskListState.ts";
 import { TaskCreationPanel } from "../../panels/task-creation-panel/Panel.tsx";
-import { ManualTimeEntryDialog } from "../../dialogs/ManualTimeEntryDialog.tsx";
 import {
   FiFileText,
   FiBarChart2,
@@ -37,10 +36,12 @@ import { CompleteTaskDialog } from "../../panels/task-complete-panel/CompleteTas
 
 interface TaskDetailsTabulatorProps {
   task: Task;
+  initialTab?: string;
 }
 
 export default function TaskDetailsTabulator({
   task,
+  initialTab,
 }: TaskDetailsTabulatorProps) {
   const { t } = useTranslation();
   const labels = t.tasks.details;
@@ -147,7 +148,6 @@ export default function TaskDetailsTabulator({
 
   const [editOpen, setEditOpen] = useState(false);
   const [completeOpen, setCompleteOpen] = useState(false);
-  const [manualTimeOpen, setManualTimeOpen] = useState(false);
   const [budgetExpenseOpen, setBudgetExpenseOpen] = useState(false);
   const { isTracking, sessionTimer, toggleTracking } = useTaskTrackingDisplay(
     task.id,
@@ -244,7 +244,7 @@ export default function TaskDetailsTabulator({
     },
   ];
 
-  const defaultTab = tabs[0].id;
+  const defaultTab = initialTab ?? tabs[0].id;
 
   const panels = [
     {
@@ -273,7 +273,16 @@ export default function TaskDetailsTabulator({
       content: (
         <TaskDetailsTimeTab
           entries={taskTimeEntries}
-          onAddManualTime={() => setManualTimeOpen(true)}
+          onSubmitManualTime={(input) =>
+            addManualTime({
+              taskId: task.id,
+              hours: input.hours,
+              minutes: input.minutes,
+              note: input.note,
+              author: authorName,
+              authorInitials,
+            })
+          }
         />
       ),
     },
@@ -330,6 +339,7 @@ export default function TaskDetailsTabulator({
   return (
     <>
       <Tabulator
+        key={`${task.id}-${defaultTab}`}
         defaultValue={defaultTab}
         header={
           <TaskDetailsActionBar
@@ -438,36 +448,6 @@ export default function TaskDetailsTabulator({
           removeStep: dashboardLabels.removeStep,
           apply: detailLabels.completeApply,
           cancel: t.common.cancel,
-        }}
-      />
-
-      <ManualTimeEntryDialog
-        open={manualTimeOpen}
-        onClose={() => setManualTimeOpen(false)}
-        onSubmit={(input) =>
-          addManualTime({
-            taskId: task.id,
-            hours: input.hours,
-            minutes: input.minutes,
-            note: input.note,
-            author: authorName,
-            authorInitials,
-          })
-        }
-        labels={{
-          title: detailLabels.manualTimeDialogTitle,
-          subtitle: detailLabels.manualTimeDialogSubtitle,
-          hours: detailLabels.manualTimeHours,
-          minutes: detailLabels.manualTimeMinutes,
-          note: detailLabels.manualTimeNote,
-          notePlaceholder: detailLabels.manualTimeNotePlaceholder,
-          required: dashboardLabels.required,
-          apply: detailLabels.manualTimeApply,
-          cancel: t.common.cancel,
-          unsavedTitle: detailLabels.manualTimeUnsavedTitle,
-          unsavedMessage: detailLabels.manualTimeUnsavedMessage,
-          unsavedYes: detailLabels.manualTimeUnsavedYes,
-          unsavedNo: detailLabels.manualTimeUnsavedNo,
         }}
       />
 

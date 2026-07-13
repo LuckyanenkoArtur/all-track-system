@@ -5,9 +5,10 @@ import { Panel } from "../../../../../components/ui/panel/Panel.tsx";
 
 type TaskDetailsPanelProps = {
   task: Task | null;
+  initialTab?: string;
 };
 
-export function TaskDetailsPanel({ task }: TaskDetailsPanelProps) {
+export function TaskDetailsPanel({ task, initialTab }: TaskDetailsPanelProps) {
   const { t } = useTranslation();
   const open = task !== null;
   const expandUrl = task ? `/app/tasks/${task.id}` : undefined;
@@ -19,7 +20,7 @@ export function TaskDetailsPanel({ task }: TaskDetailsPanelProps) {
         <Panel.Desciption>{t.tasks.details.panelSubtitle}</Panel.Desciption>
       </Panel.Header>
       <Panel.Content>
-        <TaskDetailsTabulator task={task} />
+        <TaskDetailsTabulator task={task} initialTab={initialTab} />
       </Panel.Content>
     </Panel>
   );

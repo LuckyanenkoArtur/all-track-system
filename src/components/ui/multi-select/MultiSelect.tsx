@@ -16,6 +16,7 @@ export type MultiSelectOption = {
 
 type MultiSelectProps = {
   label: string;
+  icon?: React.ReactNode;
   options: MultiSelectOption[];
   selected: string[];
   onChange: (selected: string[]) => void;
@@ -27,6 +28,7 @@ type MultiSelectProps = {
 
 export function MultiSelect({
   label,
+  icon,
   options,
   selected,
   onChange,
@@ -87,6 +89,7 @@ export function MultiSelect({
       <div
         className={`${styles.control} ${open ? styles.controlOpen : ""}`.trim()}
       >
+        {icon ? <span className={styles.icon}>{icon}</span> : null}
         <button
           type="button"
           className={styles.trigger}

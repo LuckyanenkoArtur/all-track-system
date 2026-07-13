@@ -11,7 +11,6 @@ import { ViewSwitcher } from "../../../../components/ui/view-switcher/ViewSwitch
 
 import { TaskDetailsPanel } from "../../components/panels/task-details-panel/Panel";
 import { PanelDismissContext } from "../../../../components/ui/panel/Panel";
-import { ManualTimeEntryDialog } from "../../components/dialogs/ManualTimeEntryDialog";
 import { useTasks } from "../../hooks/useTasks";
 import { useTaskTrackingDisplay } from "../../hooks/useTaskTrackingDisplay";
 import { useTaskListState } from "../../hooks/useTaskListState";
@@ -42,13 +41,12 @@ export function TaskListPage() {
     startTracking,
     stopTracking,
     completeTaskWithReport,
-    addManualTime,
     addBudgetExpense,
   } = useTasks();
   const { getDisplayTimeSpent } = useTaskTrackingDisplay();
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [detailsInitialTab, setDetailsInitialTab] = useState<string | undefined>();
   const [completeTaskId, setCompleteTaskId] = useState<string | null>(null);
-  const [manualTimeTaskId, setManualTimeTaskId] = useState<string | null>(null);
   const [budgetExpenseTaskId, setBudgetExpenseTaskId] = useState<string | null>(
     null,
   );
@@ -201,9 +199,15 @@ export function TaskListPage() {
           pageSize={pageSize}
           onPageChange={setPage}
           onPageSizeChange={setPageSize}
-          onTaskClick={setSelectedTaskId}
+          onTaskClick={(taskId) => {
+            setDetailsInitialTab(undefined);
+            setSelectedTaskId(taskId);
+          }}
           onCompleteTask={setCompleteTaskId}
-          onAddManualTime={setManualTimeTaskId}
+          onAddManualTime={(taskId) => {
+            setDetailsInitialTab("time");
+            setSelectedTaskId(taskId);
+          }}
           onLogBudgetExpense={setBudgetExpenseTaskId}
           isTracking={isTracking}
           getDisplayTimeSpent={getDisplayTimeSpent}
@@ -240,7 +244,7 @@ export function TaskListPage() {
           }}
         />
 
-        <TaskDetailsPanel task={selectedTask} />
+        <TaskDetailsPanel task={selectedTask} initialTab={detailsInitialTab} />
 
         <CompleteTaskDialog
           open={completeTaskId !== null}
@@ -259,37 +263,6 @@ export function TaskListPage() {
             removeStep: t.tasks.dashboard.removeStep,
             apply: t.tasks.details.completeApply,
             cancel: t.common.cancel,
-          }}
-        />
-
-        <ManualTimeEntryDialog
-          open={manualTimeTaskId !== null}
-          onClose={() => setManualTimeTaskId(null)}
-          onSubmit={(input) => {
-            if (!manualTimeTaskId) return;
-            addManualTime({
-              taskId: manualTimeTaskId,
-              hours: input.hours,
-              minutes: input.minutes,
-              note: input.note,
-              author: authorName,
-              authorInitials,
-            });
-          }}
-          labels={{
-            title: t.tasks.details.manualTimeDialogTitle,
-            subtitle: t.tasks.details.manualTimeDialogSubtitle,
-            hours: t.tasks.details.manualTimeHours,
-            minutes: t.tasks.details.manualTimeMinutes,
-            note: t.tasks.details.manualTimeNote,
-            notePlaceholder: t.tasks.details.manualTimeNotePlaceholder,
-            required: t.tasks.dashboard.required,
-            apply: t.tasks.details.manualTimeApply,
-            cancel: t.common.cancel,
-            unsavedTitle: t.tasks.details.manualTimeUnsavedTitle,
-            unsavedMessage: t.tasks.details.manualTimeUnsavedMessage,
-            unsavedYes: t.tasks.details.manualTimeUnsavedYes,
-            unsavedNo: t.tasks.details.manualTimeUnsavedNo,
           }}
         />
 

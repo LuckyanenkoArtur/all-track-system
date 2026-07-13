@@ -219,6 +219,7 @@ export function areFiltersEqual(a: TaskFilters, b: TaskFilters): boolean {
     a.dueDateTo === b.dueDateTo &&
     a.budgetMin === b.budgetMin &&
     a.budgetMax === b.budgetMax &&
+    a.budgetCurrency === b.budgetCurrency &&
     a.timeMin === b.timeMin &&
     a.timeMax === b.timeMax
   );

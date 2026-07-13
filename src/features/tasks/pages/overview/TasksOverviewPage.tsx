@@ -5,7 +5,6 @@ import { Title } from "../../../../components/ui/title/Title";
 
 import { TaskCreationButton } from "../../components/buttons/TaskCreationButton";
 import { ActiveTrackingCard } from "../../components/cards/ActiveTrackingCard";
-import { ManualTimeEntryDialog } from "../../components/dialogs/ManualTimeEntryDialog.tsx";
 import { TaskDetailsPanel } from "../../components/panels/task-details-panel/Panel.tsx";
 import { PanelDismissContext } from "../../../../components/ui/panel/Panel.tsx";
 import { useTasks } from "../../hooks/useTasks";
@@ -23,13 +22,12 @@ export function TasksOverviewPage() {
     tasks,
     addTask,
     completeTaskWithReport,
-    addManualTime,
     addBudgetExpense,
   } = useTasks();
   const { filterOptions } = useTaskListState();
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [detailsInitialTab, setDetailsInitialTab] = useState<string | undefined>();
   const [completeTaskId, setCompleteTaskId] = useState<string | null>(null);
-  const [manualTimeTaskId, setManualTimeTaskId] = useState<string | null>(null);
   const [budgetExpenseTaskId, setBudgetExpenseTaskId] = useState<string | null>(
     null,
   );
@@ -86,12 +84,18 @@ export function TasksOverviewPage() {
         />
 
         <TaskTabulator
-          onTaskClick={setSelectedTaskId}
-          onAddManualTime={setManualTimeTaskId}
+          onTaskClick={(taskId) => {
+            setDetailsInitialTab(undefined);
+            setSelectedTaskId(taskId);
+          }}
+          onAddManualTime={(taskId) => {
+            setDetailsInitialTab("time");
+            setSelectedTaskId(taskId);
+          }}
           onLogBudgetExpense={setBudgetExpenseTaskId}
         />
 
-        <TaskDetailsPanel task={selectedTask} />
+        <TaskDetailsPanel task={selectedTask} initialTab={detailsInitialTab} />
 
         {/* Repeated dialogs for Task Details Panel */}
         <CompleteTaskDialog
@@ -111,38 +115,6 @@ export function TasksOverviewPage() {
             removeStep: labels.removeStep,
             apply: detailLabels.completeApply,
             cancel: t.common.cancel,
-          }}
-        />
-
-        {/* Repeated dialogs for Task Details Panel */}
-        <ManualTimeEntryDialog
-          open={manualTimeTaskId !== null}
-          onClose={() => setManualTimeTaskId(null)}
-          onSubmit={(input) => {
-            if (!manualTimeTaskId) return;
-            addManualTime({
-              taskId: manualTimeTaskId,
-              hours: input.hours,
-              minutes: input.minutes,
-              note: input.note,
-              author: authorName,
-              authorInitials,
-            });
-          }}
-          labels={{
-            title: detailLabels.manualTimeDialogTitle,
-            subtitle: detailLabels.manualTimeDialogSubtitle,
-            hours: detailLabels.manualTimeHours,
-            minutes: detailLabels.manualTimeMinutes,
-            note: detailLabels.manualTimeNote,
-            notePlaceholder: detailLabels.manualTimeNotePlaceholder,
-            required: labels.required,
-            apply: detailLabels.manualTimeApply,
-            cancel: t.common.cancel,
-            unsavedTitle: detailLabels.manualTimeUnsavedTitle,
-            unsavedMessage: detailLabels.manualTimeUnsavedMessage,
-            unsavedYes: detailLabels.manualTimeUnsavedYes,
-            unsavedNo: detailLabels.manualTimeUnsavedNo,
           }}
         />
 
