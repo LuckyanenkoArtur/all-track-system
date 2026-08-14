@@ -12,7 +12,6 @@ import { useTaskListState } from "../../hooks/useTaskListState";
 import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksOverviewPage.module.scss";
 import TaskTabulator from "../../components/tabulator/tasks/Tabulator.tsx";
-import { AddBudgetExpensePanel } from "../../components/panels/add-budget-expenses-panel/AddBudgetExpenseDialog.tsx";
 import { CompleteTaskDialog } from "../../components/panels/task-complete-panel/CompleteTaskDialog.tsx";
 
 export function TasksOverviewPage() {
@@ -22,15 +21,11 @@ export function TasksOverviewPage() {
     tasks,
     addTask,
     completeTaskWithReport,
-    addBudgetExpense,
   } = useTasks();
   const { filterOptions } = useTaskListState();
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [detailsInitialTab, setDetailsInitialTab] = useState<string | undefined>();
   const [completeTaskId, setCompleteTaskId] = useState<string | null>(null);
-  const [budgetExpenseTaskId, setBudgetExpenseTaskId] = useState<string | null>(
-    null,
-  );
 
   const labels = t.tasks.dashboard;
   const taskLabels = t.tasks;
@@ -92,7 +87,10 @@ export function TasksOverviewPage() {
             setDetailsInitialTab("time");
             setSelectedTaskId(taskId);
           }}
-          onLogBudgetExpense={setBudgetExpenseTaskId}
+          onLogBudgetExpense={(taskId) => {
+            setDetailsInitialTab("transactions");
+            setSelectedTaskId(taskId);
+          }}
         />
 
         <TaskDetailsPanel task={selectedTask} initialTab={detailsInitialTab} />
@@ -115,22 +113,6 @@ export function TasksOverviewPage() {
             removeStep: labels.removeStep,
             apply: detailLabels.completeApply,
             cancel: t.common.cancel,
-          }}
-        />
-
-        {/* Repeated dialogs for Task Details Panel */}
-        <AddBudgetExpensePanel
-          open={budgetExpenseTaskId !== null}
-          onClose={() => setBudgetExpenseTaskId(null)}
-          onSubmit={(input) => {
-            if (!budgetExpenseTaskId) return;
-            addBudgetExpense({
-              taskId: budgetExpenseTaskId,
-              amount: input.amount,
-              description: input.description,
-              author: authorName,
-              authorInitials,
-            });
           }}
         />
       </div>

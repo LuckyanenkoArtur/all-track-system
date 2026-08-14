@@ -1,0 +1,72 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.title {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0;
+  width: 100%;
+  min-width: 0;
+  max-height: 3.6em; /* ~3 lines; scrolls instead of growing the panel */
+  overflow-x: hidden;
+  overflow-y: auto;
+  resize: none;
+  flex: 0 0 auto;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--color-text);
+  white-space: pre-line;
+  word-break: break-word;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 6px;
+  }
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 0.1em;
+    color: var(--color-text-muted);
+  }
+}
+
+.scrollRegion {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 6px;
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

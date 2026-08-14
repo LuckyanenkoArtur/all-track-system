@@ -31,7 +31,6 @@ import { TaskDetailsTimeTab } from "../../tabs/task-details/time/TaskDetailsTime
 import { TaskDetailsTransactionsTab } from "../../tabs/task-details/transactions/TaskDetailsTransactionsTab.tsx";
 import { TaskDetailsTabPlaceholder } from "../../placeholders/TaskDetailsTabPlaceholder.tsx";
 import { isUserTaskResponsible } from "../../../utils/taskDetailsUtils.ts";
-import { AddBudgetExpensePanel } from "../../panels/add-budget-expenses-panel/AddBudgetExpenseDialog.tsx";
 import { CompleteTaskDialog } from "../../panels/task-complete-panel/CompleteTaskDialog.tsx";
 
 interface TaskDetailsTabulatorProps {
@@ -148,7 +147,6 @@ export default function TaskDetailsTabulator({
 
   const [editOpen, setEditOpen] = useState(false);
   const [completeOpen, setCompleteOpen] = useState(false);
-  const [budgetExpenseOpen, setBudgetExpenseOpen] = useState(false);
   const { isTracking, sessionTimer, toggleTracking } = useTaskTrackingDisplay(
     task.id,
   );
@@ -291,7 +289,15 @@ export default function TaskDetailsTabulator({
       content: (
         <TaskDetailsTransactionsTab
           transactions={budgetTransactions}
-          onLogBudgetExpense={() => setBudgetExpenseOpen(true)}
+          onSubmitBudgetExpense={(input) =>
+            addBudgetExpense({
+              taskId: task.id,
+              amount: input.amount,
+              description: input.description,
+              author: authorName,
+              authorInitials,
+            })
+          }
         />
       ),
     },
@@ -451,19 +457,6 @@ export default function TaskDetailsTabulator({
         }}
       />
 
-      <AddBudgetExpensePanel
-        open={budgetExpenseOpen}
-        onClose={() => setBudgetExpenseOpen(false)}
-        onSubmit={(input) =>
-          addBudgetExpense({
-            taskId: task.id,
-            amount: input.amount,
-            description: input.description,
-            author: authorName,
-            authorInitials,
-          })
-        }
-      />
     </>
   );
 }

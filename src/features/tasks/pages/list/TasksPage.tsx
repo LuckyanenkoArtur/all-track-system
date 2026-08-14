@@ -25,7 +25,6 @@ import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksPage.module.scss";
 import { Title } from "../../../../components/ui/title/Title";
 import { SearchBar } from "../../../../components/ui/search-bar/SearchBar";
-import { AddBudgetExpensePanel } from "../../components/panels/add-budget-expenses-panel/AddBudgetExpenseDialog";
 import { CompleteTaskDialog } from "../../components/panels/task-complete-panel/CompleteTaskDialog";
 
 export function TaskListPage() {
@@ -41,15 +40,11 @@ export function TaskListPage() {
     startTracking,
     stopTracking,
     completeTaskWithReport,
-    addBudgetExpense,
   } = useTasks();
   const { getDisplayTimeSpent } = useTaskTrackingDisplay();
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [detailsInitialTab, setDetailsInitialTab] = useState<string | undefined>();
   const [completeTaskId, setCompleteTaskId] = useState<string | null>(null);
-  const [budgetExpenseTaskId, setBudgetExpenseTaskId] = useState<string | null>(
-    null,
-  );
 
   const {
     filters,
@@ -208,7 +203,10 @@ export function TaskListPage() {
             setDetailsInitialTab("time");
             setSelectedTaskId(taskId);
           }}
-          onLogBudgetExpense={setBudgetExpenseTaskId}
+          onLogBudgetExpense={(taskId) => {
+            setDetailsInitialTab("transactions");
+            setSelectedTaskId(taskId);
+          }}
           isTracking={isTracking}
           getDisplayTimeSpent={getDisplayTimeSpent}
           onToggleTracking={toggleTracking}
@@ -266,20 +264,6 @@ export function TaskListPage() {
           }}
         />
 
-        <AddBudgetExpensePanel
-          open={budgetExpenseTaskId !== null}
-          onClose={() => setBudgetExpenseTaskId(null)}
-          onSubmit={(input) => {
-            if (!budgetExpenseTaskId) return;
-            addBudgetExpense({
-              taskId: budgetExpenseTaskId,
-              amount: input.amount,
-              description: input.description,
-              author: authorName,
-              authorInitials,
-            });
-          }}
-        />
       </div>
     </PanelDismissContext.Provider>
   );

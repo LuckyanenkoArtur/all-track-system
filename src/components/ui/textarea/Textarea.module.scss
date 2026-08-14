@@ -1,0 +1,44 @@
+.textarea {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface-secondary);
+  color: var(--color-text);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  font-family: inherit;
+  resize: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    background: var(--color-surface);
+  }
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 6px;
+  }
+}
