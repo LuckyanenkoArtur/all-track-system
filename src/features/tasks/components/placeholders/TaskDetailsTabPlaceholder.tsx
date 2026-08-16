@@ -6,7 +6,7 @@ type TaskDetailsTabPlaceholderProps = {
   title: string;
   message: string;
   className?: string;
-  variant?: "default" | "compact";
+  nested?: boolean;
 };
 
 export function TaskDetailsTabPlaceholder({
@@ -14,11 +14,13 @@ export function TaskDetailsTabPlaceholder({
   title,
   message,
   className = "",
-  variant = "default",
+  nested = false,
 }: TaskDetailsTabPlaceholderProps) {
   return (
     <div
-      className={`${styles.placeholder} ${variant === "compact" ? styles.compact : ""} ${className}`.trim()}
+      className={[styles.placeholder, nested && styles.nested, className]
+        .filter(Boolean)
+        .join(" ")}
     >
       <div className={styles.icon}>{icon}</div>
       <h3>{title}</h3>

@@ -41,7 +41,7 @@ export function NotesThread({ notes }: NotesThreadProps) {
     <Thread aria-label={labels.tabs.notes}>
       {notes.length === 0 ? (
         <TaskDetailsTabPlaceholder
-          variant="compact"
+          nested
           icon={<FiClipboard size={22} aria-hidden />}
           title={labels.tabs.notes}
           message={labels.tabs.notesEmpty}

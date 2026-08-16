@@ -45,7 +45,7 @@ export function CommentsThread({ comments }: CommentsThreadProps) {
     <Thread aria-label={labels.tabs.comments}>
       {comments.length === 0 ? (
         <TaskDetailsTabPlaceholder
-          variant="compact"
+          nested
           icon={<FiMessageSquare size={22} aria-hidden />}
           title={labels.tabs.comments}
           message={labels.tabs.commentsEmpty}

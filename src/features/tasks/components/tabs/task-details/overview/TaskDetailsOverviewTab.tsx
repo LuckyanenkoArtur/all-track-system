@@ -6,7 +6,6 @@ import {
   FiCheckSquare,
   FiClock,
   FiDollarSign,
-  FiEye,
   FiFileText,
   FiFlag,
   FiLayers,
@@ -19,7 +18,7 @@ import type { Task } from "../../../../domain/others.ts";
 
 import { formatDueDate } from "../../../../utils/dateUtils.ts";
 
-import { formatBudget, formatDate } from "../../../../utils/taskListUtils.ts";
+import { formatBudget } from "../../../../utils/taskListUtils.ts";
 
 import styles from "./TaskDetailsOverviewTab.module.scss";
 
@@ -27,28 +26,33 @@ import { useTranslation } from "../../../../../../i18n/index.ts";
 
 import Badge from "../../../../../../components/ui/badge/Badge.tsx";
 
+import { Title } from "../../../../../../components/ui/title/Title.tsx";
+
+import AuthorBadge from "../../../badges/AuthorBadge.tsx";
+
+import DateTimeBadge from "../../../badges/DateTimeBadge.tsx";
+
 import PriorityBadge from "../../../badges/PriorityBadge.tsx";
+
+import RequiresResultReviewBadge from "../../../badges/RequiresResultReviewBadge.tsx";
 
 import StatusBadge from "../../../badges/StatusBadge.tsx";
 
-import { TaskDetailsStepsTab } from "../steps/Tab.tsx";
+import type { CheckListStep } from "../../../../../../components/ui/step-check-list/step";
+
+import { TaskDetailsTabPlaceholder } from "../../../placeholders/TaskDetailsTabPlaceholder.tsx";
+
+import ProgressBar from "../../../../../../components/ui/progress-bar/ProgressBar.tsx";
+
+import StepCheckList from "../../../../../../components/ui/step-check-list/StepCheckList.tsx";
+
+import { Initials } from "../../utils/Initials.ts";
 
 type TaskDetailsOverviewTabProps = {
-  task: Task;
-
+  task: Task; //! This should be done using the TaskService for getting the task details
   onToggleStep?: (stepId: string) => void;
-
   stepsReadOnly?: boolean;
 };
-
-function getInitials(name: string) {
-  return name
-    .split(/\s+/)
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
 
 export function TaskDetailsOverviewTab({
   task,
@@ -56,57 +60,31 @@ export function TaskDetailsOverviewTab({
   stepsReadOnly = false,
 }: TaskDetailsOverviewTabProps) {
   const { t } = useTranslation();
-  const details = t.tasks.details;
 
   return (
     <div className={styles.overview}>
-      <header className={styles.taskHeader}>
+      <div className={styles.taskHeader}>
         <div className={styles.taskHeading}>
-          <span className={styles.taskId}>{task.id}</span>
+          <Badge variant="info" className={styles.taskId}>
+            {task.id}
+          </Badge>
           <span className={styles.taskHeadingDivider} aria-hidden />
-          <h1 className={styles.taskTitle} title={task.title}>
-            {task.title}
-          </h1>
+          <div className={styles.taskTitle} title={task.title}>
+            <Title text={task.title} />
+          </div>
         </div>
 
         <div className={styles.headerMeta}>
-          {task.requiresResultReview && (
-            <>
-              <span className={styles.reviewChip} role="status">
-                <span className={styles.reviewChipIcon} aria-hidden>
-                  <FiEye size={13} />
-                </span>
-                <span className={styles.reviewChipText}>
-                  {details.requiresResultReview}
-                </span>
-              </span>
-
-              <span className={styles.metaChipDivider} aria-hidden />
-            </>
-          )}
-
-          <span className={styles.metaChip}>
-            <span className={styles.metaChipIcon} aria-hidden>
-              <FiUser size={13} />
-            </span>
-            <span className={styles.metaChipText}>{task.initiator}</span>
-          </span>
-
-          <span className={styles.metaChipDivider} aria-hidden />
-
-          <span className={styles.metaChip}>
-            <span className={styles.metaChipIcon} aria-hidden>
-              <FiCalendar size={13} />
-            </span>
-            <time className={styles.metaChipText} dateTime={task.createdAt}>
-              {formatDate(task.createdAt)}
-            </time>
-          </span>
+          <RequiresResultReviewBadge
+            requiresResultReview={task.requiresResultReview}
+          />
+          <AuthorBadge text={task.initiator} />
+          <DateTimeBadge time={task.createdAt} />
         </div>
-      </header>
+      </div>
 
       <div className={styles.body}>
-        <main className={styles.mainColumn}>
+        <div className={styles.mainColumn}>
           <Panel>
             <div className={styles.sectionsStack}>
               <PanelSection
@@ -145,7 +123,7 @@ export function TaskDetailsOverviewTab({
                     {task.responsible.map((person) => (
                       <span key={person} className={styles.assignee}>
                         <span className={styles.avatar}>
-                          {getInitials(person)}
+                          {new Initials(person).get()}
                         </span>
                         {person}
                       </span>
@@ -165,7 +143,7 @@ export function TaskDetailsOverviewTab({
                     {task.observables.map((person) => (
                       <span key={person} className={styles.assignee}>
                         <span className={styles.avatar}>
-                          {getInitials(person)}
+                          {new Initials(person).get()}
                         </span>
                         {person}
                       </span>
@@ -183,7 +161,7 @@ export function TaskDetailsOverviewTab({
                 <div className={styles.splitFields}>
                   <div className={styles.splitField}>
                     <span className={styles.splitFieldLabel}>
-                      {details.startDate}
+                      {t.tasks.details.startDate}
                     </span>
                     <div className={styles.splitFieldValue}>
                       <Badge variant="neutral">
@@ -249,21 +227,21 @@ export function TaskDetailsOverviewTab({
               )}
             </div>
           </Panel>
-        </main>
+        </div>
 
-        <aside className={styles.sidebar}>
+        <div className={styles.sidebar}>
           <Panel>
             <div className={styles.descriptionSteps}>
               <h3 className={styles.descriptionStepsTitle}>
                 <FiFileText size={15} aria-hidden />
-                {details.description}
+                {t.tasks.details.description}
               </h3>
 
               {task.description?.trim() ? (
                 <p className={styles.descriptionText}>{task.description}</p>
               ) : (
                 <p className={styles.descriptionPlaceholder}>
-                  {details.descriptionEmpty}
+                  {t.tasks.details.descriptionEmpty}
                 </p>
               )}
             </div>
@@ -271,7 +249,7 @@ export function TaskDetailsOverviewTab({
             <div className={styles.descriptionSteps}>
               <h3 className={styles.descriptionStepsTitle}>
                 <FiCheckSquare size={15} aria-hidden />
-                {details.tabs.steps}
+                {t.tasks.details.tabs.steps}
               </h3>
 
               <TaskDetailsStepsTab
@@ -282,7 +260,7 @@ export function TaskDetailsOverviewTab({
               />
             </div>
           </Panel>
-        </aside>
+        </div>
       </div>
     </div>
   );
@@ -334,6 +312,59 @@ function SplitDivider({ icon }: { icon?: ReactNode }) {
   return (
     <div className={styles.splitDivider} aria-hidden>
       {icon}
+    </div>
+  );
+}
+
+type TaskDetailsStepsTabProps = {
+  steps: CheckListStep[];
+  onToggleStep?: (stepId: string) => void;
+  readOnly?: boolean;
+  embedded?: boolean;
+};
+
+function TaskDetailsStepsTab({
+  steps,
+  onToggleStep,
+  readOnly = false,
+  embedded = false,
+}: TaskDetailsStepsTabProps) {
+  const { t } = useTranslation();
+  const labels = t.tasks.details.tabs;
+
+  const completed = steps.filter((step) => step.completed).length;
+  const total = steps.length;
+
+  if (steps.length === 0) {
+    if (embedded) {
+      return <p className={styles.empty}>{labels.stepsEmpty}</p>;
+    }
+
+    return (
+      <TaskDetailsTabPlaceholder
+        icon={<FiCheckSquare size={22} aria-hidden />}
+        title={labels.steps}
+        message={labels.stepsEmpty}
+      />
+    );
+  }
+
+  return (
+    <div className={[styles.root, !embedded && styles.card].filter(Boolean).join(" ")}>
+      <ProgressBar completed={completed} total={total}>
+        <ProgressBar.Header text={labels.stepsProgress} />
+        <ProgressBar.Body />
+      </ProgressBar>
+
+      <StepCheckList onToggleStep={onToggleStep}>
+        {steps.map((step, index) => (
+          <StepCheckList.Item key={step.id} step={step} index={index} />
+        ))}
+      </StepCheckList>
+
+      {readOnly && (
+        <p className={styles.readOnlyHint}>{labels.stepsReadOnlyResponsible}</p>
+      )}
     </div>
   );
 }

@@ -7,20 +7,12 @@ import { formatCommentDate } from "../../utils/commentUtils.ts";
 import { formatCurrency } from "../../utils/taskDetailsUtils.ts";
 import { useTranslation } from "../../../../i18n/index.ts";
 import { TaskDetailsTabPlaceholder } from "../placeholders/TaskDetailsTabPlaceholder.tsx";
+import { Initials } from "../tabs/utils/Initials.ts";
 import styles from "./TransactionsThread.module.scss";
 
 type TransactionsThreadProps = {
   transactions: BudgetTransaction[];
 };
-
-function getInitials(name: string) {
-  return name
-    .split(/\s+/)
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
 
 function scrollThreadToEnd(node: HTMLElement | null) {
   if (!node) return;
@@ -59,7 +51,7 @@ export function TransactionsThread({ transactions }: TransactionsThreadProps) {
     <Thread aria-label={labels.tabs.transactions}>
       {orderedTransactions.length === 0 ? (
         <TaskDetailsTabPlaceholder
-          variant="compact"
+          nested
           icon={<FiDollarSign size={22} aria-hidden />}
           title={labels.tabs.transactions}
           message={labels.tabs.transactionsEmpty}
@@ -70,7 +62,7 @@ export function TransactionsThread({ transactions }: TransactionsThreadProps) {
 
           return (
             <FeedItem key={transaction.id}>
-              <FeedItem.Avatar>{getInitials(transaction.author)}</FeedItem.Avatar>
+              <FeedItem.Avatar>{new Initials(transaction.author).get()}</FeedItem.Avatar>
               <FeedItem.Body>
                 <FeedItem.Header>
                   <FeedItem.Meta>

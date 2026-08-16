@@ -4,6 +4,10 @@
   flex: 1;
   min-height: 0;
   height: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
   overflow: hidden;
 }
 
@@ -26,23 +30,24 @@
   gap: 12px;
   min-width: 0;
   flex: 1;
-}
 
-.taskId {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-  padding: 5px 10px;
-  border-radius: 7px;
-  border: 1px solid color-mix(in srgb, var(--color-accent) 22%, transparent);
-  background: var(--color-accent-light);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  font-variant-numeric: tabular-nums;
-  color: var(--color-accent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  .taskId {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 0;
+    padding: 5px 10px;
+    border-radius: 7px;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 22%, transparent);
+    background: var(--color-accent-light);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-accent);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
 }
 
 .taskHeadingDivider {
@@ -62,14 +67,16 @@
   margin: 0;
   min-width: 0;
   flex: 1;
-  font-size: clamp(1.0625rem, 2vw, 1.375rem);
-  font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: -0.025em;
-  color: var(--color-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
+  :global(.pageHeading) {
+    min-width: 0;
+    font-size: clamp(1.0625rem, 2vw, 1.375rem);
+    line-height: 1.3;
+    letter-spacing: -0.025em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .headerMeta {
@@ -79,82 +86,6 @@
   flex-shrink: 0;
   gap: 8px;
   margin-left: auto;
-}
-
-.reviewChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  flex-shrink: 0;
-  height: 30px;
-  padding: 0 11px 0 5px;
-  border-radius: 9999px;
-  border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
-  background: var(--color-accent-light);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--color-accent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
-}
-
-.reviewChipIcon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 9999px;
-  background: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface));
-  color: var(--color-accent);
-  flex-shrink: 0;
-}
-
-.reviewChipText {
-  white-space: nowrap;
-}
-
-.metaChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  flex-shrink: 0;
-  height: 30px;
-  padding: 0 11px 0 5px;
-  border-radius: 9999px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface-secondary);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--color-text);
-}
-
-.metaChipIcon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 9999px;
-  background: var(--color-surface);
-  color: var(--color-text-muted);
-  flex-shrink: 0;
-}
-
-.metaChipText {
-  white-space: nowrap;
-}
-
-.metaChipDivider {
-  flex-shrink: 0;
-  width: 1px;
-  height: 18px;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    var(--color-border) 40%,
-    var(--color-border) 60%,
-    transparent 100%
-  );
 }
 
 .body {
@@ -189,11 +120,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 18px 20px;
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  background: var(--color-surface);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  min-width: 0;
 }
 
 .panelTitle {
@@ -526,10 +453,37 @@
   .headerMeta {
     margin-left: 0;
   }
+}
 
-  .metaChipText {
-    max-width: 88px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  flex: 1;
+  align-self: stretch;
+  min-height: 0;
+  height: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  overflow: auto;
+}
+
+.empty {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.readOnlyHint {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
 }

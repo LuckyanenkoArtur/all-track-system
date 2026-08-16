@@ -22,6 +22,7 @@ import {
 } from "../utils/taskStatusUtils";
 import PriorityBadge from "./badges/PriorityBadge";
 import StatusBadge from "./badges/StatusBadge";
+import { Initials } from "./tabs/utils/Initials";
 import styles from "./TaskDetailsContent.module.scss";
 
 export type TaskDetailsLabels = {
@@ -63,15 +64,6 @@ type TaskDetailsContentProps = {
   liveTimeSpent?: string;
   variant?: "panel" | "page";
 };
-
-function getInitials(name: string) {
-  return name
-    .split(/\s+/)
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
 
 export function TaskDetailsContent({
   task,
@@ -150,7 +142,7 @@ export function TaskDetailsContent({
             <div className={styles.assigneeList}>
               {task.responsible.map((person) => (
                 <span key={person} className={styles.assignee}>
-                  <span className={styles.avatar}>{getInitials(person)}</span>
+                  <span className={styles.avatar}>{new Initials(person).get()}</span>
                   {person}
                 </span>
               ))}

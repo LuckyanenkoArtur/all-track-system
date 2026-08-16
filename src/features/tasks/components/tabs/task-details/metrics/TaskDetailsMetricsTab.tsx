@@ -64,79 +64,81 @@ export function TaskDetailsMetricsTab({
 
   return (
     <div className={styles.metrics}>
-      <header className={styles.header}>
-        <h3 className={styles.title}>{t.tasks.details.metricsTitle}</h3>
-        <p className={styles.subtitle}>{t.tasks.details.metricsSubtitle}</p>
-      </header>
+      <div className={styles.scrollRegion}>
+        <header className={styles.header}>
+          <h3 className={styles.title}>{t.tasks.details.metricsTitle}</h3>
+          <p className={styles.subtitle}>{t.tasks.details.metricsSubtitle}</p>
+        </header>
 
-      <div className={styles.heroGrid}>
-        <MetricCard
-          label={t.tasks.details.timeLeft}
-          value={deadline.label}
-          tone={deadline.tone}
-          isTimeUp={deadline.isTimeUp}
-          icon={<FiClock size={20} aria-hidden />}
-        />
-        <MetricCard
-          label={t.tasks.details.budgetRemaining}
-          value={formatCurrency(budget.remaining)}
-          tone={budget.remainingTone}
-          icon={<FiTrendingUp size={20} aria-hidden />}
-        />
-        <MetricCard
-          label={t.tasks.details.budgetSpent}
-          value={formatCurrency(budget.spent)}
-          tone={budget.spentTone}
-          icon={<FiTrendingDown size={20} aria-hidden />}
-        />
-      </div>
-
-      <div className={styles.chartSection}>
-        <TaskBudgetChart
-          total={budget.total}
-          spent={budget.spent}
-          remaining={budget.remaining}
-          labels={{
-            title: t.tasks.details.budgetChart,
-            spent: t.tasks.details.spent,
-            remaining: t.tasks.details.remaining,
-            budget: t.tasks.budget,
-          }}
-        />
-      </div>
-
-      <div className={styles.summaryGrid}>
-        <div className={styles.summaryCard}>
-          <div className={styles.summaryHeader}>
-            <FiClock size={16} aria-hidden />
-            <span>{t.tasks.totalTime}</span>
-          </div>
-          <div className={styles.summaryValue}>
-            <span className={isTracking ? styles.liveTime : undefined}>
-              {liveTimeSpent ?? task.timeSpent}
-              {isTracking && <span className={styles.liveDot} aria-hidden />}
-            </span>
-            {isTracking && (
-              <span className={styles.liveBadge}>
-                {t.tasks.details.metricsLive}
-              </span>
-            )}
-          </div>
+        <div className={styles.heroGrid}>
+          <MetricCard
+            label={t.tasks.details.timeLeft}
+            value={deadline.label}
+            tone={deadline.tone}
+            isTimeUp={deadline.isTimeUp}
+            icon={<FiClock size={20} aria-hidden />}
+          />
+          <MetricCard
+            label={t.tasks.details.budgetRemaining}
+            value={formatCurrency(budget.remaining)}
+            tone={budget.remainingTone}
+            icon={<FiTrendingUp size={20} aria-hidden />}
+          />
+          <MetricCard
+            label={t.tasks.details.budgetSpent}
+            value={formatCurrency(budget.spent)}
+            tone={budget.spentTone}
+            icon={<FiTrendingDown size={20} aria-hidden />}
+          />
         </div>
 
-        <div className={styles.summaryCard}>
-          <div className={styles.summaryHeader}>
-            <FiDollarSign size={16} aria-hidden />
-            <span>{t.tasks.details.metricsUtilization}</span>
-          </div>
-          <div className={styles.utilization}>
-            <div className={styles.utilizationBar}>
-              <div
-                className={styles.utilizationFill}
-                style={{ width: `${spentPercent}%` }}
-              />
+        <div className={styles.chartSection}>
+          <TaskBudgetChart
+            total={budget.total}
+            spent={budget.spent}
+            remaining={budget.remaining}
+            labels={{
+              title: t.tasks.details.budgetChart,
+              spent: t.tasks.details.spent,
+              remaining: t.tasks.details.remaining,
+              budget: t.tasks.budget,
+            }}
+          />
+        </div>
+
+        <div className={styles.summaryGrid}>
+          <div className={styles.summaryCard}>
+            <div className={styles.summaryHeader}>
+              <FiClock size={16} aria-hidden />
+              <span>{t.tasks.totalTime}</span>
             </div>
-            <span className={styles.utilizationPercent}>{spentPercent}%</span>
+            <div className={styles.summaryValue}>
+              <span className={isTracking ? styles.liveTime : undefined}>
+                {liveTimeSpent ?? task.timeSpent}
+                {isTracking && <span className={styles.liveDot} aria-hidden />}
+              </span>
+              {isTracking && (
+                <span className={styles.liveBadge}>
+                  {t.tasks.details.metricsLive}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.summaryCard}>
+            <div className={styles.summaryHeader}>
+              <FiDollarSign size={16} aria-hidden />
+              <span>{t.tasks.details.metricsUtilization}</span>
+            </div>
+            <div className={styles.utilization}>
+              <div className={styles.utilizationBar}>
+                <div
+                  className={styles.utilizationFill}
+                  style={{ width: `${spentPercent}%` }}
+                />
+              </div>
+              <span className={styles.utilizationPercent}>{spentPercent}%</span>
+            </div>
           </div>
         </div>
       </div>

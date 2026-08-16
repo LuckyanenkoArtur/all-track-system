@@ -3,13 +3,28 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  min-height: 280px;
-  padding: 40px 24px;
-  border: 1px dashed var(--color-border);
-  border-radius: 14px;
-  background: var(--color-surface-secondary);
+  gap: 10px;
+  flex: 1;
+  align-self: stretch;
+  width: 100%;
+  min-height: 0;
+  height: 100%;
+  padding: 28px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  overflow: hidden;
   text-align: center;
+}
+
+/* Thread already draws a solid card; skip a second stroke. */
+.nested {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+  height: auto;
+  min-height: 100%;
 }
 
 .icon {
@@ -32,22 +47,8 @@
 
 .placeholder p {
   margin: 0;
-  max-width: 360px;
+  max-width: 320px;
   font-size: 0.875rem;
   line-height: 1.6;
   color: var(--color-text-muted);
-}
-
-.placeholder.compact {
-  flex: 1;
-  gap: 10px;
-  min-height: 100%;
-  padding: 28px 16px;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-}
-
-.placeholder.compact p {
-  max-width: 320px;
 }

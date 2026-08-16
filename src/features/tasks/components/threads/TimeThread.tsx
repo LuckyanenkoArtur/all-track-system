@@ -50,7 +50,7 @@ export function TimeThread({ entries }: TimeThreadProps) {
     <Thread aria-label={labels.tabs.time}>
       {orderedEntries.length === 0 ? (
         <TaskDetailsTabPlaceholder
-          variant="compact"
+          nested
           icon={<FiClock size={22} aria-hidden />}
           title={labels.tabs.time}
           message={labels.tabs.timeEmpty}
