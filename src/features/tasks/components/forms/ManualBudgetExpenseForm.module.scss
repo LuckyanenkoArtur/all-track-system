@@ -1,9 +1,23 @@
+.composer {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  background: var(--color-surface);
+}
+
 /* Visual add-zone chrome + resets of Form.Body (.content) defaults. */
-.addZone {
+.composer .addZone {
   display: flex;
   flex-direction: column;
   flex: none;
   flex-shrink: 0;
+  width: 100%;
   min-height: 0;
   overflow: visible;
   gap: 10px;

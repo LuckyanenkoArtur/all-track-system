@@ -1,0 +1,71 @@
+.root {
+  min-width: 0;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  white-space: normal;
+  word-break: break-word;
+
+  p,
+  ul,
+  ol {
+    margin: 0;
+  }
+
+  p + p,
+  p + ul,
+  p + ol,
+  ul + p,
+  ol + p,
+  ul + ul,
+  ol + ol,
+  ul + ol,
+  ol + ul {
+    margin-top: 0.55em;
+  }
+
+  ul,
+  ol {
+    padding-left: 1.25rem;
+  }
+
+  li + li {
+    margin-top: 0.2em;
+  }
+
+  strong {
+    font-weight: 650;
+    color: var(--color-text);
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  u {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  s {
+    text-decoration: line-through;
+  }
+
+  code {
+    padding: 0.1em 0.35em;
+    border-radius: 6px;
+    background: var(--color-surface-hover);
+    font-size: 0.92em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+      color: var(--color-accent-hover);
+    }
+  }
+}

@@ -126,15 +126,10 @@ export default function TaskDetailsTabulator({
 
   const taskTimeEntries = useMemo(
     () =>
-      taskHistory
-        .filter(
-          (entry) =>
-            entry.type === "manual_time_added" || entry.type === "time_tracked",
-        )
-        .sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        ),
+      taskHistory.filter(
+        (entry) =>
+          entry.type === "manual_time_added" || entry.type === "time_tracked",
+      ),
     [taskHistory],
   );
   //! ------------------------------------------------------------

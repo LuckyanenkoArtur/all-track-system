@@ -9,6 +9,8 @@ type TaskDetailsHistoryTabProps = {
   entries: TaskHistoryEntry[];
 };
 
+// ! History will be getter form the Store
+
 export function TaskDetailsHistoryTab({ entries }: TaskDetailsHistoryTabProps) {
   const placeholder = useHistoryTabPlaceholder();
 

@@ -55,64 +55,66 @@ export function ManualTimeForm({ onSubmitManualTime }: ManualTimeFormProps) {
   };
 
   return (
-    <Form isDirty={getIsDirty} onClose={resetForm}>
-      <Form.Body id="manual-time-form" className={styles.addZone}>
-        <div className={styles.addTop}>
-          <div className={styles.addHeading}>
-            <strong>{labels.manualTimeDialogTitle}</strong>
-            <span>{labels.manualTimeDialogSubtitle}</span>
-          </div>
-        </div>
-
-        <div className={styles.addRow}>
-          <div className={styles.durationGroup}>
-            <NumberInput
-              className={styles.durationField}
-              label={labels.manualTimeHours}
-              value={hours}
-              onChange={setHours}
-              min={0}
-              max={999}
-              placeholder={0}
-            />
-
-            <span className={styles.durationSep} aria-hidden>
-              :
-            </span>
-
-            <NumberInput
-              className={styles.durationField}
-              label={labels.manualTimeMinutes}
-              value={minutes}
-              onChange={setMinutes}
-              min={0}
-              max={59}
-              placeholder={0}
-            />
+    <div className={styles.composer}>
+      <Form isDirty={getIsDirty} onClose={resetForm}>
+        <Form.Body id="manual-time-form" className={styles.addZone}>
+          <div className={styles.addTop}>
+            <div className={styles.addHeading}>
+              <strong>{labels.manualTimeDialogTitle}</strong>
+              <span>{labels.manualTimeDialogSubtitle}</span>
+            </div>
           </div>
 
-          <Textarea
-            className={styles.noteInput}
-            value={note}
-            onChange={(event) => setNote(event.target.value)}
-            placeholder={labels.manualTimeNotePlaceholder}
-            rows={1}
-            required
-            aria-label={labels.manualTimeNote}
-          />
+          <div className={styles.addRow}>
+            <div className={styles.durationGroup}>
+              <NumberInput
+                className={styles.durationField}
+                label={labels.manualTimeHours}
+                value={hours}
+                onChange={setHours}
+                min={0}
+                max={999}
+                placeholder={0}
+              />
 
-          <Form.Button
-            type="submit"
-            className={styles.submitBtn}
-            disabled={!canSubmit}
-            onSubmit={handleSubmit}
-            aria-label={labels.manualTimeApply}
-          >
-            <FiPlus size={16} aria-hidden />
-            <span>{labels.manualTimeApply}</span>
-          </Form.Button>
-        </div>
-      </Form.Body>
-    </Form>
+              <span className={styles.durationSep} aria-hidden>
+                :
+              </span>
+
+              <NumberInput
+                className={styles.durationField}
+                label={labels.manualTimeMinutes}
+                value={minutes}
+                onChange={setMinutes}
+                min={0}
+                max={59}
+                placeholder={0}
+              />
+            </div>
+
+            <Textarea
+              className={styles.noteInput}
+              value={note}
+              onChange={(event) => setNote(event.target.value)}
+              placeholder={labels.manualTimeNotePlaceholder}
+              rows={1}
+              required
+              aria-label={labels.manualTimeNote}
+            />
+
+            <Form.Button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={!canSubmit}
+              onSubmit={handleSubmit}
+              aria-label={labels.manualTimeApply}
+            >
+              <FiPlus size={16} aria-hidden />
+              <span>{labels.manualTimeApply}</span>
+            </Form.Button>
+          </div>
+        </Form.Body>
+      </Form>
+    </div>
   );
 }

@@ -108,6 +108,36 @@
   padding: 0 14px 0 6px;
 }
 
+.iconOnly {
+  flex-shrink: 0;
+  justify-content: center;
+  gap: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  color: var(--color-text-muted);
+
+  &:active {
+    transform: none;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--color-surface-hover);
+    color: var(--color-accent);
+  }
+
+  .icon {
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+  }
+}
+
 .withBadge {
   padding-right: 22px;
 }
@@ -142,6 +172,10 @@
   .root {
     width: 100%;
     justify-content: center;
+
+    &.iconOnly {
+      width: 36px;
+    }
   }
 }
 

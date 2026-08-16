@@ -1,0 +1,119 @@
+.avatarCompletion {
+  background: rgba(34, 197, 94, 0.12);
+  color: #15803d;
+}
+
+.bodyCompletion {
+  border-color: rgba(34, 197, 94, 0.28);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.commentContent.commentContent {
+  max-height: none;
+  overflow: visible;
+  color: var(--color-text);
+  white-space: normal;
+}
+
+.badgeCompletion.badgeCompletion {
+  background: rgba(34, 197, 94, 0.16);
+  color: #15803d;
+}
+
+.completionSteps {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(34, 197, 94, 0.18);
+
+  h4 {
+    margin: 0 0 6px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+  }
+
+  ol {
+    margin: 0;
+    padding-left: 1.2rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-text);
+  }
+
+  li + li {
+    margin-top: 4px;
+  }
+}
+
+.attachmentList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.attachmentChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-accent);
+    background: var(--color-accent-light);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+.attachmentName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 220px;
+}
+
+.attachmentSize {
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+[data-theme="dark"] {
+  .avatarCompletion {
+    background: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+  }
+
+  .bodyCompletion {
+    border-color: rgba(34, 197, 94, 0.35);
+    background: rgba(34, 197, 94, 0.12);
+  }
+
+  .badgeCompletion.badgeCompletion {
+    background: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+  }
+}

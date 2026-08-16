@@ -65,15 +65,17 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  overflow: auto;
+  overflow: hidden;
   padding: 16px;
 }
 
 .panelContent {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 1;
   min-height: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 @media (max-width: 640px) {

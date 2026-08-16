@@ -6,7 +6,7 @@ export const MOCK_TASK_COMMENTS: TaskComment[] = [
     taskId: "TSK-002",
     author: "Alex M.",
     authorInitials: "AM",
-    body: "Sidebar collapse animation still jumps on nested routes. I'll profile layout shift next.",
+    body: "Sidebar collapse animation still jumps on nested routes. I'll profile **layout shift** next.\n\n- Check nested routes\n- Measure CLS",
     createdAt: "2026-06-08T14:30:00Z",
     attachments: [],
   },

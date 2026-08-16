@@ -1,0 +1,60 @@
+.composer {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  background: var(--color-surface);
+}
+
+.error {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-danger);
+}
+
+.composerRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface-secondary);
+  transition: border-color 0.2s ease;
+
+  &:focus-within {
+    border-color: var(--color-accent);
+  }
+
+  .sendBtn {
+    background: var(--color-accent);
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background: var(--color-accent-hover);
+      color: #fff;
+    }
+  }
+}
+
+.composerField {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+
+  [data-toolbar-bar] {
+    margin-bottom: 2px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  [role="textbox"] {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+}

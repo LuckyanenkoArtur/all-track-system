@@ -24,6 +24,8 @@ export type ButtonProps = PropsWithChildren<{
   className?: string;
   active?: boolean;
   ariaExpanded?: boolean;
+  ariaLabel?: string;
+  disabled?: boolean;
 }>;
 
 type ButtonTooltipSlotProps = PropsWithChildren<{
@@ -397,6 +399,8 @@ export const Button: ButtonComponent = ({
   className = "",
   active = false,
   ariaExpanded,
+  ariaLabel,
+  disabled = false,
   children,
 }) => {
   const iconChild = getChildByDisplayName(children, "ButtonIcon");
@@ -414,22 +418,27 @@ export const Button: ButtonComponent = ({
   const tooltipPosition = tooltipProps?.position ?? "bottom";
 
   const showBadge = badgeChild != null && shouldShowBadge(badge);
+  const iconOnly = Boolean(icon) && text == null;
 
   const button = (
     <button
       type="button"
-      className={`${styles.root} ${icon ? styles.withIcon : ""} ${showBadge ? styles.withBadge : ""} ${active ? styles.active : ""} ${className}`.trim()}
+      className={`${styles.root} ${icon && !iconOnly ? styles.withIcon : ""} ${iconOnly ? styles.iconOnly : ""} ${showBadge ? styles.withBadge : ""} ${active ? styles.active : ""} ${className}`.trim()}
       onClick={onClick}
       aria-expanded={ariaExpanded}
+      aria-label={ariaLabel}
+      disabled={disabled}
     >
       {icon && (
         <span className={styles.icon} aria-hidden>
           {icon}
         </span>
       )}
-      <span className={styles.copy}>
-        <strong>{text}</strong>
-      </span>
+      {!iconOnly && (
+        <span className={styles.copy}>
+          <strong>{text}</strong>
+        </span>
+      )}
       {showBadge && <span className={styles.badge}>{badge}</span>}
     </button>
   );
