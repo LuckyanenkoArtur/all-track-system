@@ -24,6 +24,7 @@ import type { Task } from "../domain/task";
 import type { TaskStep } from "../domain/step";
 import type { TaskStatus } from "../domain/status";
 import type { TaskComment } from "../domain/comment";
+import { resolveTaskPriority } from "../domain/priority";
 
 import {
   addElapsedToTimeSpent,
@@ -82,6 +83,7 @@ function normalizeTask(task: Task): Task {
   return {
     ...task,
     status: normalizeTaskStatus(task.status),
+    priority: resolveTaskPriority(task.priority),
     observables: task.observables ?? [],
     startDate: task.startDate ?? task.createdAt,
     steps: task.steps ?? [],
@@ -315,7 +317,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         const next = prev.map((task) => {
           if (task.id !== taskId) return task;
           if (task.status === "open") {
-            return { ...task, status: "inProgress" };
+            return { ...task, status: "inProgress" as const };
           }
           return task;
         });
@@ -364,7 +366,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
       setTasks((prev) => {
         const next = prev.map((task) =>
-          task.id === taskId ? { ...task, status: "completed" } : task,
+          task.id === taskId ? { ...task, status: "completed" as const } : task,
         );
         persistTasks(next);
         return next;
@@ -389,7 +391,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
       setTasks((prev) => {
         const next = prev.map((task) =>
-          task.id === input.taskId ? { ...task, status: "completed" } : task,
+          task.id === input.taskId
+            ? { ...task, status: "completed" as const }
+            : task,
         );
         persistTasks(next);
         return next;
@@ -434,15 +438,15 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   );
 
   const addTask = useCallback((input: CreateTaskInput) => {
-    let createdTask: Task | null = null;
+    let created: Task | undefined;
     const now = new Date().toISOString();
 
     setTasks((prev) => {
-      createdTask = {
+      created = {
         id: createTaskId(prev),
         title: input.title.trim(),
         status: "open",
-        priority: input.priority,
+        priority: resolveTaskPriority(input.priority),
         groups: input.groups.filter(Boolean),
         observables: input.observables.filter(Boolean),
         createdAt: now,
@@ -468,12 +472,16 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         requiresResultReview: input.requiresResultReview,
       };
 
-      const next = [createdTask, ...prev];
+      const next = [created, ...prev];
       persistTasks(next);
       return next;
     });
 
-    return createdTask!;
+    if (!created) {
+      throw new Error("Failed to create task");
+    }
+
+    return created;
   }, []);
 
   const updateTask = useCallback((id: string, input: UpdateTaskInput) => {
@@ -492,7 +500,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
           ? {
               ...task,
               title: input.title.trim(),
-              priority: input.priority,
+              priority: resolveTaskPriority(input.priority),
               groups: input.groups.filter(Boolean),
               observables: input.observables.filter(Boolean),
               startDate: input.startDate

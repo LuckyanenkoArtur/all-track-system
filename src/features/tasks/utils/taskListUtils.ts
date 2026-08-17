@@ -4,6 +4,7 @@ import type {
   TaskSort,
   TaskListQuery,
   SortField,
+  TaskPriorityId,
 } from "../domain/others";
 import { normalizeTaskStatus } from "./taskStatusUtils";
 
@@ -17,7 +18,11 @@ const STATUS_ORDER: Record<
   completed: 3,
   cancelled: 4,
 };
-const PRIORITY_ORDER = { low: 0, medium: 1, high: 2 };
+const PRIORITY_ORDER: Record<TaskPriorityId, number> = {
+  low: 0,
+  medium: 1,
+  high: 2,
+};
 
 export function parseBudget(value: string): number {
   return Number(value.replace(/[^0-9.-]/g, "")) || 0;
@@ -59,7 +64,8 @@ export function matchesSearch(task: Task, search: string): boolean {
     task.budget,
     task.timeSpent,
     task.status,
-    task.priority,
+    task.priority.id,
+    task.priority.name,
     ...task.groups,
     ...task.responsible,
     ...task.observables,
@@ -77,7 +83,9 @@ export function matchesFilters(task: Task, filters: TaskFilters): boolean {
 
   if (
     filters.priorities.length > 0 &&
-    !filters.priorities.includes(task.priority)
+    !filters.priorities.some(
+      (priority) => priority.id === task.priority.id,
+    )
   ) {
     return false;
   }
@@ -123,7 +131,7 @@ function compareField(a: Task, b: Task, field: SortField): number {
         STATUS_ORDER[normalizeTaskStatus(b.status)]
       );
     case "priority":
-      return PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority];
+      return PRIORITY_ORDER[a.priority.id] - PRIORITY_ORDER[b.priority.id];
     case "groups":
       return a.groups.join(", ").localeCompare(b.groups.join(", "));
     case "createdAt":
@@ -210,7 +218,10 @@ export function areFiltersEqual(a: TaskFilters, b: TaskFilters): boolean {
   return (
     a.search === b.search &&
     arraysEqual(a.statuses, b.statuses) &&
-    arraysEqual(a.priorities, b.priorities) &&
+    arraysEqual(
+      a.priorities.map((priority) => priority.id),
+      b.priorities.map((priority) => priority.id),
+    ) &&
     arraysEqual(a.groups, b.groups) &&
     arraysEqual(a.initiators, b.initiators) &&
     arraysEqual(a.responsible, b.responsible) &&

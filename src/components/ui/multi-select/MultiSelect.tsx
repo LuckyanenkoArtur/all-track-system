@@ -45,7 +45,7 @@ export function MultiSelect({
   useEffect(() => {
     if (!open) return;
 
-    const handleClick = (event: MouseEvent) => {
+    const handleClick = (event: Event) => {
       if (!containerRef.current?.contains(event.target as Node)) {
         setOpen(false);
         setQuery("");

@@ -92,11 +92,11 @@ export function TaskDetailsContent({
             <FiFlag
               size={14}
               aria-hidden
-              className={styles[`priorityIcon_${task.priority}`]}
+              className={styles[`priorityIcon_${task.priority.id}`]}
             />
-            {task.priority === "high" && labels.high}
-            {task.priority === "medium" && labels.medium}
-            {task.priority === "low" && labels.low} {labels.priority}
+            {task.priority.id === "high" && labels.high}
+            {task.priority.id === "medium" && labels.medium}
+            {task.priority.id === "low" && labels.low} {labels.priority}
           </span>
           <StatusBadge status={task.status} />
         </div>

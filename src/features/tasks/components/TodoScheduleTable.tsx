@@ -1,5 +1,5 @@
 import { FiCalendar, FiFlag } from "react-icons/fi";
-import type { Task, TaskPriority } from "../domain/others";
+import type { Task, TaskPriorityId } from "../domain/others";
 import { formatDueDateShort } from "../utils/dateUtils";
 import { useTaskContextMenu } from "../hooks/useTaskContextMenu";
 import { TaskContextMenu } from "./TaskContextMenu";
@@ -26,7 +26,7 @@ type TodoScheduleTableProps = {
   onLogBudgetExpense?: (taskId: string) => void;
 };
 
-const PRIORITY_CLASS: Record<TaskPriority, string> = {
+const PRIORITY_CLASS: Record<TaskPriorityId, string> = {
   high: styles.priorityHigh,
   medium: styles.priorityMedium,
   low: styles.priorityLow,
@@ -87,7 +87,7 @@ export function TodoScheduleTable({
                 >
                   <td className={styles.iconCol}>
                     <FiFlag
-                      className={`${styles.flag} ${PRIORITY_CLASS[task.priority]}`}
+                      className={`${styles.flag} ${PRIORITY_CLASS[task.priority.id]}`}
                       aria-hidden
                     />
                   </td>

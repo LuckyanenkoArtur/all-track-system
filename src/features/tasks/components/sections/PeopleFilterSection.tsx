@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { Section } from "../../../../components/ui/section/Section";
 import { MultiSelect } from "../../../../components/ui/multi-select/MultiSelect";
 import { useTranslation } from "../../../../i18n";
@@ -19,7 +19,7 @@ type MultiSelectFieldConfig = {
   key: PeopleFilterKey;
   label: string;
   options: MultiSelectOption[];
-  icon: JSX.Element;
+  icon: ReactNode;
 };
 
 type PeopleFilterSectionProps = {

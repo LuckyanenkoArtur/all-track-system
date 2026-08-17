@@ -1,9 +1,13 @@
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { Section } from "../../../../components/ui/section/Section";
 import { MultiSelect } from "../../../../components/ui/multi-select/MultiSelect";
 import { useTranslation } from "../../../../i18n";
 import type { TaskFilters, TaskStatus } from "../../domain/others";
-import type { TaskPriorityId } from "../../domain/priority";
+import {
+  isTaskPriorityId,
+  TASK_PRIORITIES,
+  type TaskPriorityId,
+} from "../../domain/priority";
 import type { MultiSelectOption } from "../../../../components/ui/multi-select/MultiSelect";
 import { FiActivity, FiAlertTriangle } from "react-icons/fi";
 
@@ -23,7 +27,7 @@ type MultiSelectFieldConfig = {
   key: TaskStateFilterKey;
   label: string;
   options: MultiSelectOption[];
-  icon: JSX.Element;
+  icon: ReactNode;
 };
 
 type TaskStateFilterSectionProps = {
@@ -89,11 +93,9 @@ export function TaskStateFilterSection({
     }
 
     onChange({
-      priorities: selected.map((id) => ({
-        id: id as TaskPriorityId,
-        name:
-          priorityOptions.find((option) => option.value === id)?.label ?? id,
-      })),
+      priorities: selected
+        .filter(isTaskPriorityId)
+        .map((id) => TASK_PRIORITIES[id]),
     });
   };
 

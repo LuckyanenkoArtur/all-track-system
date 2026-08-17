@@ -1,0 +1,51 @@
+# Dependencies and build output
+node_modules
+dist
+dist-ssr
+
+# VCS
+.git
+.gitignore
+.gitattributes
+
+# Secrets and local env
+.env
+.env.*
+!.env.example
+*.local
+
+# IDE and OS
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# Logs and coverage
+logs
+*.log
+coverage
+.nyc_output
+
+# Docker (config is copied by path; image files are not needed in context)
+Dockerfile*
+.dockerignore
+docker-compose*.yml
+docker-compose*.yaml
+
+# Docs and agent/editor metadata
+*.md
+LICENSE
+.cursor
+.agents
+agent-transcripts
+
+# npm lockfile (installs use yarn.lock)
+package-lock.json
+
+# Local scripts
+scripts

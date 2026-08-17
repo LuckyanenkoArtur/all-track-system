@@ -3,7 +3,7 @@ import type { TaskCollection } from "../domain/collection";
 import type { TaskFilters } from "../domain/filters";
 import type { TaskSort } from "../domain/sort";
 import type { PageSize } from "../domain/others";
-import type { TaskPriority } from "../domain/priority";
+import { TASK_PRIORITIES, resolveTaskPriority } from "../domain/priority";
 
 const STORAGE_KEY = "alltrack-task-collections";
 
@@ -14,7 +14,7 @@ const DEFAULT_COLLECTIONS: TaskCollection[] = [
     filters: {
       search: "",
       statuses: ["inProgress"],
-      priorities: [{ id: "high" } as TaskPriority],
+      priorities: [TASK_PRIORITIES.high],
       groups: [],
       initiators: [],
       responsible: [],
@@ -58,6 +58,7 @@ function normalizeFilters(filters: TaskFilters): TaskFilters {
   return {
     ...filters,
     observables: filters.observables ?? [],
+    priorities: (filters.priorities ?? []).map(resolveTaskPriority),
   };
 }
 

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-const useTasksStore = create((set) => ({
+const useTasksStore = create(() => ({
   tasks: [],
   //   bears: 0,
   //   increasePopulation: () => set((state) => ({ bears: state.bears + 1 })),

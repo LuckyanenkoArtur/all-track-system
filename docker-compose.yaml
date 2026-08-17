@@ -1,0 +1,9 @@
+services:
+  app:
+    container_name: app
+    image: my-app:1.0.0
+    ports:
+      - 8316:8316
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production

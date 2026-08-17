@@ -21,6 +21,7 @@ import type {
   TaskPriority,
   TaskStep,
 } from "../../../domain/others";
+import { TASK_PRIORITIES, isTaskPriorityId } from "../../../domain/priority";
 import { toDateTimeLocalValue } from "../../../utils/dateUtils";
 import {
   createPendingAttachment,
@@ -114,7 +115,7 @@ function createEmptyForm(): FormState {
     observables: [],
     startDate: "",
     dueDate: "",
-    priority: "medium",
+    priority: TASK_PRIORITIES.medium,
     budget: "",
     attachments: [],
     requiresResultReview: false,
@@ -149,7 +150,7 @@ function isFormDirty(form: FormState, baseline: FormState): boolean {
     form.description.trim() !== baseline.description.trim() ||
     form.startDate !== baseline.startDate ||
     form.dueDate !== baseline.dueDate ||
-    form.priority !== baseline.priority ||
+    form.priority.id !== baseline.priority.id ||
     form.budget.trim() !== baseline.budget.trim() ||
     form.requiresResultReview !== baseline.requiresResultReview ||
     form.groups.join("|") !== baseline.groups.join("|") ||
@@ -557,13 +558,15 @@ export function TaskCreationPanel({
                       {labels.priority}
                     </span>
                     <select
-                      value={form.priority}
-                      onChange={(event) =>
+                      value={form.priority.id}
+                      onChange={(event) => {
+                        const nextId = event.target.value;
+                        if (!isTaskPriorityId(nextId)) return;
                         setForm({
                           ...form,
-                          priority: event.target.value as TaskPriority,
-                        })
-                      }
+                          priority: TASK_PRIORITIES[nextId],
+                        });
+                      }}
                     >
                       <option value="" disabled>
                         {labels.priorityPlaceholder}

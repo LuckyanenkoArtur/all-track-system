@@ -20,7 +20,9 @@ export function TaskDetailsPanel({ task, initialTab }: TaskDetailsPanelProps) {
         <Panel.Desciption>{t.tasks.details.panelSubtitle}</Panel.Desciption>
       </Panel.Header>
       <Panel.Content>
-        <TaskDetailsTabulator task={task} initialTab={initialTab} />
+        {task ? (
+          <TaskDetailsTabulator task={task} initialTab={initialTab} />
+        ) : null}
       </Panel.Content>
     </Panel>
   );

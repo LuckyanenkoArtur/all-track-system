@@ -33,6 +33,11 @@ export type { TaskSort, SortField, SortDirection } from "./sort";
 export type { Task } from "./task";
 export type { TaskStatus, TaskStatusId } from "./status";
 export type { TaskPriority, TaskPriorityId } from "./priority";
+export {
+  TASK_PRIORITIES,
+  isTaskPriorityId,
+  resolveTaskPriority,
+} from "./priority";
 export type { TaskCollection } from "./collection";
 export type { TaskStep, CompletionReportStep } from "./step";
 export type { TaskComment, TaskCommentAttachment } from "./comment";
