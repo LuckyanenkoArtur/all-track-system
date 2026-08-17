@@ -7,7 +7,6 @@ import styles from "./TaskTrackingBar.module.scss";
 
 type TaskTrackingBarProps = {
   task: Task;
-  liveTimeSpent?: string;
   isTracking?: boolean;
   sessionTimer?: string;
   onToggleTracking?: () => void;
@@ -16,15 +15,15 @@ type TaskTrackingBarProps = {
 
 export function TaskTrackingBar({
   task,
-  liveTimeSpent,
   isTracking = false,
   sessionTimer,
   onToggleTracking,
   className,
 }: TaskTrackingBarProps) {
   const { t } = useTranslation();
-  const showToggle =
-    onToggleTracking && !isTerminalTaskStatus(task.status);
+  const isTerminal = isTerminalTaskStatus(task.status);
+  const canToggle = Boolean(onToggleTracking) && !isTerminal;
+  const showButton = Boolean(onToggleTracking) || isTerminal;
 
   return (
     <section
@@ -32,7 +31,7 @@ export function TaskTrackingBar({
       aria-label={t.tasks.tracking}
     >
       <div
-        className={`${styles.bar} ${isTracking ? styles.active : ""} ${!showToggle ? styles.barNoAction : ""}`}
+        className={`${styles.bar} ${isTracking ? styles.active : ""} ${!showButton ? styles.barNoAction : ""}`}
       >
         <div className={styles.info}>
           <span className={styles.label}>{t.tasks.tracking}</span>
@@ -41,17 +40,16 @@ export function TaskTrackingBar({
             className={`${styles.value} ${isTracking ? styles.valueActive : ""}`}
             aria-live={isTracking ? "polite" : "off"}
           >
-            {isTracking && sessionTimer
-              ? sessionTimer
-              : (liveTimeSpent ?? task.timeSpent)}
+            {isTracking && sessionTimer ? sessionTimer : "00:00"}
           </span>
         </div>
 
-        {showToggle && (
+        {showButton && (
           <button
             type="button"
             className={`${styles.btn} ${isTracking ? styles.stop : styles.start}`}
-            onClick={onToggleTracking}
+            disabled={!canToggle}
+            onClick={canToggle ? onToggleTracking : undefined}
           >
             {isTracking ? (
               <>

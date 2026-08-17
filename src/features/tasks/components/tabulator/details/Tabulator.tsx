@@ -15,7 +15,6 @@ import { TaskDetailsHistoryTab } from "../../tabs/task-details/history/Tab.tsx";
 import { useTaskTrackingDisplay } from "../../../hooks/useTaskTrackingDisplay.ts";
 import { getLiveTimeSpent } from "../../../utils/timeTrackingUtils.ts";
 import { TaskDetailsOverviewTab } from "../../tabs/task-details/overview/TaskDetailsOverviewTab.tsx";
-import { TaskDetailsActionBar } from "../../action-bar/TaskDetailsActionBar.tsx";
 import { TaskDetailsMetricsTab } from "../../tabs/task-details/metrics/TaskDetailsMetricsTab.tsx";
 import { useTaskListState } from "../../../hooks/useTaskListState.ts";
 import { TaskCreationPanel } from "../../panels/task-creation-panel/Panel.tsx";
@@ -254,6 +253,26 @@ export default function TaskDetailsTabulator({
             !readOnly && canToggleSteps ? handleToggleStep : undefined
           }
           stepsReadOnly={readOnly || !canToggleSteps}
+          onStatusChange={(status) => {
+            if (status === "completed") {
+              setCompleteOpen(true);
+              return;
+            }
+            updateTaskStatus(task.id, status, {
+              author: authorName,
+              authorInitials,
+            });
+          }}
+          isTracking={isTracking}
+          sessionTimer={sessionTimer}
+          onToggleTracking={() =>
+            toggleTracking(task.id, {
+              author: authorName,
+              authorInitials,
+            })
+          }
+          onEditTask={() => setEditOpen(true)}
+          onCompleteTask={() => setCompleteOpen(true)}
         />
       ),
     },
@@ -358,28 +377,6 @@ export default function TaskDetailsTabulator({
       <Tabulator
         key={`${task.id}-${defaultTab}`}
         defaultValue={defaultTab}
-        header={
-          <TaskDetailsActionBar
-            task={task}
-            liveTimeSpent={liveTimeSpent}
-            isTracking={isTracking}
-            sessionTimer={sessionTimer}
-            onToggleTracking={() =>
-              toggleTracking(task.id, {
-                author: authorName,
-                authorInitials,
-              })
-            }
-            onStatusChange={(status) =>
-              updateTaskStatus(task.id, status, {
-                author: authorName,
-                authorInitials,
-              })
-            }
-            onEditTask={() => setEditOpen(true)}
-            onCompleteTask={() => setCompleteOpen(true)}
-          />
-        }
       >
         <Tabulator.Tabs>
           {tabs.map((tab) => (

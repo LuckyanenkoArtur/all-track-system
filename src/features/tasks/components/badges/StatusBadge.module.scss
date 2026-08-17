@@ -1,0 +1,92 @@
+.picker {
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.trigger {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: 0;
+  appearance: none;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent-light);
+    outline-offset: 2px;
+  }
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: transparent;
+}
+
+.menu {
+  position: fixed;
+  z-index: 1201;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 198px;
+  padding: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  animation: menuIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-surface-hover);
+    outline: none;
+  }
+}
+
+.selected {
+  background: color-mix(in srgb, var(--color-accent-light) 55%, transparent);
+}
+
+.check {
+  flex-shrink: 0;
+  color: var(--color-accent);
+}
+
+@keyframes menuIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
