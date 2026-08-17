@@ -5,7 +5,7 @@ import styles from "./TaskDetailsNotesTab.module.scss";
 
 type TaskDetailsNotesTabProps = {
   notes: TaskHistoryEntry[];
-  onAddNote: (body: string) => void;
+  onAddNote?: (body: string) => void;
 };
 
 export function TaskDetailsNotesTab({
@@ -15,7 +15,7 @@ export function TaskDetailsNotesTab({
   return (
     <div className={styles.notesTab}>
       <NotesThread notes={notes} />
-      <NoteInputForm onAddNote={onAddNote} />
+      {onAddNote ? <NoteInputForm onAddNote={onAddNote} /> : null}
     </div>
   );
 }

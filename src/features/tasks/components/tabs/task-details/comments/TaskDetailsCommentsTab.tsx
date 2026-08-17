@@ -6,7 +6,7 @@ import styles from "./TaskDetailsCommentsTab.module.scss";
 
 type TaskDetailsCommentsTabProps = {
   comments: TaskComment[];
-  onAddComment: (body: string, attachments: PendingAttachment[]) => void;
+  onAddComment?: (body: string, attachments: PendingAttachment[]) => void;
 };
 
 
@@ -19,7 +19,7 @@ export function TaskDetailsCommentsTab({
   return (
     <div className={styles.commentsTab}>
       <CommentsThread comments={comments} />
-      <CommentInputForm onAddComment={onAddComment} />
+      {onAddComment ? <CommentInputForm onAddComment={onAddComment} /> : null}
     </div>
   );
 }

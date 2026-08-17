@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
-import { Title } from "../../../../components/ui/title/Title";
+import Title from "../../../../components/ui/title/Title.tsx";
 
 import { TaskCreationButton } from "../../components/buttons/TaskCreationButton";
 import { ActiveTrackingCard } from "../../components/cards/ActiveTrackingCard";

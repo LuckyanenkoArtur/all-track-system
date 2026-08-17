@@ -1,0 +1,72 @@
+.divider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  margin: 2px 0;
+  flex-shrink: 0;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    transform: translateY(-50%);
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--color-border) 70%, transparent) 12%,
+      var(--color-border) 28%,
+      color-mix(in srgb, var(--color-accent) 40%, var(--color-border) 60%) 50%,
+      var(--color-border) 72%,
+      color-mix(in srgb, var(--color-border) 70%, transparent) 88%,
+      transparent 100%
+    );
+  }
+
+  svg {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    padding: 5px;
+    border-radius: 9999px;
+    background: var(--color-surface);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 25%, var(--color-border));
+    color: var(--color-accent);
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+}
+
+@media (min-width: 560px) {
+  .divider {
+    width: 44px;
+    height: auto;
+    align-self: stretch;
+    margin: 0 2px;
+
+    &::before {
+      top: 10%;
+      bottom: 10%;
+      left: 50%;
+      right: auto;
+      width: 1px;
+      height: auto;
+      transform: translateX(-50%);
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        color-mix(in srgb, var(--color-border) 70%, transparent) 12%,
+        var(--color-border) 28%,
+        color-mix(in srgb, var(--color-accent) 40%, var(--color-border) 60%) 50%,
+        var(--color-border) 72%,
+        color-mix(in srgb, var(--color-border) 70%, transparent) 88%,
+        transparent 100%
+      );
+    }
+  }
+}

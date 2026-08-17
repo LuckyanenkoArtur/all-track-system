@@ -23,7 +23,7 @@ import {
 } from "../../domain/others";
 import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksPage.module.scss";
-import { Title } from "../../../../components/ui/title/Title";
+import Title from "../../../../components/ui/title/Title.tsx";
 import { SearchBar } from "../../../../components/ui/search-bar/SearchBar";
 import { CompleteTaskDialog } from "../../components/panels/task-complete-panel/CompleteTaskDialog";
 

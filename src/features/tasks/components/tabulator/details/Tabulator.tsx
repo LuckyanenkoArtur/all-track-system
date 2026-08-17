@@ -31,6 +31,7 @@ import { TaskDetailsTimeTab } from "../../tabs/task-details/time/TaskDetailsTime
 import { TaskDetailsTransactionsTab } from "../../tabs/task-details/transactions/TaskDetailsTransactionsTab.tsx";
 import { TaskDetailsTabPlaceholder } from "../../placeholders/TaskDetailsTabPlaceholder.tsx";
 import { isUserTaskResponsible } from "../../../utils/taskDetailsUtils.ts";
+import { isTerminalTaskStatus } from "../../../utils/taskStatusUtils.ts";
 import { CompleteTaskDialog } from "../../panels/task-complete-panel/CompleteTaskDialog.tsx";
 
 interface TaskDetailsTabulatorProps {
@@ -67,6 +68,8 @@ export default function TaskDetailsTabulator({
   const authorName = `${bio.firstName} ${bio.lastName}`.trim() || bio.username;
   const authorInitials = getAuthorInitials(authorName);
 
+  const readOnly = isTerminalTaskStatus(task.status);
+
   const canToggleSteps = useMemo(
     () => isUserTaskResponsible(authorName, task.responsible),
     [authorName, task.responsible],
@@ -74,14 +77,14 @@ export default function TaskDetailsTabulator({
 
   const handleToggleStep = useCallback(
     (stepId: string) => {
-      if (!canToggleSteps) return;
+      if (readOnly || !canToggleSteps) return;
 
       const nextSteps = (task.steps ?? []).map((step) =>
         step.id === stepId ? { ...step, completed: !step.completed } : step,
       );
       updateTaskSteps(task.id, nextSteps);
     },
-    [canToggleSteps, task.id, task.steps, updateTaskSteps],
+    [canToggleSteps, readOnly, task.id, task.steps, updateTaskSteps],
   );
   //! ------------------------------------------------------------
 
@@ -103,6 +106,8 @@ export default function TaskDetailsTabulator({
       dataUrl: string;
     }[],
   ) => {
+    if (readOnly) return;
+
     addTaskComment({
       taskId: task.id,
       body,
@@ -245,8 +250,10 @@ export default function TaskDetailsTabulator({
       content: (
         <TaskDetailsOverviewTab
           task={task}
-          onToggleStep={canToggleSteps ? handleToggleStep : undefined}
-          stepsReadOnly={!canToggleSteps}
+          onToggleStep={
+            !readOnly && canToggleSteps ? handleToggleStep : undefined
+          }
+          stepsReadOnly={readOnly || !canToggleSteps}
         />
       ),
     },
@@ -266,15 +273,18 @@ export default function TaskDetailsTabulator({
       content: (
         <TaskDetailsTimeTab
           entries={taskTimeEntries}
-          onSubmitManualTime={(input) =>
-            addManualTime({
-              taskId: task.id,
-              hours: input.hours,
-              minutes: input.minutes,
-              note: input.note,
-              author: authorName,
-              authorInitials,
-            })
+          onSubmitManualTime={
+            readOnly
+              ? undefined
+              : (input) =>
+                  addManualTime({
+                    taskId: task.id,
+                    hours: input.hours,
+                    minutes: input.minutes,
+                    note: input.note,
+                    author: authorName,
+                    authorInitials,
+                  })
           }
         />
       ),
@@ -284,14 +294,17 @@ export default function TaskDetailsTabulator({
       content: (
         <TaskDetailsTransactionsTab
           transactions={budgetTransactions}
-          onSubmitBudgetExpense={(input) =>
-            addBudgetExpense({
-              taskId: task.id,
-              amount: input.amount,
-              description: input.description,
-              author: authorName,
-              authorInitials,
-            })
+          onSubmitBudgetExpense={
+            readOnly
+              ? undefined
+              : (input) =>
+                  addBudgetExpense({
+                    taskId: task.id,
+                    amount: input.amount,
+                    description: input.description,
+                    author: authorName,
+                    authorInitials,
+                  })
           }
         />
       ),
@@ -301,7 +314,7 @@ export default function TaskDetailsTabulator({
       content: (
         <TaskDetailsCommentsTab
           comments={taskComments}
-          onAddComment={handleAddComment}
+          onAddComment={readOnly ? undefined : handleAddComment}
         />
       ),
     },
@@ -310,13 +323,16 @@ export default function TaskDetailsTabulator({
       content: (
         <TaskDetailsNotesTab
           notes={taskNotes}
-          onAddNote={(body) =>
-            addTaskNote({
-              taskId: task.id,
-              body,
-              author: authorName,
-              authorInitials,
-            })
+          onAddNote={
+            readOnly
+              ? undefined
+              : (body) =>
+                  addTaskNote({
+                    taskId: task.id,
+                    body,
+                    author: authorName,
+                    authorInitials,
+                  })
           }
         />
       ),
