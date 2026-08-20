@@ -14,7 +14,7 @@
   text-transform: inherit;
   letter-spacing: inherit;
   text-align: inherit;
-  white-space: normal;
+  white-space: inherit;
   overflow-wrap: break-word;
   cursor: pointer;
 
@@ -29,8 +29,9 @@
 }
 
 .actionsCol {
+  width: 1%;
   min-width: 56px;
-  width: 56px;
   padding-left: 8px !important;
   padding-right: 12px !important;
+  white-space: nowrap;
 }

@@ -1,6 +1,7 @@
 .chip {
   display: inline-flex;
   align-items: center;
+  vertical-align: middle;
   gap: 7px;
   flex-shrink: 0;
   height: 30px;
@@ -10,11 +11,25 @@
   background: var(--color-surface-secondary);
   font-size: 0.8125rem;
   font-weight: 500;
+  line-height: 1;
   color: var(--color-text);
 
   > [class]:first-child {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 22px;
     height: 22px;
+    line-height: 0;
+
+    svg {
+      display: block;
+    }
+  }
+
+  > [class]:last-child {
+    display: block;
+    line-height: 1;
   }
 }
 

@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 export type DataTableTabItem = {
   id: string;
   label: string;
@@ -11,4 +13,5 @@ export type DataTableTabsProps = {
   onSelectItem: (id: string | null) => void;
   onDeleteItem?: (id: string) => void;
   ariaLabel: string;
+  actions?: ReactNode;
 };

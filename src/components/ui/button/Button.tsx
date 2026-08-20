@@ -24,6 +24,8 @@ export type ButtonProps = PropsWithChildren<{
   className?: string;
   active?: boolean;
   ariaExpanded?: boolean;
+  ariaHasPopup?: boolean | "false" | "true" | "menu" | "listbox" | "tree" | "grid" | "dialog";
+  ariaControls?: string;
   ariaLabel?: string;
   disabled?: boolean;
 }>;
@@ -399,6 +401,8 @@ export const Button: ButtonComponent = ({
   className = "",
   active = false,
   ariaExpanded,
+  ariaHasPopup,
+  ariaControls,
   ariaLabel,
   disabled = false,
   children,
@@ -417,15 +421,18 @@ export const Button: ButtonComponent = ({
     : "";
   const tooltipPosition = tooltipProps?.position ?? "bottom";
 
-  const showBadge = badgeChild != null && shouldShowBadge(badge);
+  const hasBadgeSlot = badgeChild != null;
+  const showBadge = hasBadgeSlot && shouldShowBadge(badge);
   const iconOnly = Boolean(icon) && text == null;
 
   const button = (
     <button
       type="button"
-      className={`${styles.root} ${icon && !iconOnly ? styles.withIcon : ""} ${iconOnly ? styles.iconOnly : ""} ${showBadge ? styles.withBadge : ""} ${active ? styles.active : ""} ${className}`.trim()}
+      className={`${styles.root} ${icon && !iconOnly ? styles.withIcon : ""} ${iconOnly ? styles.iconOnly : ""} ${hasBadgeSlot ? styles.withBadge : ""} ${active ? styles.active : ""} ${className}`.trim()}
       onClick={onClick}
       aria-expanded={ariaExpanded}
+      aria-haspopup={ariaHasPopup}
+      aria-controls={ariaControls}
       aria-label={ariaLabel}
       disabled={disabled}
     >

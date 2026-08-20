@@ -11,7 +11,7 @@ type DateTimeBadgeProps = {
 
 export default function DateTimeBadge({ time }: DateTimeBadgeProps) {
   return (
-    <Badge variant="neutral" className={styles.chip}>
+    <Badge variant="info" className={styles.chip}>
       <Badge.Icon>
         <FiCalendar size={13} aria-hidden />
       </Badge.Icon>

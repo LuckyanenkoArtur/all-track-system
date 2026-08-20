@@ -34,7 +34,8 @@ $transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
     padding $transition-speed $transition-timing,
     background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 16px var(--sidebar-pad-end) 16px var(--sidebar-pad-start);
+  padding: var(--layout-pad, 16px) var(--sidebar-pad-end) var(--layout-pad, 16px)
+    var(--sidebar-pad-start);
   box-sizing: border-box;
   flex-shrink: 0;
 }

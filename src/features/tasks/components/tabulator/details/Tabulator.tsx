@@ -50,6 +50,7 @@ export default function TaskDetailsTabulator({
     updateTask,
     updateTaskSteps,
     updateTaskStatus,
+    updateTaskPriority,
     getTrackingElapsedMs,
     getTaskComments,
     addTaskComment,
@@ -262,6 +263,9 @@ export default function TaskDetailsTabulator({
               author: authorName,
               authorInitials,
             });
+          }}
+          onPriorityChange={(priority) => {
+            updateTaskPriority(task.id, priority);
           }}
           isTracking={isTracking}
           sessionTimer={sessionTimer}

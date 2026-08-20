@@ -41,6 +41,7 @@ export type TaskDataTableLabels = {
 
 export type TaskColumnDef = {
   id: string;
+  hideable?: boolean;
 } & Omit<DataColumnProps, "body"> & {
     body?: (task: Task) => ReactNode;
   };
@@ -70,24 +71,29 @@ export function useTaskDataTableColumns({
         id: "title",
         field: "title",
         header: labels.taskDetails,
+        hideable: false,
+        className: styles.colTitle,
         body: (task) => <div className={styles.taskPrimary}>{task.title}</div>,
       },
       {
         id: "status",
         field: "status",
         header: labels.status,
+        className: styles.colStatus,
         body: (task) => <StatusBadge status={task.status} />,
       },
       {
         id: "priority",
         field: "priority",
         header: labels.priority,
+        className: styles.colPriority,
         body: (task) => <PriorityBadge priority={task.priority} />,
       },
       {
         id: "groups",
         field: "groups",
         header: labels.groups,
+        className: styles.colGroups,
         body: (task) => (
           <div className={styles.badgeGroup}>
             {task.groups.map((group) => (
@@ -102,6 +108,7 @@ export function useTaskDataTableColumns({
         id: "createdAt",
         field: "createdAt",
         header: labels.createdAt,
+        className: styles.colDate,
         body: (task) => (
           <div className={styles.createdDate}>
             <FiClock size={12} aria-hidden />
@@ -113,6 +120,7 @@ export function useTaskDataTableColumns({
         id: "dueDate",
         field: "dueDate",
         header: labels.dueDate,
+        className: styles.colDate,
         body: (task) => (
           <div className={styles.dueDate}>
             <FiCalendar size={12} aria-hidden />
@@ -124,6 +132,7 @@ export function useTaskDataTableColumns({
         id: "initiator",
         field: "initiator",
         header: labels.initiator,
+        className: styles.colInitiator,
         body: (task) => (
           <div className={styles.initiator}>
             <FiUser size={14} aria-hidden />
@@ -135,6 +144,7 @@ export function useTaskDataTableColumns({
         id: "responsible",
         field: "responsible",
         header: labels.responsible,
+        className: styles.colPeople,
         body: (task) => (
           <UserBadgeList items={task.responsible} icon={FiUsers} />
         ),
@@ -143,6 +153,7 @@ export function useTaskDataTableColumns({
         id: "observables",
         field: "observables",
         header: labels.observables,
+        className: styles.colPeople,
         body: (task) => (
           <UserBadgeList
             items={task.observables}
@@ -156,6 +167,7 @@ export function useTaskDataTableColumns({
         field: "budget",
         header: labels.budget,
         align: "right",
+        className: styles.colMetric,
         body: (task) => <strong>{formatBudget(task.budget)}</strong>,
       },
       {
@@ -163,6 +175,7 @@ export function useTaskDataTableColumns({
         field: "timeSpent",
         header: labels.totalTime,
         align: "right",
+        className: styles.colMetric,
         body: (task) => {
           const tracking = isTracking(task.id);
           const timeSpent = getDisplayTimeSpent(task);
@@ -181,6 +194,7 @@ export function useTaskDataTableColumns({
         header: labels.actions,
         align: "right",
         sortable: false,
+        hideable: false,
         className: columnStyles.actionsCol,
         body: (task) => {
           const tracking = isTracking(task.id);

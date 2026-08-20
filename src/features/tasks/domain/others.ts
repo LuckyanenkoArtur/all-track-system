@@ -35,6 +35,7 @@ export type { TaskStatus, TaskStatusId } from "./status";
 export type { TaskPriority, TaskPriorityId } from "./priority";
 export {
   TASK_PRIORITIES,
+  TASK_PRIORITY_IDS,
   isTaskPriorityId,
   resolveTaskPriority,
 } from "./priority";

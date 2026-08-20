@@ -44,6 +44,90 @@
   --color-card-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
+:root {
+  --layout-pad: 16px;
+  --layout-gap: 16px;
+  --content-pad: 32px;
+  --page-gap: 24px;
+  --page-header-gap: 16px;
+  --toolbar-gap: 12px;
+  --topbar-gap: 16px;
+  --control-height: 40px;
+  --control-pad-x: 14px;
+  --control-icon-box: 28px;
+  --title-size: 1.75rem;
+  --topbar-pad-y: 16px;
+  --topbar-pad-x: 24px;
+  --table-cell-pad-y: 14px;
+  --table-cell-pad-x: 18px;
+  --pagination-pad-y: 14px;
+  --pagination-pad-x: 20px;
+  --sidebar-header-gap: 24px;
+  --section-header-margin: 32px;
+}
+
+@media (max-width: 1680px) {
+  :root {
+    --layout-pad: 12px;
+    --layout-gap: 12px;
+    --content-pad: 20px;
+    --page-gap: 14px;
+    --page-header-gap: 10px;
+    --toolbar-gap: 8px;
+    --topbar-gap: 12px;
+    --control-height: 36px;
+    --control-pad-x: 12px;
+    --control-icon-box: 26px;
+    --title-size: 1.375rem;
+    --topbar-pad-y: 12px;
+    --topbar-pad-x: 18px;
+    --table-cell-pad-y: 10px;
+    --table-cell-pad-x: 14px;
+    --pagination-pad-y: 10px;
+    --pagination-pad-x: 16px;
+    --sidebar-header-gap: 16px;
+    --section-header-margin: 20px;
+  }
+}
+
+@media (max-width: 1440px) {
+  :root {
+    --content-pad: 16px;
+    --page-gap: 12px;
+    --page-header-gap: 8px;
+    --toolbar-gap: 6px;
+    --topbar-gap: 10px;
+    --title-size: 1.3125rem;
+  }
+}
+
+@media (max-width: 1366px) {
+  :root {
+    --layout-pad: 10px;
+    --layout-gap: 10px;
+    --content-pad: 16px;
+    --title-size: 1.25rem;
+  }
+}
+
+@media (max-height: 850px) {
+  :root {
+    --layout-pad: 10px;
+    --layout-gap: 10px;
+    --page-gap: 12px;
+    --topbar-pad-y: 10px;
+    --table-cell-pad-y: 10px;
+    --pagination-pad-y: 10px;
+    --sidebar-header-gap: 12px;
+  }
+}
+
+@media (max-height: 850px) and (min-width: 1367px) {
+  :root {
+    --content-pad: 16px;
+  }
+}
+
 /* Global containment — prevents page-level scroll & viewport overflow */
 *,
 *::before,
@@ -77,8 +161,8 @@ body,
   height: 100%;
   width: 100%;
   background: var(--color-bg);
-  padding: 16px;
-  gap: 16px;
+  padding: var(--layout-pad);
+  gap: var(--layout-gap);
   overflow: hidden;
   transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -90,7 +174,7 @@ body,
   flex: 1;
   min-width: 0;
   min-height: 0;
-  gap: 16px;
+  gap: var(--layout-gap);
   overflow: hidden;
 }
 
@@ -102,7 +186,7 @@ body,
   background: var(--color-surface);
   border-radius: 24px;
   box-shadow: var(--color-card-shadow);
-  padding: 32px;
+  padding: var(--content-pad);
   overflow-y: auto;
   overflow-x: hidden;
   transition:

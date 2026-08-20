@@ -6,12 +6,12 @@
 }
 
 .user-page__header {
-  margin-bottom: 32px;
+  margin-bottom: var(--section-header-margin, 32px);
 }
 
 .user-page__title {
   margin: 0 0 8px;
-  font-size: 28px;
+  font-size: var(--title-size, 1.75rem);
   font-weight: 700;
   color: var(--color-text);
   letter-spacing: -0.02em;
@@ -35,7 +35,7 @@
   @media (min-width: 768px) {
     flex-direction: row;
     align-items: stretch;
-    gap: 32px;
+    gap: var(--section-header-margin, 32px);
   }
 }
 

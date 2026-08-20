@@ -11,8 +11,28 @@ export const TASK_PRIORITIES: Record<TaskPriorityId, TaskPriority> = {
   low: { id: "low", name: "Low" },
 };
 
+export const TASK_PRIORITY_IDS: TaskPriorityId[] = ["high", "medium", "low"];
+
 export function isTaskPriorityId(value: string): value is TaskPriorityId {
   return value === "high" || value === "medium" || value === "low";
+}
+
+type PriorityLabels = Record<TaskPriorityId, string>;
+
+export function getTaskPriorityLabel(
+  priority: TaskPriorityId,
+  labels: PriorityLabels,
+): string {
+  return labels[priority];
+}
+
+export function getTaskPriorityOptions(
+  labels: PriorityLabels,
+): { value: TaskPriorityId; label: string }[] {
+  return TASK_PRIORITY_IDS.map((value) => ({
+    value,
+    label: getTaskPriorityLabel(value, labels),
+  }));
 }
 
 export function resolveTaskPriority(value: unknown): TaskPriority {

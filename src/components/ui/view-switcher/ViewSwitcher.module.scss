@@ -1,6 +1,10 @@
 .root {
   display: inline-flex;
-  align-items: center;
+  align-items: stretch;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  height: var(--control-height, 40px);
+  min-height: var(--control-height, 40px);
   gap: 4px;
   padding: 4px;
   background: var(--color-surface-secondary);
@@ -11,15 +15,21 @@
 .toggleBtn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 12px;
+  box-sizing: border-box;
+  height: 100%;
+  margin: 0;
+  gap: 6px;
+  padding: 0 12px;
   border-radius: 7px;
   font-size: 0.8125rem;
   font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
   border: 1px solid transparent;
   background: transparent;
   cursor: pointer;
   color: var(--color-text-muted);
+  appearance: none;
   transition:
     background 0.2s ease,
     color 0.2s ease,
@@ -41,6 +51,44 @@
   &:disabled {
     cursor: not-allowed;
     opacity: 0.55;
+  }
+
+  &::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+  }
+}
+
+@media (max-width: 1680px) {
+  .root {
+    gap: 2px;
+    padding: 3px;
+  }
+
+  .toggleBtn {
+    gap: 6px;
+    padding: 0 9px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 1440px) {
+  .toggleBtn {
+    gap: 5px;
+    padding: 0 8px;
+  }
+}
+
+@container (max-width: 980px) {
+  .root {
+    gap: 2px;
+    padding: 3px;
+  }
+
+  .toggleBtn {
+    gap: 4px;
+    padding: 0 7px;
+    font-size: 0.75rem;
   }
 }
 

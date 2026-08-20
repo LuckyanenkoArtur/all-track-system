@@ -24,7 +24,7 @@ import type { Task } from "../domain/task";
 import type { TaskStep } from "../domain/step";
 import type { TaskStatus } from "../domain/status";
 import type { TaskComment } from "../domain/comment";
-import { resolveTaskPriority } from "../domain/priority";
+import { resolveTaskPriority, type TaskPriorityId } from "../domain/priority";
 
 import {
   addElapsedToTimeSpent,
@@ -59,6 +59,7 @@ interface TasksContextValue {
     status: TaskStatus,
     changeAuthor?: { author: string; authorInitials: string },
   ) => void;
+  updateTaskPriority: (id: string, priority: TaskPriorityId) => void;
   startTracking: (taskId: string, meta?: TrackingMeta) => void;
   stopTracking: () => void;
   toggleTracking: (taskId: string, meta?: TrackingMeta) => void;
@@ -602,6 +603,24 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const updateTaskPriority = useCallback(
+    (id: string, priority: TaskPriorityId) => {
+      const resolved = resolveTaskPriority(priority);
+
+      setTasks((prev) => {
+        const task = prev.find((item) => item.id === id);
+        if (!task || task.priority.id === resolved.id) return prev;
+
+        const next = prev.map((item) =>
+          item.id === id ? { ...item, priority: resolved } : item,
+        );
+        persistTasks(next);
+        return next;
+      });
+    },
+    [],
+  );
+
   const isTracking = useCallback(
     (taskId: string) => tracking?.taskId === taskId,
     [tracking],
@@ -813,6 +832,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       updateTask,
       updateTaskSteps,
       updateTaskStatus,
+      updateTaskPriority,
       startTracking,
       stopTracking,
       toggleTracking,
@@ -836,6 +856,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       updateTask,
       updateTaskSteps,
       updateTaskStatus,
+      updateTaskPriority,
       startTracking,
       stopTracking,
       toggleTracking,

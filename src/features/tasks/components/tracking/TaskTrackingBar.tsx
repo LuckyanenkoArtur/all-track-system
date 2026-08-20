@@ -34,7 +34,12 @@ export function TaskTrackingBar({
         className={`${styles.bar} ${isTracking ? styles.active : ""} ${!showButton ? styles.barNoAction : ""}`}
       >
         <div className={styles.info}>
-          <span className={styles.label}>{t.tasks.tracking}</span>
+          <span className={styles.label}>
+            {isTracking ? (
+              <span className={styles.liveDot} aria-hidden />
+            ) : null}
+            {t.tasks.tracking}
+          </span>
 
           <span
             className={`${styles.value} ${isTracking ? styles.valueActive : ""}`}

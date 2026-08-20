@@ -3,6 +3,7 @@ import { Button } from "../../../../components/ui/button/Button";
 import { useTranslation } from "../../../../i18n";
 import type { TaskFilters } from "../../domain/filters";
 import { TaskFilterPanel } from "../panels/task-filter-panel/Panel";
+import styles from "./TaskFilterOptionsButton.module.scss";
 
 type FilterOptions = {
   groups: string[];
@@ -43,6 +44,7 @@ export function TaskFilterOptionsButton({
   return (
     <>
       <Button
+        className={styles.trigger}
         onClick={() => (open ? onClose() : onOpen())}
         active={open}
         ariaExpanded={open}

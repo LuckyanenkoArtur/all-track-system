@@ -15,6 +15,8 @@ import type {
 } from "../../domain/others";
 import { PAGE_SIZE_OPTIONS } from "../../domain/others";
 import { useTaskContextMenu } from "../../hooks/useTaskContextMenu";
+import { useTaskTableColumnVisibility } from "../../hooks/useTaskTableColumnVisibility";
+import { TaskColumnVisibilityButton } from "../buttons/TaskColumnVisibilityButton";
 import {
   useTaskDataTableColumns,
   type TaskDataTableLabels,
@@ -89,19 +91,48 @@ export function TaskDataTable({
     onLogBudgetExpense,
   });
 
-  const columns = useMemo<DataColumnProps[]>(
+  const columnRefs = useMemo(
     () =>
       taskColumns.map((column) => ({
-        field: column.field,
-        header: column.header,
-        align: column.align,
-        sortable: column.sortable,
-        className: column.className,
-        body: column.body
-          ? (row) => column.body!(row as Task)
-          : undefined,
+        id: column.id,
+        hideable: column.hideable,
       })),
     [taskColumns],
+  );
+
+  const {
+    visibility,
+    isColumnVisible,
+    toggleColumn,
+    showAllColumns,
+    hiddenCount,
+  } = useTaskTableColumnVisibility(columnRefs);
+
+  const columnOptions = useMemo(
+    () =>
+      taskColumns.map((column) => ({
+        id: column.id,
+        label: column.header,
+        hideable: column.hideable !== false,
+      })),
+    [taskColumns],
+  );
+
+  const columns = useMemo<DataColumnProps[]>(
+    () =>
+      taskColumns
+        .filter((column) => isColumnVisible(column.id))
+        .map((column) => ({
+          field: column.field,
+          header: column.header,
+          align: column.align,
+          sortable: column.sortable,
+          className: column.className,
+          body: column.body
+            ? (row) => column.body!(row as Task)
+            : undefined,
+        })),
+    [taskColumns, isColumnVisible],
   );
 
   const contextMenuLabels = {
@@ -132,6 +163,15 @@ export function TaskDataTable({
           onSelectAll={onSelectAll}
           onSelectCollection={onSelectCollection}
           onDeleteCollection={onDeleteCollection}
+          actions={
+            <TaskColumnVisibilityButton
+              columns={columnOptions}
+              visibility={visibility}
+              hiddenCount={hiddenCount}
+              onToggle={toggleColumn}
+              onShowAll={showAllColumns}
+            />
+          }
         />
 
         <DataTablePagination

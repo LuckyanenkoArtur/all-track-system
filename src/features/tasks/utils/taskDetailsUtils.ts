@@ -20,6 +20,20 @@ export interface BudgetInfo {
   remainingPercent: number;
   remainingTone: BudgetTone;
   spentTone: BudgetTone;
+  tone: BudgetTone;
+}
+
+export function resolveBudgetTone(
+  remainingTone: BudgetTone,
+  spentTone: BudgetTone,
+): BudgetTone {
+  if (remainingTone === "critical" || spentTone === "critical") {
+    return "critical";
+  }
+  if (remainingTone === "warning" || spentTone === "warning") {
+    return "warning";
+  }
+  return "ok";
 }
 
 export function formatCurrency(amount: number): string {
@@ -119,18 +133,26 @@ export function getBudgetInfo(
   const remainingPercent =
     total > 0 ? Math.max(0, (remaining / total) * 100) : 0;
 
+  // ok <70% spent / >30% remaining; caution 70–89% / 11–30% left; red ≥90%, ≤10% left, or overspent.
   let remainingTone: BudgetTone = "ok";
-  if (spent > total || remainingPercent <= 10) {
-    remainingTone = "critical";
-  } else if (remainingPercent <= 30) {
-    remainingTone = "warning";
-  }
-
   let spentTone: BudgetTone = "ok";
-  if (spentPercent >= 90) {
-    spentTone = "critical";
-  } else if (spentPercent >= 70) {
-    spentTone = "warning";
+
+  if (total <= 0) {
+    const overspentWithoutBudget = spent > 0;
+    remainingTone = overspentWithoutBudget ? "critical" : "ok";
+    spentTone = overspentWithoutBudget ? "critical" : "ok";
+  } else {
+    if (spent > total || remainingPercent <= 10) {
+      remainingTone = "critical";
+    } else if (remainingPercent <= 30) {
+      remainingTone = "warning";
+    }
+
+    if (spentPercent >= 90) {
+      spentTone = "critical";
+    } else if (spentPercent >= 70) {
+      spentTone = "warning";
+    }
   }
 
   return {
@@ -141,5 +163,6 @@ export function getBudgetInfo(
     remainingPercent,
     remainingTone,
     spentTone,
+    tone: resolveBudgetTone(remainingTone, spentTone),
   };
 }

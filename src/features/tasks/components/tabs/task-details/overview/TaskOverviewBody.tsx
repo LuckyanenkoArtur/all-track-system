@@ -13,7 +13,11 @@ import {
   FiUsers,
 } from "react-icons/fi";
 
-import type { Task, TaskStatus } from "../../../../domain/others.ts";
+import type {
+  Task,
+  TaskPriorityId,
+  TaskStatus,
+} from "../../../../domain/others.ts";
 import styles from "./TaskOverviewBody.module.scss";
 import { useTranslation } from "../../../../../../i18n/index.ts";
 import Badge from "../../../../../../components/ui/badge/Badge.tsx";
@@ -39,6 +43,7 @@ export type TaskOverviewBodyProps = {
   onToggleStep?: (stepId: string) => void;
   stepsReadOnly?: boolean;
   onStatusChange?: (status: TaskStatus) => void;
+  onPriorityChange?: (priority: TaskPriorityId) => void;
   isTracking?: boolean;
   sessionTimer?: string;
   onToggleTracking?: () => void;
@@ -51,6 +56,7 @@ export function TaskOverviewBody({
   onToggleStep,
   stepsReadOnly = false,
   onStatusChange,
+  onPriorityChange,
   isTracking,
   sessionTimer,
   onToggleTracking,
@@ -78,12 +84,13 @@ export function TaskOverviewBody({
               <PriorityCard
                 title={t.tasks.priority}
                 priority={task.priority}
+                onPriorityChange={onPriorityChange}
               />
               <Divider icon={<FiFlag size={11} aria-hidden />} />
               <StatusCard
                 title={t.tasks.status}
                 status={task.status}
-                onStatusChange={closed ? undefined : onStatusChange}
+                onStatusChange={onStatusChange}
               />
             </div>
           </Panel.Section.Content>
@@ -169,7 +176,7 @@ export function TaskOverviewBody({
                 {task.groups.map((group) => (
                   <Badge
                     key={group}
-                    variant="neutral"
+                    variant="info"
                     className={styles.groupBadge}
                   >
                     <Badge.Icon>
@@ -261,7 +268,10 @@ export function TaskOverviewBody({
               {showTaskActions && (
                 <div className={styles.actionButtons}>
                   {showComplete && onCompleteTask && (
-                    <Button onClick={onCompleteTask}>
+                    <Button
+                      onClick={onCompleteTask}
+                      className={styles.actionBtn}
+                    >
                       <Button.Icon>
                         <FiCheckCircle size={15} />
                       </Button.Icon>
@@ -271,7 +281,7 @@ export function TaskOverviewBody({
                   {onEditTask && (
                     <Button
                       onClick={onEditTask}
-                      className={buttonStyles.secondary}
+                      className={`${buttonStyles.secondary} ${styles.actionBtn}`}
                     >
                       <Button.Icon>
                         <FiEdit2 size={15} />

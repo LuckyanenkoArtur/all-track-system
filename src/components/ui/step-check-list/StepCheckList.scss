@@ -67,5 +67,7 @@
     font-size: 0.875rem;
     color: var(--color-text);
     line-height: 1.4;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 }

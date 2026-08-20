@@ -14,7 +14,7 @@ export function BudgetCard({ title, budget }: BudgetCardProps) {
     <Card>
       <Card.Title>{title}</Card.Title>
       <Card.Content>
-        <Badge variant="success">
+        <Badge variant="info">
           <Badge.Icon>
             <FiDollarSign size={16} aria-hidden />
           </Badge.Icon>

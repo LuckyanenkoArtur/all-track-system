@@ -4,6 +4,8 @@
   flex: 1;
   min-height: 0;
   height: 100%;
+  min-width: 0;
+  max-width: 100%;
   padding: 14px 16px;
   border: 1px solid var(--color-border);
   border-radius: 12px;
@@ -14,9 +16,11 @@
 .scrollRegion {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--page-gap, 16px);
   flex: 1;
   min-height: 0;
+  min-width: 0;
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
 
@@ -50,16 +54,18 @@
 
 .heroGrid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--page-gap, 14px);
   flex-shrink: 0;
+  min-width: 0;
 }
 
 .metricCard {
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  padding: 18px 16px;
+  min-width: 0;
+  padding: 16px;
   border-radius: 14px;
   border: 1px solid var(--color-border);
   background: var(--color-surface-secondary);
@@ -90,6 +96,15 @@
   flex-direction: column;
   gap: 4px;
   min-width: 0;
+  flex: 1;
+}
+
+.metricValueRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
 }
 
 .metricLabel {
@@ -101,12 +116,14 @@
 }
 
 .metricValue {
+  min-width: 0;
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.2;
   color: var(--color-text);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
 }
 
 .timeUp {
@@ -227,48 +244,8 @@
 
 .chartSection {
   flex-shrink: 0;
-}
-
-.summaryGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  flex-shrink: 0;
-}
-
-.summaryCard {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px 18px;
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  background: var(--color-surface-secondary);
-}
-
-.summaryHeader {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-text-muted);
-
-  svg {
-    color: var(--color-text-subtle);
-  }
-}
-
-.summaryValue {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1.375rem;
-  font-weight: 700;
-  color: var(--color-text);
-  font-variant-numeric: tabular-nums;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .liveTime {
@@ -298,35 +275,6 @@
   letter-spacing: 0.04em;
 }
 
-.utilization {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.utilizationBar {
-  flex: 1;
-  height: 10px;
-  border-radius: 9999px;
-  background: var(--color-border);
-  overflow: hidden;
-}
-
-.utilizationFill {
-  height: 100%;
-  border-radius: 9999px;
-  background: linear-gradient(90deg, var(--color-accent) 0%, #6366f1 100%);
-  transition: width 0.5s ease;
-}
-
-.utilizationPercent {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--color-text);
-  font-variant-numeric: tabular-nums;
-  min-width: 3ch;
-}
-
 @keyframes livePulse {
   0%,
   100% {
@@ -337,12 +285,8 @@
   }
 }
 
-@media (max-width: 960px) {
+@media (max-width: 720px) {
   .heroGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .summaryGrid {
     grid-template-columns: 1fr;
   }
 }

@@ -1,4 +1,8 @@
-import type { Task, TaskStatus } from "../../../../domain/others.ts";
+import type {
+  Task,
+  TaskPriorityId,
+  TaskStatus,
+} from "../../../../domain/others.ts";
 import styles from "./TaskDetailsOverviewTab.module.scss";
 
 import { TaskOverviewBody } from "./TaskOverviewBody.tsx";
@@ -9,6 +13,7 @@ type TaskDetailsOverviewTabProps = {
   onToggleStep?: (stepId: string) => void;
   stepsReadOnly?: boolean;
   onStatusChange?: (status: TaskStatus) => void;
+  onPriorityChange?: (priority: TaskPriorityId) => void;
   isTracking?: boolean;
   sessionTimer?: string;
   onToggleTracking?: () => void;
@@ -21,6 +26,7 @@ export function TaskDetailsOverviewTab({
   onToggleStep,
   stepsReadOnly = false,
   onStatusChange,
+  onPriorityChange,
   isTracking,
   sessionTimer,
   onToggleTracking,
@@ -41,6 +47,7 @@ export function TaskDetailsOverviewTab({
         onToggleStep={onToggleStep}
         stepsReadOnly={stepsReadOnly}
         onStatusChange={onStatusChange}
+        onPriorityChange={onPriorityChange}
         isTracking={isTracking}
         sessionTimer={sessionTimer}
         onToggleTracking={onToggleTracking}

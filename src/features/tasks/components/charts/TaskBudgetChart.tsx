@@ -1,4 +1,9 @@
-import { formatCurrency } from "../../utils/taskDetailsUtils";
+import { useId } from "react";
+import { FiAlertTriangle } from "react-icons/fi";
+import {
+  formatCurrency,
+  type BudgetTone,
+} from "../../utils/taskDetailsUtils";
 import styles from "./TaskBudgetChart.module.scss";
 
 type TaskBudgetChartProps = {
@@ -6,59 +11,87 @@ type TaskBudgetChartProps = {
   spent: number;
   remaining: number;
   compact?: boolean;
+  tone?: BudgetTone;
   labels: {
-    title: string;
     spent: string;
     remaining: string;
     budget: string;
+    utilization: string;
   };
 };
 
-export function TaskBudgetChart({ total, spent, remaining, compact = false, labels }: TaskBudgetChartProps) {
-  const spentPercent = total > 0 ? Math.min(100, (spent / total) * 100) : 0;
-  const remainingPercent = total > 0 ? Math.max(0, (remaining / total) * 100) : 0;
+const TONE_CLASS: Record<BudgetTone, string> = {
+  ok: styles.tone_ok,
+  warning: styles.tone_warning,
+  critical: styles.tone_critical,
+};
+
+export function TaskBudgetChart({
+  total,
+  spent,
+  remaining,
+  compact = false,
+  tone = "ok",
+  labels,
+}: TaskBudgetChartProps) {
+  const headingId = useId();
+  const spentRatio = total > 0 ? Math.min(100, (spent / total) * 100) : 0;
+  const spentPercent = Math.round(spentRatio);
+  const showAlert = tone === "warning" || tone === "critical";
+
+  const className = [
+    styles.chart,
+    compact ? styles.compact : "",
+    TONE_CLASS[tone],
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <div className={`${styles.chart} ${compact ? styles.compact : ""}`}>
-      <div className={styles.header}>
-        <h4>{labels.title}</h4>
-        <span className={styles.total}>{formatCurrency(total)}</span>
-      </div>
+    <section className={className} aria-labelledby={headingId}>
+      <header className={styles.header}>
+        <div className={styles.titleBlock}>
+          <h4 id={headingId}>{labels.budget}</h4>
+          <p className={styles.total}>{formatCurrency(total)}</p>
+        </div>
+
+        <div className={styles.utilization}>
+          <span className={styles.utilizationLabel}>{labels.utilization}</span>
+          <strong className={styles.utilizationValue}>
+            {showAlert && (
+              <FiAlertTriangle
+                size={18}
+                aria-hidden
+                className={styles.alertIcon}
+              />
+            )}
+            {spentPercent}%
+          </strong>
+        </div>
+      </header>
 
       <div
         className={styles.barTrack}
-        role="img"
-        aria-label={`${labels.spent} ${formatCurrency(spent)}, ${labels.remaining} ${formatCurrency(remaining)}`}
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={spentPercent}
+        aria-valuetext={`${labels.utilization} ${spentPercent}%, ${labels.spent} ${formatCurrency(spent)}, ${labels.remaining} ${formatCurrency(remaining)}, ${labels.budget} ${formatCurrency(total)}`}
+        aria-label={labels.utilization}
       >
-        <div
-          className={styles.barSpent}
-          style={{ width: `${spentPercent}%` }}
-          title={`${labels.spent}: ${formatCurrency(spent)}`}
-        />
-        <div
-          className={styles.barRemaining}
-          style={{ width: `${remainingPercent}%` }}
-          title={`${labels.remaining}: ${formatCurrency(remaining)}`}
-        />
+        <div className={styles.barFill} style={{ width: `${spentRatio}%` }} />
       </div>
 
-      <div className={styles.legend}>
-        <div className={styles.legendItem}>
-          <span className={`${styles.dot} ${styles.dotSpent}`} aria-hidden />
-          <span>{labels.spent}</span>
-          <strong>{formatCurrency(spent)}</strong>
+      <dl className={styles.stats}>
+        <div className={styles.stat}>
+          <dt>{labels.spent}</dt>
+          <dd>{formatCurrency(spent)}</dd>
         </div>
-        <div className={styles.legendItem}>
-          <span className={`${styles.dot} ${styles.dotRemaining}`} aria-hidden />
-          <span>{labels.remaining}</span>
-          <strong>{formatCurrency(remaining)}</strong>
+        <div className={`${styles.stat} ${styles.statRemaining}`}>
+          <dt>{labels.remaining}</dt>
+          <dd>{formatCurrency(remaining)}</dd>
         </div>
-        <div className={styles.legendItem}>
-          <span className={`${styles.dot} ${styles.dotBudget}`} aria-hidden />
-          <span>{labels.budget}</span>
-          <strong>{formatCurrency(total)}</strong>
-        </div>
-      </div>
-    </div>
+      </dl>
+    </section>
   );
 }

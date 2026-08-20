@@ -14,7 +14,7 @@ export function StartDateCard({ title, startDate }: StartDateCardProps) {
     <Card>
       <Card.Title>{title}</Card.Title>
       <Card.Content>
-        <Badge variant="neutral">
+        <Badge variant="info">
           <Badge.Icon>
             <FiPlay size={16} aria-hidden />
           </Badge.Icon>

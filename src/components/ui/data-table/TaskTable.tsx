@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, type ReactNode } from "react";
 import { DataTableTabs } from "./tabs";
 
 export type TaskTableCollection = {
@@ -14,6 +14,7 @@ export type TaskTableCollectionTabsProps = {
   onSelectAll: () => void;
   onSelectCollection: (id: string) => void;
   onDeleteCollection: (id: string) => void;
+  actions?: ReactNode;
 };
 
 export function TaskTableCollectionTabs({
@@ -24,6 +25,7 @@ export function TaskTableCollectionTabs({
   onSelectAll,
   onSelectCollection,
   onDeleteCollection,
+  actions,
 }: TaskTableCollectionTabsProps) {
   const handleSelectItem = useCallback(
     (id: string | null) => {
@@ -60,6 +62,7 @@ export function TaskTableCollectionTabs({
       onSelectItem={handleSelectItem}
       onDeleteItem={handleDeleteItem}
       ariaLabel={ariaLabel}
+      actions={actions}
     />
   );
 }

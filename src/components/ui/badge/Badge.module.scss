@@ -1,13 +1,17 @@
 .badge {
   display: inline-flex;
   align-items: center;
+  vertical-align: middle;
   gap: 7px;
+  max-width: 100%;
+  min-width: 0;
   padding: 4px 10px 4px 4px;
   border-radius: 9999px;
   border: 1px solid var(--color-border);
   background: var(--color-surface-secondary);
   font-size: 0.8125rem;
   font-weight: 500;
+  line-height: 1;
   color: var(--color-text);
   white-space: nowrap;
 }
@@ -20,14 +24,25 @@
   height: 26px;
   border-radius: 9999px;
   flex-shrink: 0;
+  line-height: 1;
 
   svg {
+    display: block;
     flex-shrink: 0;
   }
 }
 
 .label {
-  line-height: 1.35;
+  display: block;
+  min-width: 0;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  time {
+    display: block;
+    line-height: inherit;
+  }
 }
 
 .badge.success .icon {
