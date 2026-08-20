@@ -1,6 +1,6 @@
 import type { TaskHistoryEntry } from "../../../../domain/others.ts";
-import { NoteInputForm } from "../../../forms/NoteInputForm.tsx";
-import { NotesThread } from "../../../threads/NotesThread.tsx";
+import { NoteInputForm } from "../../../forms/note-input-form/NoteInputForm.tsx";
+import { NotesThread } from "../../../threads/notes-thread/NotesThread.tsx";
 import styles from "./TaskDetailsNotesTab.module.scss";
 
 type TaskDetailsNotesTabProps = {

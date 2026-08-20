@@ -5,7 +5,6 @@ import {
   TaskTableCollectionTabs,
   type DataColumnProps,
 } from "../../../../components/ui/data-table/DataTable";
-import { TaskContextMenu } from "../../components/TaskContextMenu";
 import type {
   PageSize,
   SortField,
@@ -14,9 +13,8 @@ import type {
   TaskSort,
 } from "../../domain/others";
 import { PAGE_SIZE_OPTIONS } from "../../domain/others";
-import { useTaskContextMenu } from "../../hooks/useTaskContextMenu";
 import { useTaskTableColumnVisibility } from "../../hooks/useTaskTableColumnVisibility";
-import { TaskColumnVisibilityButton } from "../buttons/TaskColumnVisibilityButton";
+import { TaskColumnVisibilityButton } from "../buttons/task-column-visability-button/TaskColumnVisibilityButton";
 import {
   useTaskDataTableColumns,
   type TaskDataTableLabels,
@@ -50,8 +48,6 @@ type TaskDataTableProps = {
   isTracking: (taskId: string) => boolean;
   getDisplayTimeSpent: (task: Task) => string;
   onToggleTracking: (taskId: string) => void;
-  onStartTracking: (taskId: string) => void;
-  onStopTracking: () => void;
   labels: TaskDataTableLabels;
 };
 
@@ -75,12 +71,8 @@ export function TaskDataTable({
   isTracking,
   getDisplayTimeSpent,
   onToggleTracking,
-  onStartTracking,
-  onStopTracking,
   labels,
 }: TaskDataTableProps) {
-  const { menu, openContextMenu, closeContextMenu } = useTaskContextMenu();
-
   const taskColumns = useTaskDataTableColumns({
     labels,
     isTracking,
@@ -135,77 +127,56 @@ export function TaskDataTable({
     [taskColumns, isColumnVisible],
   );
 
-  const contextMenuLabels = {
-    addManualTime: labels.addManualTime,
-    startTracking: labels.startTracking,
-    finishTracking: labels.finishTracking,
-    logBudgetExpense: labels.logBudgetExpense,
-  };
-
   return (
-    <>
-      <DataTable
-        value={tasks}
-        columns={columns}
-        sort={sort}
-        onSort={(field) => onSort(field as SortField)}
-        emptyLabel={labels.noResults}
-        onRowClick={(task) => onTaskClick(task.id)}
-        onRowContextMenu={openContextMenu}
-        getRowKey={(task) => task.id}
-        getRowAriaLabel={(task) => task.title}
-      >
-        <TaskTableCollectionTabs
-          collections={collections}
-          activeCollectionId={activeCollectionId}
-          defaultItemLabel={labels.allTasks}
-          ariaLabel={labels.allTasks}
-          onSelectAll={onSelectAll}
-          onSelectCollection={onSelectCollection}
-          onDeleteCollection={onDeleteCollection}
-          actions={
-            <TaskColumnVisibilityButton
-              columns={columnOptions}
-              visibility={visibility}
-              hiddenCount={hiddenCount}
-              onToggle={toggleColumn}
-              onShowAll={showAllColumns}
-            />
-          }
-        />
-
-        <DataTablePagination
-          page={listResult.page}
-          totalPages={listResult.totalPages}
-          total={listResult.total}
-          startIndex={listResult.startIndex}
-          endIndex={listResult.endIndex}
-          pageSize={pageSize}
-          pageSizeOptions={PAGE_SIZE_OPTIONS}
-          onPageChange={onPageChange}
-          onPageSizeChange={(size) => onPageSizeChange(size as PageSize)}
-          labels={{
-            showing: labels.showing,
-            rowsPerPage: labels.rowsPerPage,
-            page: labels.page,
-            of: labels.of,
-            previous: labels.previous,
-            next: labels.next,
-          }}
-        />
-      </DataTable>
-
-      <TaskContextMenu
-        menu={menu}
-        isTracking={isTracking}
-        labels={contextMenuLabels}
-        onClose={closeContextMenu}
-        onAddManualTime={onAddManualTime}
-        onStartTracking={onStartTracking}
-        onStopTracking={onStopTracking}
-        onLogBudgetExpense={onLogBudgetExpense}
+    <DataTable
+      value={tasks}
+      columns={columns}
+      sort={sort}
+      onSort={(field) => onSort(field as SortField)}
+      emptyLabel={labels.noResults}
+      onRowClick={(task) => onTaskClick(task.id)}
+      getRowKey={(task) => task.id}
+      getRowAriaLabel={(task) => task.title}
+    >
+      <TaskTableCollectionTabs
+        collections={collections}
+        activeCollectionId={activeCollectionId}
+        defaultItemLabel={labels.allTasks}
+        ariaLabel={labels.allTasks}
+        onSelectAll={onSelectAll}
+        onSelectCollection={onSelectCollection}
+        onDeleteCollection={onDeleteCollection}
+        actions={
+          <TaskColumnVisibilityButton
+            columns={columnOptions}
+            visibility={visibility}
+            hiddenCount={hiddenCount}
+            onToggle={toggleColumn}
+            onShowAll={showAllColumns}
+          />
+        }
       />
-    </>
+
+      <DataTablePagination
+        page={listResult.page}
+        totalPages={listResult.totalPages}
+        total={listResult.total}
+        startIndex={listResult.startIndex}
+        endIndex={listResult.endIndex}
+        pageSize={pageSize}
+        pageSizeOptions={PAGE_SIZE_OPTIONS}
+        onPageChange={onPageChange}
+        onPageSizeChange={(size) => onPageSizeChange(size as PageSize)}
+        labels={{
+          showing: labels.showing,
+          rowsPerPage: labels.rowsPerPage,
+          page: labels.page,
+          of: labels.of,
+          previous: labels.previous,
+          next: labels.next,
+        }}
+      />
+    </DataTable>
   );
 }
 

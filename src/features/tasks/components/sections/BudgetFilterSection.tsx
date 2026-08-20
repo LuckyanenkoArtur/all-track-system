@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 import { NumberInput } from "../../../../components/ui/number-input/NumberInput";
-import { Section } from "../../../../components/ui/section/Section";
+import { Sections } from "../../../../components/ui/sections/Sections";
 import { useTranslation } from "../../../../i18n";
 import type { TaskFilters } from "../../domain/others";
 import { FaMoneyBill } from "react-icons/fa6";
+import styles from "../drawers/task-filter-drawer/Drawer.module.scss";
 
 type BudgetFilterKey = "budgetMin" | "budgetMax" | "budgetCurrency";
 
@@ -35,29 +36,32 @@ export function BudgetFilterSection({
   );
 
   return (
-    <Section>
-      <Section.Title>{t.tasks.filterSections.budget}</Section.Title>
-      <Section.Content>
-        <Section.Grid>
-          <Section.Row>
-            {fields.map(({ key, label, placeholder }) => (
-              <NumberInput
-                key={key}
-                icon={<FaMoneyBill />}
-                label={label}
-                currency={filters.budgetCurrency}
-                currencyOptions={["USD", "EUR", "RUB", "GBP"]}
-                onCurrencyChange={(budgetCurrency) => onChange({ budgetCurrency })}
-                grouping={true}
-                fractionDigits={2}
-                value={filters[key]}
-                onChange={(value) => onChange({ [key]: value })}
-                placeholder={placeholder}
-              />
-            ))}
-          </Section.Row>
-        </Section.Grid>
-      </Section.Content>
-    </Section>
+    <Sections.Section>
+      <Sections.Section.Icon>
+        <FaMoneyBill size={15} aria-hidden />
+      </Sections.Section.Icon>
+      <Sections.Section.Title>
+        {t.tasks.filterSections.budget}
+      </Sections.Section.Title>
+      <Sections.Section.Content>
+        <div className={styles.row}>
+          {fields.map(({ key, label, placeholder }) => (
+            <NumberInput
+              key={key}
+              icon={<FaMoneyBill />}
+              label={label}
+              currency={filters.budgetCurrency}
+              currencyOptions={["USD", "EUR", "RUB", "GBP"]}
+              onCurrencyChange={(budgetCurrency) => onChange({ budgetCurrency })}
+              grouping={true}
+              fractionDigits={2}
+              value={filters[key]}
+              onChange={(value) => onChange({ [key]: value })}
+              placeholder={placeholder}
+            />
+          ))}
+        </div>
+      </Sections.Section.Content>
+    </Sections.Section>
   );
 }

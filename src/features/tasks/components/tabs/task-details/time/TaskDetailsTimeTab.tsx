@@ -1,6 +1,6 @@
 import type { TaskHistoryEntry } from "../../../../domain/others.ts";
-import { ManualTimeForm } from "../../../forms/ManualTimeForm.tsx";
-import { TimeThread } from "../../../threads/TimeThread.tsx";
+import { ManualTimeForm } from "../../../forms/manual-time-input-form/ManualTimeForm.tsx";
+import { TimeThread } from "../../../threads/time-thread/TimeThread.tsx";
 import styles from "./TaskDetailsTimeTab.module.scss";
 
 type TaskDetailsTimeTabProps = {

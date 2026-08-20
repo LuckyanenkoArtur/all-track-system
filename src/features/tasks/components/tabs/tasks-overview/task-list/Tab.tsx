@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useTasks } from "../../../../hooks/useTasks.ts";
 import { useCallback, useMemo } from "react";
 import { getOverviewCardNavigation } from "../../../../utils/tasksNavigation.ts";
-import { TaskInfoCards } from "../../../cards/TaskInfoCards.tsx";
+import { TaskInfoCards } from "../../../cards/task-info-card/TaskInfoCards.tsx";
 
 import {
   FiAlertCircle,
@@ -17,15 +17,9 @@ import { useTranslation } from "../../../../../../i18n/index.ts";
 
 type TaskListTabProps = {
   onTaskClick: (taskId: string) => void;
-  onAddManualTime: (taskId: string) => void;
-  onLogBudgetExpense: (taskId: string) => void;
 };
 
-const TaskListTab = ({
-  onTaskClick,
-  onAddManualTime,
-  onLogBudgetExpense,
-}: TaskListTabProps) => {
+const TaskListTab = ({ onTaskClick }: TaskListTabProps) => {
   //   ---------------------------- PART OF CARDS ----------------------------
   const navigate = useNavigate();
   const { tasks } = useTasks();
@@ -120,11 +114,7 @@ const TaskListTab = ({
   return (
     <>
       <TaskInfoCards stats={infoCards} />
-      <TodoGrid
-        onTaskClick={onTaskClick}
-        onAddManualTime={onAddManualTime}
-        onLogBudgetExpense={onLogBudgetExpense}
-      />
+      <TodoGrid onTaskClick={onTaskClick} />
     </>
   );
 };

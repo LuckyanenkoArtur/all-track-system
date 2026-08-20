@@ -1,45 +1,30 @@
-import { FiArrowLeft } from "react-icons/fi";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
-import { useTranslation } from "../../../../i18n";
-import { useTasks } from "../../hooks/useTasks";
-import styles from "./TaskDetailsPage.module.scss";
+import { BackToTasksButton } from "../../components/buttons/back-to-tasks-button/BackToTasksButton.tsx";
 import TaskDetailsTabulator from "../../components/tabulator/details/Tabulator.tsx";
+
+import styles from "./TaskDetailsPage.module.scss";
+import { useTasks } from "../../hooks/useTasks";
+
 
 export function TaskDetailsPage() {
   const { id } = useParams<{ id: string }>();
-  const { t } = useTranslation();
+
+  //!--------------------------------------------------------------------------------------------------- #
+  //! Here should be a request to the server to get the task details by using TaskService.getTaskById(id)#
+  //!--------------------------------------------------------------------------------------------------- #
   const { tasks } = useTasks();
-
-  const detailLabels = t.tasks.details;
   const task = tasks.find((item) => item.id === id);
-
-  if (!id) {
-    return <Navigate to="/app/tasks/tasks" replace />;
-  }
+  //!--------------------------------------------------------------------------------------------------- #
 
   if (!task) {
-    return (
-      <div className={styles.page}>
-        <Link to="/app/tasks/tasks" className={styles.backBtn}>
-          <FiArrowLeft size={18} aria-hidden />
-          {detailLabels.backToTasks}
-        </Link>
-        <div className={styles.notFound}>
-          <h1>{detailLabels.notFoundTitle}</h1>
-          <p>{detailLabels.notFoundMessage}</p>
-        </div>
-      </div>
-    );
+    return <Navigate to="/404" replace />;
   }
 
   return (
     <div className={styles.page}>
       <header className={styles.pageHeader}>
-        <Link to="/app/tasks/tasks" className={styles.backBtn}>
-          <FiArrowLeft size={18} aria-hidden />
-          {detailLabels.backToTasks}
-        </Link>
+        <BackToTasksButton />
       </header>
 
       <TaskDetailsTabulator task={task} />

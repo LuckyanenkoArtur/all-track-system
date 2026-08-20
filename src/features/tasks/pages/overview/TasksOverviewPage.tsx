@@ -3,16 +3,16 @@ import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
 import Title from "../../../../components/ui/title/Title.tsx";
 
-import { TaskCreationButton } from "../../components/buttons/TaskCreationButton";
-import { ActiveTrackingCard } from "../../components/cards/ActiveTrackingCard";
-import { TaskDetailsPanel } from "../../components/panels/task-details-panel/Panel.tsx";
-import { PanelDismissContext } from "../../../../components/ui/panel/Panel.tsx";
+import { TaskCreationButton } from "../../components/buttons/task-creation-button/TaskCreationButton";
+import { ActiveTrackingCard } from "../../components/cards/active-tracking-card/ActiveTrackingCard.tsx";
+import { TaskDetailsDrawer } from "../../components/drawers/task-details-drawer/Drawer.tsx";
+import { DrawerDismissContext } from "../../../../components/ui/drawer/Drawer.tsx";
 import { useTasks } from "../../hooks/useTasks";
 import { useTaskListState } from "../../hooks/useTaskListState";
 import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksOverviewPage.module.scss";
 import TaskTabulator from "../../components/tabulator/tasks/Tabulator.tsx";
-import { CompleteTaskDialog } from "../../components/panels/task-complete-panel/CompleteTaskDialog.tsx";
+import { CompleteTaskDrawer } from "../../components/drawers/task-complete-drawer/Drawer.tsx";
 
 export function TasksOverviewPage() {
   const { t } = useTranslation();
@@ -57,7 +57,7 @@ export function TasksOverviewPage() {
   };
 
   return (
-    <PanelDismissContext.Provider value={() => setSelectedTaskId(null)}>
+    <DrawerDismissContext.Provider value={() => setSelectedTaskId(null)}>
       <div className={styles.page}>
         <header className={styles.pageHeader}>
           <Title text={t.sidebar.tasksOverview} />
@@ -83,20 +83,12 @@ export function TasksOverviewPage() {
             setDetailsInitialTab(undefined);
             setSelectedTaskId(taskId);
           }}
-          onAddManualTime={(taskId) => {
-            setDetailsInitialTab("time");
-            setSelectedTaskId(taskId);
-          }}
-          onLogBudgetExpense={(taskId) => {
-            setDetailsInitialTab("transactions");
-            setSelectedTaskId(taskId);
-          }}
         />
 
-        <TaskDetailsPanel task={selectedTask} initialTab={detailsInitialTab} />
+        <TaskDetailsDrawer task={selectedTask} initialTab={detailsInitialTab} />
 
         {/* Repeated dialogs for Task Details Panel */}
-        <CompleteTaskDialog
+        <CompleteTaskDrawer
           open={completeTaskId !== null}
           onClose={() => setCompleteTaskId(null)}
           onSubmit={handleCompleteTask}
@@ -116,6 +108,6 @@ export function TasksOverviewPage() {
           }}
         />
       </div>
-    </PanelDismissContext.Provider>
+    </DrawerDismissContext.Provider>
   );
 }

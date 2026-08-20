@@ -20,8 +20,8 @@ import {
   getTaskStatusOptions,
   isTerminalTaskStatus,
 } from "../utils/taskStatusUtils";
-import PriorityBadge from "./badges/PriorityBadge";
-import StatusBadge from "./badges/StatusBadge";
+import PriorityBadge from "./badges/priority-badge/PriorityBadge";
+import StatusBadge from "./badges/status-badge/StatusBadge";
 import { Initials } from "./tabs/utils/Initials";
 import styles from "./TaskDetailsContent.module.scss";
 

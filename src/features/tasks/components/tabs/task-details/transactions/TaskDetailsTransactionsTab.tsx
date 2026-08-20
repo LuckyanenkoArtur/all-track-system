@@ -2,8 +2,8 @@ import type { BudgetTransaction } from "../../../../domain/others.ts";
 import {
   ManualBudgetExpenseForm,
   type ManualBudgetExpenseSubmitInput,
-} from "../../../forms/ManualBudgetExpenseForm.tsx";
-import { TransactionsThread } from "../../../threads/TransactionsThread.tsx";
+} from "../../../forms/budget-expenses-input-form/ManualBudgetExpenseForm.tsx";
+import { TransactionsThread } from "../../../threads/transactions-thread/TransactionsThread.tsx";
 import styles from "./TaskDetailsTransactionsTab.module.scss";
 
 type TaskDetailsTransactionsTabProps = {

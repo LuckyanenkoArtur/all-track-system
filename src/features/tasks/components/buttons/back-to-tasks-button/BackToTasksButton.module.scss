@@ -1,0 +1,22 @@
+.button {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: none;
+
+  &:active {
+    transform: none;
+  }
+
+  :global(strong) {
+    font-weight: 500;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--color-surface-hover);
+    border-color: var(--color-accent);
+
+    :global(strong) {
+      color: var(--color-accent);
+    }
+  }
+}

@@ -1,35 +1,22 @@
 import { useTranslation } from "../../../../i18n";
-import { useTasks } from "../../hooks/useTasks";
-import { TodoScheduleTable } from "../TodoScheduleTable";
+import { TodoScheduleTable } from "../../pages/overview/TodoScheduleTable";
 import { useTodoScheduleTasks } from "./useTodoScheduleTasks";
 import styles from "./TodoGrid.module.scss";
 
 type TodoGridProps = {
   onTaskClick: (taskId: string) => void;
-  onAddManualTime: (taskId: string) => void;
-  onLogBudgetExpense: (taskId: string) => void;
 };
 
-export function TodoGrid({
-  onTaskClick,
-  onAddManualTime,
-  onLogBudgetExpense,
-}: TodoGridProps) {
+export function TodoGrid({ onTaskClick }: TodoGridProps) {
   const { t } = useTranslation();
-  const { isTracking, startTracking, stopTracking } = useTasks();
   const { todayTasks, weekTasks } = useTodoScheduleTasks();
 
   const labels = t.tasks.dashboard;
-  const taskLabels = t.tasks;
 
   const todoTableColumns = {
     name: labels.name,
     projects: labels.projects,
     dueDate: labels.dueDate,
-    startTracking: taskLabels.startTracking,
-    finishTracking: taskLabels.finishTracking,
-    addManualTime: taskLabels.addManualTime,
-    logBudgetExpense: taskLabels.logBudgetExpense,
   };
 
   return (
@@ -39,12 +26,7 @@ export function TodoGrid({
         tasks={todayTasks}
         emptyLabel={labels.emptyToday}
         columns={todoTableColumns}
-        isTracking={isTracking}
         onTaskClick={(task) => onTaskClick(task.id)}
-        onStartTracking={startTracking}
-        onStopTracking={stopTracking}
-        onAddManualTime={onAddManualTime}
-        onLogBudgetExpense={onLogBudgetExpense}
       />
 
       <TodoScheduleTable
@@ -52,12 +34,7 @@ export function TodoGrid({
         tasks={weekTasks}
         emptyLabel={labels.emptyWeek}
         columns={todoTableColumns}
-        isTracking={isTracking}
         onTaskClick={(task) => onTaskClick(task.id)}
-        onStartTracking={startTracking}
-        onStopTracking={stopTracking}
-        onAddManualTime={onAddManualTime}
-        onLogBudgetExpense={onLogBudgetExpense}
       />
     </div>
   );

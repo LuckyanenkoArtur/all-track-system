@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from "react";
-import { Section } from "../../../../components/ui/section/Section";
+import { Sections } from "../../../../components/ui/sections/Sections";
 import { MultiSelect } from "../../../../components/ui/multi-select/MultiSelect";
 import { useTranslation } from "../../../../i18n";
 import type { TaskFilters, TaskStatus } from "../../domain/others";
@@ -10,6 +10,7 @@ import {
 } from "../../domain/priority";
 import type { MultiSelectOption } from "../../../../components/ui/multi-select/MultiSelect";
 import { FiActivity, FiAlertTriangle } from "react-icons/fi";
+import styles from "../drawers/task-filter-drawer/Drawer.module.scss";
 
 const STATUS_OPTIONS: TaskStatus[] = [
   "open",
@@ -105,25 +106,28 @@ export function TaskStateFilterSection({
   };
 
   return (
-    <Section>
-      <Section.Title>{t.tasks.filterSections.taskState}</Section.Title>
-      <Section.Content>
-        <Section.Grid>
-          <Section.Column>
-            {fields.map(({ key, label, options, icon }) => (
-              <MultiSelect
-                key={key}
-                label={label}
-                icon={icon}
-                options={options}
-                selected={getSelected(key)}
-                onChange={(selected) => handleChange(key, selected)}
-                {...multiSelectLabels}
-              />
-            ))}
-          </Section.Column>
-        </Section.Grid>
-      </Section.Content>
-    </Section>
+    <Sections.Section>
+      <Sections.Section.Icon>
+        <FiActivity size={15} aria-hidden />
+      </Sections.Section.Icon>
+      <Sections.Section.Title>
+        {t.tasks.filterSections.taskState}
+      </Sections.Section.Title>
+      <Sections.Section.Content>
+        <div className={styles.stack}>
+          {fields.map(({ key, label, options, icon }) => (
+            <MultiSelect
+              key={key}
+              label={label}
+              icon={icon}
+              options={options}
+              selected={getSelected(key)}
+              onChange={(selected) => handleChange(key, selected)}
+              {...multiSelectLabels}
+            />
+          ))}
+        </div>
+      </Sections.Section.Content>
+    </Sections.Section>
   );
 }

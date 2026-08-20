@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type ButtonHTMLAttributes,
@@ -14,7 +15,10 @@ import {
 } from "react";
 
 import { ConfirmDialog } from "../../../features/user-profile/components/dialogs/Dialog";
-import { PanelDismissContext } from "../panel/Panel";
+import {
+  DrawerDismissContext,
+  DrawerDismissRegistryContext,
+} from "../drawer/Drawer";
 import buttonStyles from "../button/Button.module.scss";
 import styles from "./Form.module.scss";
 import { useTranslation } from "../../../i18n";
@@ -70,7 +74,7 @@ type FormBodyProps = PropsWithChildren<{
   contentGap?: "default" | "compact";
 }>;
 
-type FormPanelDismissProps = PropsWithChildren<{
+type FormDrawerDismissProps = PropsWithChildren<{
   beforeDismiss?: () => void | false;
 }>;
 
@@ -93,7 +97,7 @@ interface FormComponent extends FC<FormRootProps> {
   Body: FC<FormBodyProps>;
   Footer: FC<PropsWithChildren<{ className?: string }>>;
   Button: FC<FormButtonProps>;
-  PanelDismiss: FC<FormPanelDismissProps>;
+  DrawerDismiss: FC<FormDrawerDismissProps>;
 }
 
 export const Form: FormComponent = ({
@@ -209,8 +213,9 @@ export const Form: FormComponent = ({
   );
 };
 
-Form.PanelDismiss = ({ children, beforeDismiss }) => {
+Form.DrawerDismiss = ({ children, beforeDismiss }) => {
   const { requestClose, confirmOpen } = useFormContext();
+  const dismissRegistry = useContext(DrawerDismissRegistryContext);
 
   const handleDismiss = useCallback(() => {
     if (confirmOpen) return false;
@@ -218,10 +223,20 @@ Form.PanelDismiss = ({ children, beforeDismiss }) => {
     requestClose();
   }, [beforeDismiss, confirmOpen, requestClose]);
 
+  useLayoutEffect(() => {
+    if (!dismissRegistry) return;
+    dismissRegistry.current = handleDismiss;
+    return () => {
+      if (dismissRegistry.current === handleDismiss) {
+        dismissRegistry.current = undefined;
+      }
+    };
+  }, [dismissRegistry, handleDismiss]);
+
   return (
-    <PanelDismissContext.Provider value={handleDismiss}>
+    <DrawerDismissContext.Provider value={handleDismiss}>
       {children}
-    </PanelDismissContext.Provider>
+    </DrawerDismissContext.Provider>
   );
 };
 

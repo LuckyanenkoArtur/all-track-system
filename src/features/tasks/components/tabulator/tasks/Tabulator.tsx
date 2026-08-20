@@ -6,15 +6,9 @@ import TaskListTab from "../../tabs/tasks-overview/task-list/Tab.tsx";
 
 type TaskTabulatorProps = {
   onTaskClick: (taskId: string) => void;
-  onAddManualTime: (taskId: string) => void;
-  onLogBudgetExpense: (taskId: string) => void;
 };
 
-export default function TaskTabulator({
-  onTaskClick,
-  onAddManualTime,
-  onLogBudgetExpense,
-}: TaskTabulatorProps) {
+export default function TaskTabulator({ onTaskClick }: TaskTabulatorProps) {
   const { t } = useTranslation();
 
   const tabs = [
@@ -33,13 +27,7 @@ export default function TaskTabulator({
   const panels = [
     {
       value: "taskList",
-      content: (
-        <TaskListTab
-          onTaskClick={onTaskClick}
-          onAddManualTime={onAddManualTime}
-          onLogBudgetExpense={onLogBudgetExpense}
-        />
-      ),
+      content: <TaskListTab onTaskClick={onTaskClick} />,
     },
     {
       value: "analytics",

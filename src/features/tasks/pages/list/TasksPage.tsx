@@ -5,12 +5,12 @@ import { BiAbacus, BiTable } from "react-icons/bi";
 import { useUserProfile } from "../../../../context/UserProfileContext";
 import { useTranslation } from "../../../../i18n";
 
-import { TaskFilterOptionsButton } from "../../components/buttons/TaskFilterOptionsButton";
-import { TaskCreationButton } from "../../components/buttons/TaskCreationButton";
+import { TaskFilterOptionsButton } from "../../components/buttons/task-filter-options/TaskFilterOptionsButton.tsx";
+import { TaskCreationButton } from "../../components/buttons/task-creation-button/TaskCreationButton";
 import { ViewSwitcher } from "../../../../components/ui/view-switcher/ViewSwitcher";
 
-import { TaskDetailsPanel } from "../../components/panels/task-details-panel/Panel";
-import { PanelDismissContext } from "../../../../components/ui/panel/Panel";
+import { TaskDetailsDrawer } from "../../components/drawers/task-details-drawer/Drawer";
+import { DrawerDismissContext } from "../../../../components/ui/drawer/Drawer";
 import { useTasks } from "../../hooks/useTasks";
 import { useTaskTrackingDisplay } from "../../hooks/useTaskTrackingDisplay";
 import { useTaskListState } from "../../hooks/useTaskListState";
@@ -25,7 +25,7 @@ import { getAuthorInitials } from "../../utils/commentUtils";
 import styles from "./TasksPage.module.scss";
 import Title from "../../../../components/ui/title/Title.tsx";
 import { SearchBar } from "../../../../components/ui/search-bar/SearchBar";
-import { CompleteTaskDialog } from "../../components/panels/task-complete-panel/CompleteTaskDialog";
+import { CompleteTaskDrawer } from "../../components/drawers/task-complete-drawer/Drawer";
 
 export function TaskListPage() {
   const { t } = useTranslation();
@@ -37,8 +37,6 @@ export function TaskListPage() {
     addTask,
     isTracking,
     toggleTracking,
-    startTracking,
-    stopTracking,
     completeTaskWithReport,
   } = useTasks();
   const { getDisplayTimeSpent } = useTaskTrackingDisplay();
@@ -131,7 +129,7 @@ export function TaskListPage() {
   );
 
   return (
-    <PanelDismissContext.Provider value={() => setSelectedTaskId(null)}>
+    <DrawerDismissContext.Provider value={() => setSelectedTaskId(null)}>
       <div className={styles.page}>
         <header className={styles.pageHeader}>
           <Title text={t.sidebar.workQueue} />
@@ -210,8 +208,6 @@ export function TaskListPage() {
           isTracking={isTracking}
           getDisplayTimeSpent={getDisplayTimeSpent}
           onToggleTracking={toggleTracking}
-          onStartTracking={startTracking}
-          onStopTracking={stopTracking}
           labels={{
             allTasks: t.tasks.allTasks,
             noResults: t.tasks.noResults,
@@ -242,9 +238,9 @@ export function TaskListPage() {
           }}
         />
 
-        <TaskDetailsPanel task={selectedTask} initialTab={detailsInitialTab} />
+        <TaskDetailsDrawer task={selectedTask} initialTab={detailsInitialTab} />
 
-        <CompleteTaskDialog
+        <CompleteTaskDrawer
           open={completeTaskId !== null}
           onClose={() => setCompleteTaskId(null)}
           onSubmit={handleCompleteTask}
@@ -265,6 +261,6 @@ export function TaskListPage() {
         />
 
       </div>
-    </PanelDismissContext.Provider>
+    </DrawerDismissContext.Provider>
   );
 }

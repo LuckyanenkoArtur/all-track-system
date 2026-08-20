@@ -1,9 +1,9 @@
 import Badge from "../../../../../../components/ui/badge/Badge.tsx";
 import Divider from "../../../../../../components/ui/divider/Divider.tsx";
 import Title from "../../../../../../components/ui/title/Title.tsx";
-import AuthorBadge from "../../../badges/AuthorBadge.tsx";
-import DateTimeBadge from "../../../badges/DateTimeBadge.tsx";
-import RequiresResultReviewBadge from "../../../badges/RequiresResultReviewBadge.tsx";
+import AuthorBadge from "../../../badges/author-badge/AuthorBadge.tsx";
+import DateTimeBadge from "../../../badges/date-time-badge/DateTimeBadge.tsx";
+import RequiresResultReviewBadge from "../../../badges/requires-result-review-badge/RequiresResultReviewBadge.tsx";
 
 import type { Task } from "../../../../domain/others.ts";
 

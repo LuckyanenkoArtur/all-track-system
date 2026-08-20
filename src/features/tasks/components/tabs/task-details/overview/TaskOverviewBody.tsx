@@ -24,15 +24,15 @@ import Badge from "../../../../../../components/ui/badge/Badge.tsx";
 import { Button } from "../../../../../../components/ui/button/Button.tsx";
 import buttonStyles from "../../../../../../components/ui/button/Button.module.scss";
 import Divider from "../../../../../../components/ui/divider/Divider.tsx";
-import { Panel } from "../../../../../../components/ui/info-panel/Panel.tsx";
+import { Sections } from "../../../../../../components/ui/sections/Sections.tsx";
 import ProgressBar from "../../../../../../components/ui/progress-bar/ProgressBar.tsx";
 import StepCheckList from "../../../../../../components/ui/step-check-list/StepCheckList.tsx";
 
-import { BudgetCard } from "../../../cards/BudgetCard.tsx";
-import { DueDateCard } from "../../../cards/DueDateCard.tsx";
-import { PriorityCard } from "../../../cards/PriorityCard.tsx";
-import { StartDateCard } from "../../../cards/StartDateCard.tsx";
-import { StatusCard } from "../../../cards/StatusCard.tsx";
+import { BudgetCard } from "../../../cards/budget-card/BudgetCard.tsx";
+import { DueDateCard } from "../../../cards/due-date-card/DueDateCard.tsx";
+import { PriorityCard } from "../../../cards/priority-card/PriorityCard.tsx";
+import { StartDateCard } from "../../../cards/start-date-card/StartDateCard.tsx";
+import { StatusCard } from "../../../cards/status-card/StatusCard.tsx";
 import { TaskTrackingBar } from "../../../tracking/TaskTrackingBar.tsx";
 
 import { Initials } from "../../utils/Initials.ts";
@@ -73,13 +73,13 @@ export function TaskOverviewBody({
 
   return (
     <div className={styles.body}>
-      <Panel className={styles.mainColumn}>
-        <Panel.Section>
-          <Panel.Section.Icon>
+      <Sections className={styles.mainColumn}>
+        <Sections.Section>
+          <Sections.Section.Icon>
             <FiFlag size={15} aria-hidden />
-          </Panel.Section.Icon>
-          <Panel.Section.Title>Status & Priority</Panel.Section.Title>
-          <Panel.Section.Content>
+          </Sections.Section.Icon>
+          <Sections.Section.Title>Status & Priority</Sections.Section.Title>
+          <Sections.Section.Content>
             <div className={styles.splitFields}>
               <PriorityCard
                 title={t.tasks.priority}
@@ -93,15 +93,15 @@ export function TaskOverviewBody({
                 onStatusChange={onStatusChange}
               />
             </div>
-          </Panel.Section.Content>
-        </Panel.Section>
+          </Sections.Section.Content>
+        </Sections.Section>
 
-        <Panel.Section>
-          <Panel.Section.Icon>
+        <Sections.Section>
+          <Sections.Section.Icon>
             <FiUser size={15} aria-hidden />
-          </Panel.Section.Icon>
-          <Panel.Section.Title>{t.tasks.responsible}</Panel.Section.Title>
-          <Panel.Section.Content>
+          </Sections.Section.Icon>
+          <Sections.Section.Title>{t.tasks.responsible}</Sections.Section.Title>
+          <Sections.Section.Content>
             {task.responsible.length > 0 ? (
               <div className={styles.assigneeList}>
                 {task.responsible.map((person) => (
@@ -114,15 +114,15 @@ export function TaskOverviewBody({
             ) : (
               <span className={styles.emptyValue}>—</span>
             )}
-          </Panel.Section.Content>
-        </Panel.Section>
+          </Sections.Section.Content>
+        </Sections.Section>
 
-        <Panel.Section>
-          <Panel.Section.Icon>
+        <Sections.Section>
+          <Sections.Section.Icon>
             <FiUsers size={15} aria-hidden />
-          </Panel.Section.Icon>
-          <Panel.Section.Title>{t.tasks.observables}</Panel.Section.Title>
-          <Panel.Section.Content>
+          </Sections.Section.Icon>
+          <Sections.Section.Title>{t.tasks.observables}</Sections.Section.Title>
+          <Sections.Section.Content>
             {task.observables.length > 0 ? (
               <div className={styles.assigneeList}>
                 {task.observables.map((person) => (
@@ -135,15 +135,15 @@ export function TaskOverviewBody({
             ) : (
               <span className={styles.emptyValue}>—</span>
             )}
-          </Panel.Section.Content>
-        </Panel.Section>
+          </Sections.Section.Content>
+        </Sections.Section>
 
-        <Panel.Section>
-          <Panel.Section.Icon>
+        <Sections.Section>
+          <Sections.Section.Icon>
             <FiClock size={15} aria-hidden />
-          </Panel.Section.Icon>
-          <Panel.Section.Title>Timeline</Panel.Section.Title>
-          <Panel.Section.Content>
+          </Sections.Section.Icon>
+          <Sections.Section.Title>Timeline</Sections.Section.Title>
+          <Sections.Section.Content>
             <div className={styles.splitFields}>
               <StartDateCard
                 title={t.tasks.details.startDate}
@@ -152,26 +152,26 @@ export function TaskOverviewBody({
               <Divider icon={<FiArrowRight size={11} aria-hidden />} />
               <DueDateCard title={t.tasks.dueDate} dueDate={task.dueDate} />
             </div>
-          </Panel.Section.Content>
-        </Panel.Section>
+          </Sections.Section.Content>
+        </Sections.Section>
 
-        <Panel.Section>
-          <Panel.Section.Icon>
+        <Sections.Section>
+          <Sections.Section.Icon>
             <FiDollarSign size={15} aria-hidden />
-          </Panel.Section.Icon>
-          <Panel.Section.Title>Financials</Panel.Section.Title>
-          <Panel.Section.Content>
+          </Sections.Section.Icon>
+          <Sections.Section.Title>Financials</Sections.Section.Title>
+          <Sections.Section.Content>
             <BudgetCard title={t.tasks.budget} budget={task.budget} />
-          </Panel.Section.Content>
-        </Panel.Section>
+          </Sections.Section.Content>
+        </Sections.Section>
 
         {task.groups.length > 0 && (
-          <Panel.Section>
-            <Panel.Section.Icon>
+          <Sections.Section>
+            <Sections.Section.Icon>
               <FiLayers size={15} aria-hidden />
-            </Panel.Section.Icon>
-            <Panel.Section.Title>{t.tasks.groups}</Panel.Section.Title>
-            <Panel.Section.Content>
+            </Sections.Section.Icon>
+            <Sections.Section.Title>{t.tasks.groups}</Sections.Section.Title>
+            <Sections.Section.Content>
               <div className={styles.groupList}>
                 {task.groups.map((group) => (
                   <Badge
@@ -186,20 +186,20 @@ export function TaskOverviewBody({
                   </Badge>
                 ))}
               </div>
-            </Panel.Section.Content>
-          </Panel.Section>
+            </Sections.Section.Content>
+          </Sections.Section>
         )}
-      </Panel>
+      </Sections>
 
-      <Panel className={styles.sidebar}>
-        <Panel.Section>
-          <Panel.Section.Icon>
+      <Sections className={styles.sidebar}>
+        <Sections.Section>
+          <Sections.Section.Icon>
             <FiFileText size={15} aria-hidden />
-          </Panel.Section.Icon>
-          <Panel.Section.Title>
+          </Sections.Section.Icon>
+          <Sections.Section.Title>
             {t.tasks.details.description}
-          </Panel.Section.Title>
-          <Panel.Section.Content>
+          </Sections.Section.Title>
+          <Sections.Section.Content>
             {task.description?.trim() ? (
               <div className={styles.descriptionText}>{task.description}</div>
             ) : (
@@ -207,17 +207,17 @@ export function TaskOverviewBody({
                 {t.tasks.details.descriptionEmpty}
               </div>
             )}
-          </Panel.Section.Content>
-        </Panel.Section>
+          </Sections.Section.Content>
+        </Sections.Section>
 
-        <Panel.Section>
-          <Panel.Section.Icon>
+        <Sections.Section>
+          <Sections.Section.Icon>
             <FiCheckSquare size={15} aria-hidden />
-          </Panel.Section.Icon>
-          <Panel.Section.Title>
+          </Sections.Section.Icon>
+          <Sections.Section.Title>
             {t.tasks.details.tabs.steps}
-          </Panel.Section.Title>
-          <Panel.Section.Content>
+          </Sections.Section.Title>
+          <Sections.Section.Content>
             {steps.length === 0 ? (
               <p className={styles.empty}>{t.tasks.details.tabs.stepsEmpty}</p>
             ) : (
@@ -246,17 +246,17 @@ export function TaskOverviewBody({
                 )}
               </div>
             )}
-          </Panel.Section.Content>
-        </Panel.Section>
+          </Sections.Section.Content>
+        </Sections.Section>
 
-        <Panel.Section>
-          <Panel.Section.Icon>
+        <Sections.Section>
+          <Sections.Section.Icon>
             <FiPlayCircle size={15} aria-hidden />
-          </Panel.Section.Icon>
-          <Panel.Section.Title>
+          </Sections.Section.Icon>
+          <Sections.Section.Title>
             {t.tasks.details.overviewActions}
-          </Panel.Section.Title>
-          <Panel.Section.Content>
+          </Sections.Section.Title>
+          <Sections.Section.Content>
             <div className={styles.actionsStack}>
               <TaskTrackingBar
                 task={task}
@@ -292,9 +292,9 @@ export function TaskOverviewBody({
                 </div>
               )}
             </div>
-          </Panel.Section.Content>
-        </Panel.Section>
-      </Panel>
+          </Sections.Section.Content>
+        </Sections.Section>
+      </Sections>
     </div>
   );
 }

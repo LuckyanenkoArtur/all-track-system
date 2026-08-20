@@ -17,7 +17,7 @@ import { getLiveTimeSpent } from "../../../utils/timeTrackingUtils.ts";
 import { TaskDetailsOverviewTab } from "../../tabs/task-details/overview/TaskDetailsOverviewTab.tsx";
 import { TaskDetailsMetricsTab } from "../../tabs/task-details/metrics/TaskDetailsMetricsTab.tsx";
 import { useTaskListState } from "../../../hooks/useTaskListState.ts";
-import { TaskCreationPanel } from "../../panels/task-creation-panel/Panel.tsx";
+import { TaskCreationDrawer } from "../../drawers/task-creation-drawer/Drawer.tsx";
 import {
   FiFileText,
   FiBarChart2,
@@ -31,7 +31,7 @@ import { TaskDetailsTransactionsTab } from "../../tabs/task-details/transactions
 import { TaskDetailsTabPlaceholder } from "../../placeholders/TaskDetailsTabPlaceholder.tsx";
 import { isUserTaskResponsible } from "../../../utils/taskDetailsUtils.ts";
 import { isTerminalTaskStatus } from "../../../utils/taskStatusUtils.ts";
-import { CompleteTaskDialog } from "../../panels/task-complete-panel/CompleteTaskDialog.tsx";
+import { CompleteTaskDrawer } from "../../drawers/task-complete-drawer/Drawer.tsx";
 
 interface TaskDetailsTabulatorProps {
   task: Task;
@@ -398,7 +398,7 @@ export default function TaskDetailsTabulator({
         </Tabulator.Panels>
       </Tabulator>
 
-      <TaskCreationPanel
+      <TaskCreationDrawer
         open={editOpen}
         onClose={() => setEditOpen(false)}
         task={task}
@@ -450,7 +450,7 @@ export default function TaskDetailsTabulator({
         }}
       />
 
-      <CompleteTaskDialog
+      <CompleteTaskDrawer
         open={completeOpen}
         onClose={() => setCompleteOpen(false)}
         onSubmit={handleCompleteTask}
